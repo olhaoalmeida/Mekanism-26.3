@@ -1,0 +1,19 @@
+name: release
+on: workflow_dispatch
+permissions: { contents: write }
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 25 }
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew assemble --no-daemon --console=plain
+      - name: create release
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          tag="v10.8.0-26.3-r${{ github.run_number }}"
+          gh release create "$tag" --prerelease --title "Mekanism 10.8.0 (MC 26.3) r${{ github.run_number }}" \
+            --notes "Build de teste do Mekanism principal para NeoForge 26.3, compilado da branch oficial 26.3. Ainda não testado em jogo. Addons (Generators, Tools, Additions) serão portados depois." \
+            build/libs/Mekanism-26.3-10.8.0.homebaked.jar
