@@ -1,0 +1,14 @@
+{
+  "type": "mekanism:sawing",
+  "category": "food",
+  "experience": 0.25,
+  "group": "mekanism:fd_cooked_meat",
+  "input": {
+    "count": 1,
+    "ingredient": "minecraft:porkchop"
+  },
+  "main_output": {
+    "count": 2,
+    "id": "farmersdelight:bacon"
+  }
+}

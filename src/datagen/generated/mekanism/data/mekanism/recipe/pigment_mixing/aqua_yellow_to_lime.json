@@ -1,0 +1,17 @@
+{
+  "type": "mekanism:pigment_mixing",
+  "experience": 1.00000005E-4,
+  "group": "mekanism:lime",
+  "left_input": {
+    "amount": 1,
+    "ingredient": "mekanism:aqua"
+  },
+  "output": {
+    "amount": 2,
+    "id": "mekanism:lime"
+  },
+  "right_input": {
+    "amount": 1,
+    "ingredient": "mekanism:yellow"
+  }
+}

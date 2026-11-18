@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "condition": "minecraft:tool/can_silk_touch",
+              "name": "mekanism:block_salt"
+            },
+            {
+              "type": "minecraft:item",
+              "modifier": [
+                {
+                  "type": "minecraft:set_count",
+                  "count": 4
+                },
+                {
+                  "type": "minecraft:explosion_decay"
+                }
+              ],
+              "name": "mekanism:salt"
+            }
+          ]
+        }
+      ],
+      "name": "main",
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "mekanism:blocks/block_salt"
+}

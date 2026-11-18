@@ -1,0 +1,17 @@
+{
+  "type": "mekanism:nucleosynthesizing",
+  "chemical_input": {
+    "amount": 3,
+    "ingredient": "mekanism:antimatter"
+  },
+  "duration": 750,
+  "experience": 1.15,
+  "item_input": {
+    "count": 1,
+    "ingredient": "minecraft:beacon"
+  },
+  "output": {
+    "id": "minecraft:end_crystal"
+  },
+  "per_tick_usage": false
+}

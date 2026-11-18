@@ -1,0 +1,13 @@
+{
+  "type": "mekanism:crushing",
+  "category": "building",
+  "experience": 0.1,
+  "group": "mekanism:sphalerite_conversion",
+  "input": {
+    "count": 1,
+    "ingredient": "biomesoplenty:polished_sphalerite_stairs"
+  },
+  "output": {
+    "id": "biomesoplenty:sphalerite_stairs"
+  }
+}

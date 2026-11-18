@@ -1,0 +1,28 @@
+{
+  "criteria": {
+    "automatic": {
+      "trigger": "mekanism:logged_in"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "mekanism:block/block_osmium",
+    "description": {
+      "translate": "advancements.mekanism.root.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "mekanism:atomic_disassembler"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.mekanism.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "automatic"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

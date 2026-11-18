@@ -1,0 +1,12 @@
+{
+  "type": "mekanism:enriching",
+  "experience": 0.35,
+  "input": {
+    "count": 1,
+    "ingredient": "ae2:certus_quartz_dust"
+  },
+  "output": {
+    "count": 2,
+    "id": "ae2:silicon"
+  }
+}

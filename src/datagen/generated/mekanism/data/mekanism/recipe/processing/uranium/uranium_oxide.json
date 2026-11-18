@@ -1,0 +1,12 @@
+{
+  "type": "mekanism:oxidizing",
+  "experience": 0.9,
+  "input": {
+    "count": 1,
+    "ingredient": "mekanism:yellow_cake_uranium"
+  },
+  "output": {
+    "amount": 250,
+    "id": "mekanism:uranium_oxide"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": [
+            {
+              "type": "minecraft:copy_name",
+              "source": "block_entity"
+            },
+            {
+              "type": "minecraft:copy_components",
+              "include": [
+                "mekanism:owner",
+                "mekanism:security"
+              ],
+              "source": "block_entity"
+            },
+            {
+              "type": "mekanism:personal_storage_contents"
+            }
+          ],
+          "name": "mekanism:personal_chest"
+        }
+      ],
+      "name": "main",
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "mekanism:blocks/personal_chest"
+}

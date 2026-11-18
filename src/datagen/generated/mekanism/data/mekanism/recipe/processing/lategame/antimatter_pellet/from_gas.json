@@ -1,0 +1,11 @@
+{
+  "type": "mekanism:crystallizing",
+  "experience": 5.0,
+  "input": {
+    "amount": 1000,
+    "ingredient": "mekanism:antimatter"
+  },
+  "output": {
+    "id": "mekanism:pellet_antimatter"
+  }
+}

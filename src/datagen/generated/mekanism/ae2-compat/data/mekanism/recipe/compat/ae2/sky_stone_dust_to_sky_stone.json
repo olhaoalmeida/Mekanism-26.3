@@ -1,0 +1,11 @@
+{
+  "type": "mekanism:enriching",
+  "experience": 0.1,
+  "input": {
+    "count": 1,
+    "ingredient": "ae2:sky_dust"
+  },
+  "output": {
+    "id": "ae2:sky_stone_block"
+  }
+}

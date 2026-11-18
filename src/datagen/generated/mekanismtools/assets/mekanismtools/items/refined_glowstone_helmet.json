@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "neoforge:trimmed_armor",
+    "base_model": {
+      "type": "minecraft:model",
+      "model": "mekanismtools:item/refined_glowstone_helmet"
+    },
+    "base_trim_texture": "minecraft:trims/items/helmet_trim",
+    "palette_replacement": {
+      "replacement": "mekanism:trim/mekanism_refined_glowstone_lighter",
+      "target": "mekanism:trim/mekanism_refined_glowstone"
+    }
+  }
+}

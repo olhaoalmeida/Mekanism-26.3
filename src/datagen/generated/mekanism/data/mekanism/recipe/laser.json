@@ -1,0 +1,17 @@
+{
+  "type": "mekanism:mek_data",
+  "key": {
+    "#": "#c:gems/diamond",
+    "A": "#mekanism:alloys/reinforced",
+    "E": "mekanism:energy_tablet",
+    "X": "mekanism:steel_casing"
+  },
+  "pattern": [
+    "AE ",
+    "AX#",
+    "AE "
+  ],
+  "result": {
+    "id": "mekanism:laser"
+  }
+}

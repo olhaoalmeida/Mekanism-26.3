@@ -1,0 +1,37 @@
+{
+  "layers": {
+    "horse_body": [
+      {
+        "texture": "mekanismtools:bronze"
+      }
+    ],
+    "humanoid": [
+      {
+        "texture": "mekanismtools:bronze"
+      }
+    ],
+    "humanoid_baby": [
+      {
+        "texture": "mekanismtools:bronze"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "mekanismtools:bronze"
+      }
+    ],
+    "nautilus_body": [
+      {
+        "texture": "mekanismtools:bronze"
+      }
+    ]
+  },
+  "trim_overrides": [
+    {
+      "palette": "mekanism:trim/mekanism_bronze_lighter",
+      "when": {
+        "material": "mekanism:bronze"
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "type": "mekanism:rotary",
+  "chemical_input": {
+    "amount": 1,
+    "ingredient": "mekanism:oxygen"
+  },
+  "chemical_output": {
+    "amount": 1,
+    "id": "mekanism:oxygen"
+  },
+  "experience": 1.00000005E-4,
+  "fluid_input": {
+    "amount": 1,
+    "ingredient": "#c:oxygen"
+  },
+  "fluid_output": {
+    "amount": 1,
+    "id": "mekanism:oxygen"
+  }
+}

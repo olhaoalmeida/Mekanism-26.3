@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": [
+            {
+              "type": "minecraft:copy_name",
+              "source": "block_entity"
+            },
+            {
+              "type": "minecraft:copy_components",
+              "include": [
+                "mekanism:owner",
+                "mekanism:redstone_control",
+                "mekanism:security",
+                "mekanism:upgrades",
+                "mekanism:energy",
+                "mekanism:items"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "mekanismgenerators:solar_generator"
+        }
+      ],
+      "name": "main",
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "mekanismgenerators:blocks/solar_generator"
+}

@@ -1,0 +1,47 @@
+package mekanism.client.gui.robit;
+
+import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
+import mekanism.client.gui.element.progress.GuiProgress;
+import mekanism.client.gui.element.progress.ProgressType;
+import mekanism.client.gui.element.tab.GuiXpContainmentTab;
+import mekanism.client.gui.recipe_book.MekanismRecipeBookComponent;
+import mekanism.common.Mekanism;
+import mekanism.common.inventory.container.entity.robit.RobitContainer;
+import mekanism.common.inventory.warning.WarningTracker.WarningType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+
+public class GuiRobitSmelting extends GuiRobit<RobitContainer> {
+
+    public GuiRobitSmelting(RobitContainer container, Inventory inv, Component title) {
+        super(container, inv, title);
+        inventoryLabelY += 1;
+        dynamicSlots = true;
+        if (!Mekanism.hooks.isRecipeBookDisabled()) {
+            this.recipeBookComponent = new MekanismRecipeBookComponent<>(menu, robit, registryAccess(), this::font);
+        }
+    }
+
+    @Override
+    protected void addGuiElements() {
+        super.addGuiElements();
+        addRenderableWidget(new GuiProgress(robit::getScaledProgress, ProgressType.BAR, this, 78, 38).recipeViewerCategory(robit))
+              .warning(WarningType.INPUT_DOESNT_PRODUCE_OUTPUT, robit.getWarningCheck(RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT));
+        addRenderableWidget(new GuiXpContainmentTab(this, robit, true, 34));
+        //We don't have a spot to display energy errors on this GUI, so we instead just display it on the warning tab
+        trackWarning(WarningType.NOT_ENOUGH_ENERGY, robit.getWarningCheck(RecipeError.NOT_ENOUGH_ENERGY));
+    }
+
+    @Override
+    protected void drawForegroundText(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        renderTitleText(guiGraphics);
+        renderInventoryText(guiGraphics);
+        super.drawForegroundText(guiGraphics, mouseX, mouseY, partialTicks);
+    }
+
+    @Override
+    protected boolean shouldOpenGui(RobitGuiType guiType) {
+        return guiType != RobitGuiType.SMELTING;
+    }
+}

@@ -1,0 +1,49 @@
+package mekanism.client.gui.machine;
+
+import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
+import mekanism.client.gui.GuiConfigurableTile;
+import mekanism.client.gui.element.GuiTexturedElement;
+import mekanism.client.gui.element.bar.GuiHorizontalPowerBar;
+import mekanism.client.gui.element.gauge.GaugeType;
+import mekanism.client.gui.element.gauge.GuiFluidGauge;
+import mekanism.client.gui.element.progress.GuiProgress;
+import mekanism.client.gui.element.progress.ProgressType;
+import mekanism.client.gui.element.tab.GuiEnergyTab;
+import mekanism.client.gui.recipe_book.BookComponentType;
+import mekanism.common.inventory.container.tile.MekanismTileContainer;
+import mekanism.common.inventory.warning.WarningTracker.WarningType;
+import mekanism.common.tile.machine.TileEntityNutritionalLiquifier;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+
+public class GuiNutritionalLiquifier extends GuiConfigurableTile<TileEntityNutritionalLiquifier, MekanismTileContainer<TileEntityNutritionalLiquifier>> {
+
+    private static final int ENERGY_BAR_X = 115;
+
+    public GuiNutritionalLiquifier(MekanismTileContainer<TileEntityNutritionalLiquifier> container, Inventory inv, Component title) {
+        super(container, inv, title);
+        dynamicSlots = true;
+    }
+
+    @Override
+    protected void addGuiElements() {
+        //Note: This needs to be before super so that it gets added as an output before the item slot does
+        addRecipeBookComponent(new GuiFluidGauge(() -> tile.fluidTank, tile::getFluidTanks, GaugeType.STANDARD, this, 133, 13), BookComponentType.OUTPUT)
+              .warning(WarningType.NO_SPACE_IN_OUTPUT, tile.getWarningCheck(RecipeError.NOT_ENOUGH_OUTPUT_SPACE));
+        super.addGuiElements();
+        addRenderableWidget(new GuiHorizontalPowerBar(this, tile.energyContainer(), ENERGY_BAR_X, 75))
+              .warning(WarningType.NOT_ENOUGH_ENERGY, tile.getWarningCheck(RecipeError.NOT_ENOUGH_ENERGY));
+        addRenderableWidget(new GuiEnergyTab(this, tile.energyContainer(), tile::getActive));
+        addRenderableWidget(GuiTexturedElement.downArrow(this, 159, 44));
+        addRenderableWidget(new GuiProgress(tile::getScaledProgress, ProgressType.LARGE_RIGHT, this, 54, 40).recipeViewerCategory(tile))
+              .warning(WarningType.INPUT_DOESNT_PRODUCE_OUTPUT, tile.getWarningCheck(RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT));
+    }
+
+    @Override
+    protected void drawForegroundText(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        renderTitleText(guiGraphics);
+        renderInventoryText(guiGraphics, ENERGY_BAR_X);
+        super.drawForegroundText(guiGraphics, mouseX, mouseY, partialTicks);
+    }
+}

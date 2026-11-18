@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "mekanism:hdpe_rod"
+  },
+  "pattern": [
+    "#",
+    "#"
+  ],
+  "result": {
+    "id": "mekanism:hdpe_stick"
+  }
+}

@@ -1,0 +1,123 @@
+package mekanism.common.recipe.lookup.cache.type;
+
+import com.google.common.collect.Iterables;
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import mekanism.api.recipes.MekanismRecipe;
+import mekanism.api.recipes.ingredients.InputIngredient;
+import mekanism.common.Mekanism;
+import net.minecraft.core.Holder;
+import net.minecraft.core.TypedInstance;
+import net.minecraft.core.component.DataComponentHolder;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.neoforged.neoforge.common.util.strategy.BasicStrategy;
+import org.jspecify.annotations.Nullable;
+
+/// Extended input cache that implements the backend handling to allow for both the basic key based input lookup that [BaseInputCache] provides, and also a more advanced
+/// mapping that is Data Component based.
+public abstract class ComponentSensitiveInputCache<KEY, INPUT extends TypedInstance<KEY> & DataComponentHolder, INGREDIENT extends InputIngredient<KEY, INPUT>, RECIPE extends MekanismRecipe<?, ?, ?>>
+      extends BaseInputCache<KEY, INPUT, INGREDIENT, RECIPE> {
+
+    /// Map of ResourceKey to Map of components to lists.
+    private final Map<ResourceKey<KEY>, Map<DataComponentMap, List<RecipeHolder<RECIPE>>>> componentInputCache = new Reference2ObjectOpenHashMap<>();
+
+    @Override
+    public void clear() {
+        super.clear();
+        componentInputCache.clear();
+    }
+
+    /// @implNote Checks the more specific Data Component based cache before checking the more generic base type.
+    @Override
+    public boolean contains(TypedInstance<KEY> input) {
+        return super.contains(input) || (input instanceof DataComponentHolder dCH && componentCacheContains(input, dCH));
+    }
+
+    private boolean componentCacheContains(TypedInstance<KEY> input, DataComponentHolder asDCHolder) {
+        if (componentInputCache.isEmpty()) {
+            return false;
+        }
+        ResourceKey<KEY> key = input.typeHolder().keyOrNull();
+        if (key == null) {
+            Mekanism.logger.warn("Component Input cache contains check received a direct holder or an unbound intrusive holder");
+            return false;
+        }
+        Map<DataComponentMap, List<RecipeHolder<RECIPE>>> holderMatch = componentInputCache.get(key);
+        return holderMatch != null && holderMatch.containsKey(asDCHolder.getComponents());
+    }
+
+    /// @implNote Checks the more specific Data Component based cache before checking the more generic base type.
+    @Override
+    public Iterable<RecipeHolder<RECIPE>> getRecipes(TypedInstance<KEY> input) {
+        if (componentInputCache.isEmpty() || !(input instanceof DataComponentHolder dataComponentHolder)) {
+            return super.getRecipes(input);
+        }
+        List<RecipeHolder<RECIPE>> nbtRecipes = getComponentMatches(input, dataComponentHolder);
+        if (nbtRecipes == null) {
+            return super.getRecipes(input);
+        }
+        Collection<RecipeHolder<RECIPE>> basicRecipes = (Collection<RecipeHolder<RECIPE>>) super.getRecipes(input);
+        if (basicRecipes.isEmpty()) {
+            return nbtRecipes;
+        }
+        return Iterables.concat(nbtRecipes, basicRecipes);
+    }
+
+    @Nullable
+    private List<RecipeHolder<RECIPE>> getComponentMatches(TypedInstance<KEY> input, DataComponentHolder asDCHolder) {
+        ResourceKey<KEY> key = input.typeHolder().keyOrNull();
+        if (key == null) {
+            Mekanism.logger.warn("Component Input matches check received a direct holder or an unbound intrusive holder");
+            return null;
+        }
+        Map<DataComponentMap, List<RecipeHolder<RECIPE>>> holderMatches = componentInputCache.get(key);
+        if (holderMatches == null) {
+            return null;
+        }
+        return holderMatches.get(asDCHolder.getComponents());
+    }
+
+    /// Adds a given recipe to the input cache using the corresponding Data Component based key. Works for EXACT matches only.
+    ///
+    /// @param inputHolder Holder representing the KEY
+    /// @param patch       The component patch to apply against inputHolder for storing in the index
+    /// @param recipeHolder      Recipe to add.
+    protected void addComponentInputCache(Holder<KEY> inputHolder, DataComponentPatch patch, RecipeHolder<RECIPE> recipeHolder) {
+        ResourceKey<KEY> key = inputHolder.keyOrNull();
+        if (key == null) {
+            Mekanism.logger.warn("Component Input Cache received a direct holder or an unbound intrusive holder");
+            return;
+        }
+        DataComponentMap components = PatchedDataComponentMap.fromPatch(inputHolder.components(), patch);
+        Map<DataComponentMap, List<RecipeHolder<RECIPE>>> holderMatch = componentInputCache.get(key);
+        if (holderMatch == null) {
+            componentInputCache.put(key, Collections.singletonMap(components, Collections.singletonList(recipeHolder)));
+        } else {
+            if (holderMatch.size() == 1) {
+                Map<DataComponentMap, List<RecipeHolder<RECIPE>>> newMap = new Object2ObjectOpenCustomHashMap<>(1, Hash.VERY_FAST_LOAD_FACTOR, BasicStrategy.BASIC);
+                newMap.putAll(holderMatch);
+                holderMatch = newMap;
+            }
+            List<RecipeHolder<RECIPE>> existing = holderMatch.get(components);
+            if (existing == null) {
+                holderMatch.put(components, Collections.singletonList(recipeHolder));
+            } else if (existing.size() == 1) {
+                List<RecipeHolder<RECIPE>> newList = new ArrayList<>(existing);
+                newList.add(recipeHolder);
+                holderMatch.put(components, newList);
+            } else {
+                existing.add(recipeHolder);
+            }
+        }
+    }
+}

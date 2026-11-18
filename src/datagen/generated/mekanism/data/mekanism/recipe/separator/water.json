@@ -1,0 +1,18 @@
+{
+  "type": "mekanism:separating",
+  "experience": 1.00000005E-4,
+  "input": {
+    "amount": 2,
+    "ingredient": "#minecraft:water"
+  },
+  "output": {
+    "left": {
+      "amount": 2,
+      "id": "mekanism:hydrogen"
+    },
+    "right": {
+      "amount": 1,
+      "id": "mekanism:oxygen"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "mekanism:evaporating",
+  "experience": 1.5E-4,
+  "input": {
+    "amount": 10,
+    "ingredient": "#c:brine"
+  },
+  "output": {
+    "amount": 1,
+    "id": "mekanism:lithium"
+  }
+}

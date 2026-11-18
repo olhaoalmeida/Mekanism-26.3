@@ -1,0 +1,20 @@
+{
+  "type": "mekanism:rotary",
+  "chemical_input": {
+    "amount": 1,
+    "ingredient": "#mekanism:fusion_fuel"
+  },
+  "chemical_output": {
+    "amount": 1,
+    "id": "mekanismgenerators:fusion_fuel"
+  },
+  "experience": 1.00000005E-4,
+  "fluid_input": {
+    "amount": 1,
+    "ingredient": "#c:fusion_fuel"
+  },
+  "fluid_output": {
+    "amount": 1,
+    "id": "mekanismgenerators:fusion_fuel"
+  }
+}

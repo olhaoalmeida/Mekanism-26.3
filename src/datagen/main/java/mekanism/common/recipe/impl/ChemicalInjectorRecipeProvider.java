@@ -1,0 +1,164 @@
+package mekanism.common.recipe.impl;
+
+import java.util.Map;
+import mekanism.api.chemical.Chemical;
+import mekanism.api.chemical.ChemicalIds;
+import mekanism.api.datagen.recipe.RecipeCriterion;
+import mekanism.api.datagen.recipe.builder.ItemStackChemicalToItemStackRecipeBuilder;
+import mekanism.api.recipes.book.InjectingBookCategory;
+import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
+import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess;
+import mekanism.common.Mekanism;
+import mekanism.common.registries.MekanismItems;
+import mekanism.common.tags.MekanismTags;
+import mekanism.common.util.RegistryUtils;
+import net.minecraft.advancements.predicates.LocationPredicate;
+import net.minecraft.advancements.triggers.PlayerTrigger;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.references.BlockItemId;
+import net.minecraft.references.BlockItemIds;
+import net.minecraft.references.ItemIds;
+import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ColorCollection;
+import net.minecraft.world.level.block.WeatheringCopper;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.common.Tags;
+
+class ChemicalInjectorRecipeProvider extends BaseSubRecipeProvider {
+
+    private final HolderGetter<Biome> biomes;
+
+    ChemicalInjectorRecipeProvider(HolderGetter<Item> items, HolderGetter<Fluid> fluids, HolderGetter<Chemical> chemicals, HolderGetter<Biome> biomes) {
+        super(items, fluids, chemicals);
+        this.biomes = biomes;
+    }
+
+    @Override
+    public void addRecipes(RecipeOutput output) {
+        String basePath = "injecting/";
+        //Brick -> clay ball
+        ItemStackChemicalToItemStackRecipeBuilder.injecting(
+                    IngredientCreatorAccess.item().from(this.items, Tags.Items.BRICKS_NORMAL),
+                    IngredientCreatorAccess.chemicalStack().from(this.chemicals, MekanismTags.Chemicals.WATER_VAPOR, 1),
+                    true,
+                    template(ItemIds.CLAY_BALL)
+              ).unlockedBy("has_brick", has(Tags.Items.BRICKS_NORMAL))
+              .experience(0.3F)//Matches the rate vanilla uses for smelting clay to bricks
+              .save(output, basePath + "brick_to_clay_ball");
+        //Dirt -> mud
+        ItemStackChemicalToItemStackRecipeBuilder.injecting(
+                    IngredientCreatorAccess.item().from(this.items, BlockItemIds.DIRT),
+                    IngredientCreatorAccess.chemicalStack().from(this.chemicals, MekanismTags.Chemicals.WATER_VAPOR, 1),
+                    true,
+                    template(BlockItemIds.MUD)
+              ).category(InjectingBookCategory.BUILDING)
+              .unlockedBy(hasCriterion(BlockItemIds.DIRT))
+              .experience(0.15F)//Matches the rate vanilla has for drying sponges
+              .save(output, basePath + "dirt_to_mud");
+        //Gunpowder -> sulfur
+        ItemStackChemicalToItemStackRecipeBuilder.injecting(
+                    IngredientCreatorAccess.item().from(this.items, Tags.Items.GUNPOWDERS),
+                    IngredientCreatorAccess.chemicalStack().from(this.chemicals, ChemicalIds.HYDROGEN_CHLORIDE, 1),
+                    true,
+                    MekanismItems.SULFUR_DUST.asTemplate()
+              ).unlockedBy("has_gunpowder", has(Tags.Items.GUNPOWDERS))
+              .experience(0.4F)
+              .save(output, basePath + "gunpowder_to_sulfur");
+        //Terracotta -> clay
+        ItemStackChemicalToItemStackRecipeBuilder.injecting(
+                    IngredientCreatorAccess.item().from(this.items, BlockItemIds.TERRACOTTA),
+                    IngredientCreatorAccess.chemicalStack().from(this.chemicals, MekanismTags.Chemicals.WATER_VAPOR, 1),
+                    true,
+                    template(BlockItemIds.CLAY)
+              ).category(InjectingBookCategory.BUILDING)
+              .unlockedBy(hasCriterion(BlockItemIds.TERRACOTTA))
+              .experience(0.35F)//Matches the rate vanilla uses for smelting clay to terracotta
+              .save(output, basePath + "terracotta_to_clay");
+        addChemicalInjectorConcreteRecipes(output, basePath + "concrete/");
+        addChemicalInjectorCoralRevivalRecipes(output, basePath + "coral/");
+        addChemicalInjectorOxidizingRecipe(output, basePath + "oxidizing/");
+    }
+
+    private void addChemicalInjectorConcreteRecipes(RecipeOutput output, String basePath) {
+        ColorCollection.VALUES.forEach(color -> ItemStackChemicalToItemStackRecipeBuilder.injecting(
+                    IngredientCreatorAccess.item().from(this.items, BlockItemIds.CONCRETE_POWDER.pick(color)),
+                    IngredientCreatorAccess.chemicalStack().from(this.chemicals, MekanismTags.Chemicals.WATER_VAPOR, 1),
+                    true,
+                    template(BlockItemIds.CONCRETE.pick(color))
+              ).category(InjectingBookCategory.BUILDING)
+              .group(Mekanism.rl("concrete"))
+              .unlockedBy("has_concrete_powder", has(BlockItemIds.CONCRETE_POWDER.pick(color)))
+              .experience(0.15F)//Matches the rate vanilla has for drying sponges
+              .save(output, basePath + color));
+    }
+
+    private void addChemicalInjectorCoralRevivalRecipes(RecipeOutput output, String basePath) {
+        //Just re-use this biome tag as it is the closest to what we want
+        RecipeCriterion inWarmOcean = new RecipeCriterion("in_warm_ocean", PlayerTrigger.TriggerInstance.located(LocationPredicate.Builder.location().setBiomes(
+              biomes.getOrThrow(BiomeTags.HAS_OCEAN_RUIN_WARM))));
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_BRAIN_CORAL_BLOCK, BlockItemIds.BRAIN_CORAL_BLOCK, 5);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_BUBBLE_CORAL_BLOCK, BlockItemIds.BUBBLE_CORAL_BLOCK, 5);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_FIRE_CORAL_BLOCK, BlockItemIds.FIRE_CORAL_BLOCK, 5);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_HORN_CORAL_BLOCK, BlockItemIds.HORN_CORAL_BLOCK, 5);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_TUBE_CORAL_BLOCK, BlockItemIds.TUBE_CORAL_BLOCK, 5);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_BRAIN_CORAL, BlockItemIds.BRAIN_CORAL, 3);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_BUBBLE_CORAL, BlockItemIds.BUBBLE_CORAL, 3);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_FIRE_CORAL, BlockItemIds.FIRE_CORAL, 3);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_HORN_CORAL, BlockItemIds.HORN_CORAL, 3);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_TUBE_CORAL, BlockItemIds.TUBE_CORAL, 3);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_BRAIN_CORAL_FAN, BlockItemIds.BRAIN_CORAL_FAN, 3);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_BUBBLE_CORAL_FAN, BlockItemIds.BUBBLE_CORAL_FAN, 3);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_FIRE_CORAL_FAN, BlockItemIds.FIRE_CORAL_FAN, 3);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_HORN_CORAL_FAN, BlockItemIds.HORN_CORAL_FAN, 3);
+        addChemicalInjectorCoralRevivalRecipe(output, basePath, inWarmOcean, BlockItemIds.DEAD_TUBE_CORAL_FAN, BlockItemIds.TUBE_CORAL_FAN, 3);
+    }
+
+    private void addChemicalInjectorCoralRevivalRecipe(RecipeOutput output, String basePath, RecipeCriterion inWarmOcean, BlockItemId dead, BlockItemId living, int water) {
+        ItemStackChemicalToItemStackRecipeBuilder.injecting(
+                    IngredientCreatorAccess.item().from(this.items, dead),
+                    IngredientCreatorAccess.chemicalStack().from(this.chemicals, MekanismTags.Chemicals.WATER_VAPOR, water),
+                    true,
+                    template(living)
+              ).group(Mekanism.rl("coral_revival"))
+              .unlockedBy(inWarmOcean)
+              .experience(0.03F * water)//Matches the rate vanilla has for drying sponges when making the full block wet again
+              .save(output, basePath + living.item().identifier().getPath());
+    }
+
+    private void addChemicalInjectorOxidizingRecipe(RecipeOutput output, String basePath) {
+        //Generate baseline recipes from weathering recipe set
+        ChemicalStackIngredient oxygen = IngredientCreatorAccess.chemicalStack().from(this.chemicals, ChemicalIds.OXYGEN, 1);
+        //TODO - 26.3: Switch this to being created at runtime and making use of the Neo DataMap?
+        // https://github.com/neoforged/NeoForge/commit/87875183dcd8239404cbddbe8717db1dbe4f64ee
+        // Likely will require a PR based on https://github.com/neoforged/NeoForge/pull/1915 to move data maps before registries?
+        for (Map.Entry<Block, Block> entry : WeatheringCopper.NEXT_BY_BLOCK.get().entrySet()) {
+            Block input = entry.getKey();
+            Block result = entry.getValue();
+            String path = RegistryUtils.getPath(result);
+            String group = null;
+            //Note: This doesn't need to worry about waxed
+            if (path.startsWith("exposed_")) {
+                group = "unaffected_to_exposed";
+            } else if (path.startsWith("weathered_")) {
+                group = "exposed_to_weathered";
+            } else if (path.startsWith("oxidized_")) {
+                group = "weathered_to_oxidized";
+            }
+            ItemStackChemicalToItemStackRecipeBuilder.injecting(
+                        IngredientCreatorAccess.item().from(input),
+                        oxygen,
+                        true,
+                        new ItemStackTemplate(result.asItem())
+                  ).category(InjectingBookCategory.BUILDING)
+                  .group(group)
+                  .unlockedBy("has_weathering", has(input.asItem()))
+                  .experience(0.1F)
+                  .save(output, basePath + path);
+        }
+    }
+}

@@ -1,0 +1,71 @@
+package mekanism.common.recipe.impl;
+
+import mekanism.api.MekanismAPITags;
+import mekanism.api.chemical.Chemical;
+import mekanism.api.datagen.recipe.builder.ItemStackChemicalToItemStackRecipeBuilder;
+import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess;
+import mekanism.common.Mekanism;
+import mekanism.common.recipe.builder.ExtendedShapedRecipeBuilder;
+import mekanism.common.recipe.pattern.Pattern;
+import mekanism.common.recipe.pattern.RecipePattern;
+import mekanism.common.recipe.pattern.RecipePattern.TripleLine;
+import mekanism.common.registries.MekanismItems;
+import mekanism.common.resource.PrimaryResource;
+import mekanism.common.resource.ResourceType;
+import mekanism.common.tags.MekanismTags;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.level.material.Fluid;
+
+class ControlCircuitRecipeProvider extends BaseSubRecipeProvider {
+
+    private static final RecipePattern circuitPattern = RecipePattern.createPattern(TripleLine.of(Pattern.ALLOY, Pattern.CIRCUIT, Pattern.ALLOY));
+
+    ControlCircuitRecipeProvider(HolderGetter<Item> items, HolderGetter<Fluid> fluids, HolderGetter<Chemical> chemicals) {
+        super(items, fluids, chemicals);
+    }
+
+    @Override
+    public void addRecipes(RecipeOutput consumer) {
+        String basePath = "control_circuit/";
+        TagKey<Item> osmiumIngot = MekanismTags.Items.getProcessedResource(ResourceType.INGOT, PrimaryResource.OSMIUM);
+        ItemStackChemicalToItemStackRecipeBuilder.metallurgicInfusing(
+                    IngredientCreatorAccess.item().from(this.items, osmiumIngot),
+                    IngredientCreatorAccess.chemicalStack().from(this.chemicals, MekanismAPITags.Chemicals.REDSTONE, 20),
+                    false,
+                    MekanismItems.BASIC_CONTROL_CIRCUIT.asTemplate()
+              ).unlockedBy("has_osmium_ingpt", has(osmiumIngot))
+              .experience(0.2F)
+              .save(consumer, basePath + "basic");
+        addCircuitUpgradeRecipe(consumer, MekanismItems.ADVANCED_CONTROL_CIRCUIT, MekanismTags.Items.CIRCUITS_BASIC, MekanismTags.Items.ALLOYS_INFUSED,
+              MekanismAPITags.Chemicals.REDSTONE, 10, 0.25F, basePath, "advanced");
+        addCircuitUpgradeRecipe(consumer, MekanismItems.ELITE_CONTROL_CIRCUIT, MekanismTags.Items.CIRCUITS_ADVANCED, MekanismTags.Items.ALLOYS_REINFORCED,
+              MekanismAPITags.Chemicals.DIAMOND, 20, 0.3F, basePath, "elite");
+        addCircuitUpgradeRecipe(consumer, MekanismItems.ULTIMATE_CONTROL_CIRCUIT, MekanismTags.Items.CIRCUITS_ELITE, MekanismTags.Items.ALLOYS_ATOMIC,
+              MekanismAPITags.Chemicals.REFINED_OBSIDIAN, 40, 0.4F, basePath, "ultimate");
+    }
+
+    private void addCircuitUpgradeRecipe(RecipeOutput consumer, Holder<Item> output, TagKey<Item> circuitTag, TagKey<Item> alloyTag, TagKey<Chemical> infusionType,
+          int singleAlloyAmount, float exp, String basePath, String name) {
+        ExtendedShapedRecipeBuilder.shaped(output)
+              .pattern(circuitPattern)
+              .define(Pattern.CIRCUIT, this.items, circuitTag)
+              .define(Pattern.ALLOY, this.items, alloyTag)
+              .group(Mekanism.rl("circuit_upgrade"))
+              .unlockedBy("has_alloy", has(alloyTag))
+              .save(consumer, basePath + name);
+        //infusion variants that save on the base ingots needed, but take extra infusion material
+        ItemStackChemicalToItemStackRecipeBuilder.metallurgicInfusing(
+                    IngredientCreatorAccess.item().from(this.items, circuitTag),
+                    IngredientCreatorAccess.chemicalStack().from(this.chemicals, infusionType, singleAlloyAmount * 6), /* 3x 2 alloys */
+                    false,
+                    new ItemStackTemplate(output)
+              ).unlockedBy("has_alloy", has(alloyTag))
+              .experience(exp)
+              .save(consumer, basePath + "infused_" + name);
+    }
+}

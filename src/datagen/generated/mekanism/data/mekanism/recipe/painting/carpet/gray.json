@@ -1,0 +1,21 @@
+{
+  "type": "mekanism:painting",
+  "chemical_input": {
+    "amount": 256,
+    "ingredient": "mekanism:gray"
+  },
+  "experience": 0.1,
+  "group": "mekanism:carpet_painting",
+  "item_input": {
+    "count": 1,
+    "ingredient": {
+      "neoforge:ingredient_type": "neoforge:difference",
+      "base": "#mekanism:colorable/carpets",
+      "subtracted": "minecraft:gray_carpet"
+    }
+  },
+  "output": {
+    "id": "minecraft:gray_carpet"
+  },
+  "per_tick_usage": false
+}

@@ -1,0 +1,21 @@
+{
+  "type": "mekanism:painting",
+  "chemical_input": {
+    "amount": 256,
+    "ingredient": "mekanism:orange"
+  },
+  "experience": 0.1,
+  "group": "mekanism:candle_painting",
+  "item_input": {
+    "count": 1,
+    "ingredient": {
+      "neoforge:ingredient_type": "neoforge:difference",
+      "base": "#mekanism:colorable/candle",
+      "subtracted": "minecraft:orange_candle"
+    }
+  },
+  "output": {
+    "id": "minecraft:orange_candle"
+  },
+  "per_tick_usage": false
+}

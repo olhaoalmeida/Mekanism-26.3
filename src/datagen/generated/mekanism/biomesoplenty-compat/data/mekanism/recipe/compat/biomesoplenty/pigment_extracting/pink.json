@@ -1,0 +1,16 @@
+{
+  "type": "mekanism:pigment_extracting",
+  "experience": 0.1,
+  "group": "pink_dye",
+  "input": {
+    "count": 1,
+    "ingredient": [
+      "biomesoplenty:pink_daffodil",
+      "biomesoplenty:pink_hibiscus"
+    ]
+  },
+  "output": {
+    "amount": 768,
+    "id": "mekanism:pink"
+  }
+}

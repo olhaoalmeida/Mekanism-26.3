@@ -1,0 +1,38 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": [
+            {
+              "type": "minecraft:copy_name",
+              "source": "block_entity"
+            },
+            {
+              "type": "minecraft:copy_components",
+              "include": [
+                "mekanism:ejector",
+                "mekanism:owner",
+                "mekanism:redstone_control",
+                "mekanism:security",
+                "mekanism:side_config",
+                "mekanism:sorting",
+                "mekanism:upgrades",
+                "mekanism:energy",
+                "mekanism:items",
+                "mekanism:chemicals"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "mekanism:ultimate_injecting_factory"
+        }
+      ],
+      "name": "main",
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "mekanism:blocks/ultimate_injecting_factory"
+}

@@ -1,0 +1,17 @@
+{
+  "type": "mekanism:injecting",
+  "chemical_input": {
+    "amount": 1,
+    "ingredient": "mekanism:hydrogen_chloride"
+  },
+  "experience": 1.0,
+  "item_input": {
+    "count": 1,
+    "ingredient": "#c:pellets/plutonium"
+  },
+  "output": {
+    "count": 4,
+    "id": "mekanism:reprocessed_fissile_fragment"
+  },
+  "per_tick_usage": true
+}

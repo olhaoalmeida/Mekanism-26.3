@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:copy_components",
+            "include": [
+              "mekanism:owner",
+              "mekanism:security",
+              "mekanism:energy"
+            ],
+            "source": "block_entity"
+          },
+          "name": "mekanism:laser"
+        }
+      ],
+      "name": "main",
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "mekanism:blocks/laser"
+}

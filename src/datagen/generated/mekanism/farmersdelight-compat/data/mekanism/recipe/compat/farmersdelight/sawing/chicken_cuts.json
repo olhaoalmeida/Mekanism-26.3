@@ -1,0 +1,18 @@
+{
+  "type": "mekanism:sawing",
+  "category": "food",
+  "experience": 0.35,
+  "group": "mekanism:fd_cooked_meat",
+  "input": {
+    "count": 1,
+    "ingredient": "minecraft:cooked_chicken"
+  },
+  "main_output": {
+    "count": 2,
+    "id": "farmersdelight:cooked_chicken_cuts"
+  },
+  "secondary_chance": 1.0,
+  "secondary_output": {
+    "id": "minecraft:bone_meal"
+  }
+}

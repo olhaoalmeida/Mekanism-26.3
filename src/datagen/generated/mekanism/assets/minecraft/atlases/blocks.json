@@ -1,0 +1,14 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:directory",
+      "prefix": "mek_liquid/",
+      "source": "mek_liquid"
+    },
+    {
+      "type": "minecraft:directory",
+      "prefix": "mek_chemical/",
+      "source": "mek_chemical"
+    }
+  ]
+}

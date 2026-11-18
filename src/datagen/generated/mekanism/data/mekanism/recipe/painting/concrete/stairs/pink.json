@@ -1,0 +1,21 @@
+{
+  "type": "mekanism:painting",
+  "chemical_input": {
+    "amount": 32,
+    "ingredient": "mekanism:pink"
+  },
+  "experience": 0.1,
+  "group": "mekanism:concrete_stairs_painting",
+  "item_input": {
+    "count": 1,
+    "ingredient": {
+      "neoforge:ingredient_type": "neoforge:difference",
+      "base": "#mekanism:colorable/concrete/stairs",
+      "subtracted": "minecraft:pink_concrete_stairs"
+    }
+  },
+  "output": {
+    "id": "minecraft:pink_concrete_stairs"
+  },
+  "per_tick_usage": false
+}

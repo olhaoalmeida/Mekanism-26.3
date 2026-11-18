@@ -1,0 +1,18 @@
+{
+  "type": "mekanism:enriching",
+  "category": "decorative",
+  "experience": 0.1,
+  "group": "orange_dye",
+  "input": {
+    "count": 1,
+    "ingredient": [
+      "biomesoplenty:orange_cosmos",
+      "biomesoplenty:burning_blossom",
+      "biomesoplenty:marigold"
+    ]
+  },
+  "output": {
+    "count": 2,
+    "id": "minecraft:orange_dye"
+  }
+}

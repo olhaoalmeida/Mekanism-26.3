@@ -1,0 +1,19 @@
+{
+  "type": "mekanism:separating",
+  "energy_multiplier": 2,
+  "experience": 2.0000001E-4,
+  "input": {
+    "amount": 2,
+    "ingredient": "#c:heavy_water"
+  },
+  "output": {
+    "left": {
+      "amount": 2,
+      "id": "mekanismgenerators:deuterium"
+    },
+    "right": {
+      "amount": 1,
+      "id": "mekanism:oxygen"
+    }
+  }
+}

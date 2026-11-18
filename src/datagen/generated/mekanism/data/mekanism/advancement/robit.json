@@ -1,0 +1,35 @@
+{
+  "parent": "mekanism:atomic_alloy",
+  "criteria": {
+    "summon": {
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "mekanism:robit"
+          }
+        }
+      },
+      "trigger": "minecraft:summoned_entity"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.mekanism.robit.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "mekanism:robit"
+    },
+    "title": {
+      "translate": "advancements.mekanism.robit.title"
+    }
+  },
+  "requirements": [
+    [
+      "summon"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

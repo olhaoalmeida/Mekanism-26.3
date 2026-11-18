@@ -1,0 +1,33 @@
+{
+  "parent": "mekanism:steel_ingot",
+  "criteria": {
+    "has_pipe": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#mekanism:transmitters/fluid"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.mekanism.fluid_transport.description"
+    },
+    "icon": {
+      "id": "mekanism:basic_mechanical_pipe"
+    },
+    "title": {
+      "translate": "advancements.mekanism.fluid_transport.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_pipe"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

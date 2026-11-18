@@ -1,0 +1,23 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "mekanism:block/transporter_box",
+		"particle": "mekanism:block/transporter_box"
+	},
+	"elements": [
+		{
+			"from": [4.5, 4.5, 4.5],
+			"to": [11.5, 11.5, 11.5],
+			"rotation": {"y": 0, "origin": [8, 8, 8]},
+			"faces": {
+				"north": {"uv": [14, 0, 0, 14], "texture": "#0", "tintindex": 0},
+				"east": {"uv": [14, 14, 0, 0], "texture": "#0", "tintindex": 0},
+				"south": {"uv": [0, 14, 14, 0], "texture": "#0", "tintindex": 0},
+				"west": {"uv": [0, 0, 14, 14], "texture": "#0", "tintindex": 0},
+				"up": {"uv": [0, 0, 14, 14], "texture": "#0", "tintindex": 0},
+				"down": {"uv": [14, 0, 0, 14], "texture": "#0", "tintindex": 0}
+			}
+		}
+	]
+}

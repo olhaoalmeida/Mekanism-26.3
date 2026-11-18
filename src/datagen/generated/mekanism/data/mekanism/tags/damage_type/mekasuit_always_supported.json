@@ -1,0 +1,17 @@
+{
+  "values": [
+    "minecraft:on_fire",
+    "minecraft:in_wall",
+    "minecraft:cramming",
+    "minecraft:cactus",
+    "minecraft:fall",
+    "minecraft:ender_pearl",
+    "minecraft:fly_into_wall",
+    "minecraft:generic",
+    "minecraft:wither",
+    "minecraft:dragon_breath",
+    "minecraft:freeze",
+    "minecraft:stalagmite",
+    "minecraft:sonic_boom"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "layers": {
+    "horse_body": [
+      {
+        "texture": "mekanismtools:lapis_lazuli"
+      }
+    ],
+    "humanoid": [
+      {
+        "texture": "mekanismtools:lapis_lazuli"
+      }
+    ],
+    "humanoid_baby": [
+      {
+        "texture": "mekanismtools:lapis_lazuli"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "mekanismtools:lapis_lazuli"
+      }
+    ],
+    "nautilus_body": [
+      {
+        "texture": "mekanismtools:lapis_lazuli"
+      }
+    ]
+  },
+  "trim_overrides": [
+    {
+      "palette": "mekanismtools:trim/mekanismtools_lapis_lighter",
+      "when": {
+        "material": "minecraft:lapis"
+      }
+    }
+  ]
+}

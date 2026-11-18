@@ -1,0 +1,21 @@
+{
+  "type": "mekanism:painting",
+  "chemical_input": {
+    "amount": 256,
+    "ingredient": "mekanism:blue"
+  },
+  "experience": 0.1,
+  "group": "mekanism:wool_stairs_painting",
+  "item_input": {
+    "count": 1,
+    "ingredient": {
+      "neoforge:ingredient_type": "neoforge:difference",
+      "base": "#mekanism:colorable/wool_stairs",
+      "subtracted": "minecraft:blue_wool_stairs"
+    }
+  },
+  "output": {
+    "id": "minecraft:blue_wool_stairs"
+  },
+  "per_tick_usage": false
+}

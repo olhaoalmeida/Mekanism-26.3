@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "mekanism:alloy_atomic",
+    "A": "#c:pellets/antimatter",
+    "C": "#c:circuits/ultimate",
+    "X": "mekanism:steel_casing"
+  },
+  "pattern": [
+    "#C#",
+    "AXA",
+    "#C#"
+  ],
+  "result": {
+    "id": "mekanism:antiprotonic_nucleosynthesizer"
+  }
+}

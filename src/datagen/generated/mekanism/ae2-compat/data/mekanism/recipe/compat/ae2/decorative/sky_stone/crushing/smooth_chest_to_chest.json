@@ -1,0 +1,13 @@
+{
+  "type": "mekanism:crushing",
+  "category": "building",
+  "experience": 0.1,
+  "group": "mekanism:sky_stone_conversion",
+  "input": {
+    "count": 1,
+    "ingredient": "ae2:smooth_sky_stone_chest"
+  },
+  "output": {
+    "id": "ae2:sky_stone_chest"
+  }
+}

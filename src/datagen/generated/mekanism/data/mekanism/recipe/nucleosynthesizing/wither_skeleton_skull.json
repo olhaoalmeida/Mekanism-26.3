@@ -1,0 +1,17 @@
+{
+  "type": "mekanism:nucleosynthesizing",
+  "chemical_input": {
+    "amount": 5,
+    "ingredient": "mekanism:antimatter"
+  },
+  "duration": 1250,
+  "experience": 1.4,
+  "item_input": {
+    "count": 1,
+    "ingredient": "minecraft:skeleton_skull"
+  },
+  "output": {
+    "id": "minecraft:wither_skeleton_skull"
+  },
+  "per_tick_usage": false
+}

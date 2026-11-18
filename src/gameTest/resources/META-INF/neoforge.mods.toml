@@ -1,0 +1,7 @@
+license="MIT"
+licenseURL = "https://github.com/mekanism/Mekanism#license"
+
+[[mods]]
+    modId="mekanismtests"
+    displayName="Mekanism: Tests"
+    description='''Tests for Mekanism to ensure it functions properly'''

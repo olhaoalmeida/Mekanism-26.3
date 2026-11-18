@@ -1,0 +1,333 @@
+
+package mekanism.common.tests.codec;
+
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import java.util.Optional;
+import mekanism.api.MekanismRegistries;
+import mekanism.api.chemical.ChemicalIds;
+import mekanism.api.chemical.ChemicalResource;
+import mekanism.api.resource.LargeResourceStack;
+import mekanism.api.security.SecurityMode;
+import mekanism.api.upgrade.Upgrade;
+import mekanism.api.upgrade.UpgradeIds;
+import mekanism.common.Mekanism;
+import mekanism.common.component.FormulaComponent;
+import mekanism.common.component.LockData;
+import mekanism.common.component.OverflowAware;
+import mekanism.common.component.component.UpgradeAware;
+import mekanism.common.component.qio.PortableDashboardContents;
+import mekanism.common.content.entangloporter.InventoryFrequency;
+import mekanism.common.content.transporter.SorterFilter;
+import mekanism.common.content.transporter.SorterItemStackFilter;
+import mekanism.common.content.transporter.SorterModIDFilter;
+import mekanism.common.lib.collection.HashList;
+import mekanism.common.registries.MekanismBlocks;
+import mekanism.common.registries.MekanismDataComponents;
+import mekanism.common.registries.MekanismItems;
+import mekanism.common.tests.helpers.MissingObjectTestHelper;
+import mekanism.common.tile.TileEntityLogisticalSorter;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Holder.Reference;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.testframework.DynamicTest;
+import net.neoforged.testframework.annotation.ForEachTest;
+import net.neoforged.testframework.annotation.TestHolder;
+import net.neoforged.testframework.gametest.EmptyTemplate;
+import net.neoforged.testframework.gametest.GameTest;
+import net.neoforged.testframework.gametest.StructureTemplateBuilder;
+
+@ForEachTest(groups = "codec.missing")
+public class MissingObjectSerializationTest {
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that attached items load as best as they can when an item is missing.")
+    public static void testAttachedItems(final MissingObjectTestHelper helper) {
+        helper.succeedIfAttachedCycle(MekanismDataComponents.ATTACHED_ITEMS.get(), LargeResourceStack.ITEM_HELPER, helper.failureItemType(),
+              ItemResource.of(Items.STICK), ItemResource.of(Items.STONE));
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that attached fluids load as best as they can when a fluid is missing.")
+    public static void testAttachedFluids(final MissingObjectTestHelper helper) {
+        helper.succeedIfAttachedCycle(MekanismDataComponents.ATTACHED_FLUIDS.get(), LargeResourceStack.FLUID_HELPER, helper.failureFluidType(),
+              FluidResource.of(Fluids.WATER), FluidResource.of(Fluids.LAVA));
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that attached chemicals load as best as they can when a chemical is missing.")
+    public static void testAttachedChemicals(final MissingObjectTestHelper helper) {
+        helper.succeedIfAttachedCycle(MekanismDataComponents.ATTACHED_CHEMICALS.get(), LargeResourceStack.CHEMICAL_HELPER, helper.failureChemicalType(),
+              ChemicalIds.ANTIMATTER, ChemicalIds.GOLD, ChemicalResource::of);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that formulas that contain invalid items fall back to an empty formula.")
+    public static void testFormulaAttachment(final MissingObjectTestHelper helper) {
+        helper.succeedIfInvalidItemSerializationCycle(FormulaComponent.CODEC, MissingObjectTestHelper::makeFormula, FormulaComponent::isEmpty);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that formula items that have formulas that contain invalid items will load as having no formula.")
+    public static void testFormulaAttachmentOnItem(final MissingObjectTestHelper helper) {
+        helper.succeedIfInvalidItemSerializationCycle(ItemStack.CODEC, help -> {
+            ItemStack formulaItem = MekanismItems.CRAFTING_FORMULA.asStack();
+            formulaItem.set(MekanismDataComponents.FORMULA_HOLDER, help.makeFormula());
+            return formulaItem;
+        }, formulaItem -> {
+            if (formulaItem.is(MekanismItems.CRAFTING_FORMULA)) {
+                FormulaComponent formula = formulaItem.get(MekanismDataComponents.FORMULA_HOLDER);
+                return formula != null && formula.isEmpty() && !formulaItem.getComponentsPatch().isPatched(MekanismDataComponents.FORMULA_HOLDER.get());
+            }
+            return false;
+        });
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that lock data that contain invalid items fall back to no lock data.")
+    public static void testLockData(final MissingObjectTestHelper helper) {
+        helper.succeedIfInvalidItemSerializationCycle(LockData.CODEC, help -> LockData.create(help.failureItemType()), LockData.EMPTY::equals);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that bins that are locked to an invalid item will load as not being locked.")
+    public static void testLockDataOnItem(final MissingObjectTestHelper helper) {
+        helper.succeedIfInvalidItemSerializationCycle(ItemStack.CODEC, help -> {
+            ItemStack binItem = new ItemStack(MekanismBlocks.BASIC_BIN);
+            binItem.set(MekanismDataComponents.LOCK, LockData.create(help.failureItemType()));
+            return binItem;
+        }, binItem -> binItem.is(MekanismBlocks.BASIC_BIN.getItemHolder()) && LockData.EMPTY.equals(binItem.get(MekanismDataComponents.LOCK)) &&
+                      !binItem.getComponentsPatch().isPatched(MekanismDataComponents.LOCK.get()));
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that redstone adapters with a target that are targeting an invalid item, will load sa if they have no target.")
+    public static void testItemTarget(final MissingObjectTestHelper helper) {
+        helper.succeedIfInvalidItemSerializationCycle(ItemStack.CODEC, help -> {
+            ItemStack adapter = new ItemStack(MekanismBlocks.QIO_REDSTONE_ADAPTER);
+            adapter.set(MekanismDataComponents.ITEM_TARGET, help.failureItemType());
+            adapter.set(MekanismDataComponents.LONG_AMOUNT, 5L);
+            return adapter;
+        }, adapter -> {
+            if (adapter.is(MekanismBlocks.QIO_REDSTONE_ADAPTER.getItemHolder())) {
+                ItemResource itemTarget = adapter.get(MekanismDataComponents.ITEM_TARGET);
+                return itemTarget != null && itemTarget.isEmpty() && !adapter.getComponentsPatch().isPatched(MekanismDataComponents.ITEM_TARGET.get()) &&
+                       adapter.getOrDefault(MekanismDataComponents.LONG_AMOUNT, 0L) == 5;
+            }
+            return false;
+        });
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that overflow that contain invalid items, keeps all still valid items, and ignores the invalid ones.")
+    public static void testOverflowAware(final MissingObjectTestHelper helper) {
+        helper.succeedIfInvalidItemSerializationCycle(OverflowAware.CODEC, MissingObjectTestHelper::makeOverflow, helper::validateOverflow);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that overflow that contain invalid items, will load all still valid items and ignore the invalid ones.")
+    public static void testOverflowAwareOnItem(final MissingObjectTestHelper helper) {
+        helper.succeedIfInvalidItemSerializationCycle(ItemStack.CODEC, help -> {
+            ItemStack minerItem = new ItemStack(MekanismBlocks.DIGITAL_MINER);
+            minerItem.set(MekanismDataComponents.OVERFLOW_AWARE, help.makeOverflow());
+            return minerItem;
+        }, minerItem -> minerItem.is(MekanismBlocks.DIGITAL_MINER.getItemHolder()) &&
+                        helper.validateOverflow(minerItem.getOrDefault(MekanismDataComponents.OVERFLOW_AWARE, OverflowAware.EMPTY)));
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that portable dashboard contents that contain invalid items, keeps all still valid items, and ignores the invalid ones.")
+    public static void testDashboardContents(final MissingObjectTestHelper helper) {
+        helper.succeedIfInvalidItemSerializationCycle(PortableDashboardContents.CODEC, MissingObjectTestHelper::makeDashboard, helper::validateDashboard);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that portable dashboards that contain invalid items, will load all still valid items and ignore the invalid ones.")
+    public static void testDashboardContentsOnItem(final MissingObjectTestHelper helper) {
+        helper.succeedIfInvalidItemSerializationCycle(ItemStack.CODEC, help -> {
+            ItemStack dashboardItem = MekanismItems.PORTABLE_QIO_DASHBOARD.asStack();
+            dashboardItem.set(MekanismDataComponents.QIO_DASHBOARD, help.makeDashboard());
+            return dashboardItem;
+        }, dashboardItem -> dashboardItem.is(MekanismItems.PORTABLE_QIO_DASHBOARD) &&
+                            helper.validateDashboard(dashboardItem.getOrDefault(MekanismDataComponents.QIO_DASHBOARD, PortableDashboardContents.EMPTY)));
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that upgrade components ignore invalid upgrades.")
+    public static void testUpgradeAwareUpgrades(final MissingObjectTestHelper helper) {
+        Object2IntMap<Holder<Upgrade>> upgrades = new Object2IntOpenHashMap<>();
+        HolderGetter<Upgrade> upgradeLookup = helper.getLevel().registryAccess().lookupOrThrow(MekanismRegistries.Keys.UPGRADES);
+        Reference<Upgrade> speed = upgradeLookup.getOrThrow(UpgradeIds.SPEED);
+        Reference<Upgrade> energy = upgradeLookup.getOrThrow(UpgradeIds.ENERGY);
+        upgrades.put(upgradeLookup.getOrThrow(UpgradeIds.ANCHOR), 3);
+        upgrades.put(speed, 2);
+        upgrades.put(energy, 1);
+        helper.succeedIfSerializationCycle(UpgradeAware.CODEC, _ -> new UpgradeAware(upgrades, LargeResourceStack.ITEM_HELPER.empty(), LargeResourceStack.ITEM_HELPER.empty()), upgradeAware -> {
+            if (upgradeAware.inputSlot().isEmpty() && upgradeAware.outputSlot().isEmpty()) {
+                return upgradeAware.upgrades().size() == 2 && upgradeAware.upgrades().getInt(speed) == 2 && upgradeAware.upgrades().getInt(energy) == 1;
+            }
+            return false;
+        }, MissingObjectTestHelper.replaceInvalid(UpgradeIds.ANCHOR));
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that upgrade components that contain invalid items, ignore the invalid ones.")
+    public static void testUpgradeAware(final MissingObjectTestHelper helper) {
+        helper.testUpgradeAware(false, false);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that items with upgrade components that contain invalid items, ignore the invalid ones.")
+    public static void testUpgradeAwareOnItem(final MissingObjectTestHelper helper) {
+        helper.testUpgradeAwareOnItem(false, false);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that upgrade components that contain an invalid second item, ignores it.")
+    public static void testUpgradeAwareFirstValid(final MissingObjectTestHelper helper) {
+        helper.testUpgradeAware(true, false);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that items with upgrade components that contain an invalid second item, ignores it.")
+    public static void testUpgradeAwareOnItemFirstValid(final MissingObjectTestHelper helper) {
+        helper.testUpgradeAwareOnItem(true, false);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that upgrade components that contain an invalid first item, ignores it.")
+    public static void testUpgradeAwareSecondValid(final MissingObjectTestHelper helper) {
+        helper.testUpgradeAware(false, true);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that items with upgrade components that contain an invalid first item, ignores it.")
+    public static void testUpgradeAwareOnItemSecondValid(final MissingObjectTestHelper helper) {
+        helper.testUpgradeAwareOnItem(false, true);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that when the filter manager encounters an invalid filter, it gets properly skipped.")
+    public static void testFilterManager(final DynamicTest test) {
+        test.registerGameTestTemplate(() -> StructureTemplateBuilder.withSize(1, 1, 1).set(0, 0, 0, MekanismBlocks.LOGISTICAL_SORTER.defaultState()));
+        test.onGameTest(MissingObjectTestHelper.class, helper -> helper.startSequence()
+              .thenMap(() -> helper.getBlockEntity(0, 0, 0, TileEntityLogisticalSorter.class).getFilterManager())
+              .thenExecute(filterManager -> {
+                  SorterModIDFilter mcModIdFilter = new SorterModIDFilter(true, false, false, 0, 0, Optional.empty(), Identifier.DEFAULT_NAMESPACE);
+                  SorterItemStackFilter itemFilter = new SorterItemStackFilter(true, false, false, 0, 0, Optional.empty(), ItemResource.of(Items.STICK), true);
+                  filterManager.addFilter(mcModIdFilter);
+                  filterManager.addFilter(new SorterItemStackFilter(true, false, false, 0, 0, Optional.empty(), helper.failureItemType(), true));
+                  filterManager.addFilter(itemFilter);
+                  try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(Mekanism.logger)) {
+                      TagValueOutput output = TagValueOutput.createWithContext(reporter, helper.getLevel().registryAccess());
+                      filterManager.serialize(output);
+                      CompoundTag tag = helper.cycleSerialization(CompoundTag.CODEC, output.buildResult(), MissingObjectTestHelper.REPLACE_TO_INVALID_ITEM);
+                      ValueInput input = TagValueInput.create(reporter, helper.getLevel().registryAccess(), tag);
+                      filterManager.deserialize(input);
+                  }
+                  HashList<SorterFilter<?>> filters = filterManager.getFilters();
+                  helper.assertTrue(filters.size() == 2, "Expected there to be two filters after serialization cycle loading");
+                  helper.assertTrue(filters.getFirst().equals(mcModIdFilter), "Expected first filter to be a modid filter for minecraft");
+                  helper.assertTrue(filters.getLast().equals(itemFilter), "Expected second filter to be an item filter for sticks");
+              }).thenSucceed()
+        );
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that when a miner filter is invalid, it gets properly skipped.")
+    public static void testMinerFilterAware(final MissingObjectTestHelper helper) {
+        helper.testFilterAware(helper::makeMinerFilter, helper::testFilter);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that when an item storing miner filters has an invalid filter, it gets properly skipped.")
+    public static void testMinerFilterAwareOnItem(final MissingObjectTestHelper helper) {
+        helper.testFilterAwareOnItem(MekanismBlocks.DIGITAL_MINER.getItemHolder(), helper::makeMinerFilter, helper::testFilter);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that when a sorter filter is invalid, it gets properly skipped.")
+    public static void testSorterFilterAware(final MissingObjectTestHelper helper) {
+        helper.testFilterAware(helper::makeSorterFilter, helper::testFilter);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that when an item storing sorter filters has an invalid filter, it gets properly skipped.")
+    public static void testSorterFilterAwareOnItem(final MissingObjectTestHelper helper) {
+        helper.testFilterAwareOnItem(MekanismBlocks.LOGISTICAL_SORTER.getItemHolder(), helper::makeSorterFilter, helper::testFilter);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that when a QIO filter is invalid, it gets properly skipped.")
+    public static void testQIOFilterAware(final MissingObjectTestHelper helper) {
+        helper.testFilterAware(helper::makeQIOFilter, helper::testFilter);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that when an item storing QIO filters has an invalid filter, it gets properly skipped.")
+    public static void testQIOFilterAwareOnItem(final MissingObjectTestHelper helper) {
+        helper.testFilterAwareOnItem(MekanismBlocks.QIO_IMPORTER.getItemHolder(), helper::makeQIOFilter, helper::testFilter);
+    }
+
+    @GameTest
+    @EmptyTemplate
+    @TestHolder(description = "Tests to make sure that invalid chemicals, fluids, and items are skipped when loading inventory frequencies, without breaking the rest of the stored data.")
+    public static void testInventoryFrequency(final MissingObjectTestHelper helper) {
+        helper.succeedIfSerializationCycle(InventoryFrequency.CODEC, help -> {
+                  InventoryFrequency frequency = new InventoryFrequency("test", null, SecurityMode.PUBLIC);
+                  frequency.getEnergyContainer().setEnergy(100, null);
+                  frequency.getHeatCapacitor().setHeat(1_000, null);
+                  frequency.getChemicalTanks().getFirst().setContents(help.failureChemicalType(), 1, null);
+                  frequency.getFluidTanks().getFirst().setContents(help.failureFluidType(), FluidType.BUCKET_VOLUME, null);
+                  frequency.getInventorySlots().getFirst().setContents(help.failureItemType(), 1, null);
+                  return frequency;
+              }, frequency -> frequency.getName().equals("test") && frequency.getSecurity() == SecurityMode.PUBLIC &&
+                              frequency.getEnergyContainer().getAmountAsLong() == 100 &&
+                              frequency.getHeatCapacitor().getHeat() == 1_000 &&
+                              frequency.getChemicalTanks().getFirst().isEmpty() &&
+                              frequency.getFluidTanks().getFirst().isEmpty() &&
+                              frequency.getInventorySlots().getFirst().isEmpty(),
+              MissingObjectTestHelper.REPLACE_TO_INVALID_ITEM
+                    .andThen(MissingObjectTestHelper.REPLACE_TO_INVALID_FLUID)
+                    .andThen(MissingObjectTestHelper.REPLACE_TO_INVALID_CHEMICAL)
+        );
+    }
+}

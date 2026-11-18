@@ -1,0 +1,14 @@
+{
+  "type": "mekanism:sawing",
+  "category": "food",
+  "experience": 0.35,
+  "group": "mekanism:fd_cooked_meat",
+  "input": {
+    "count": 1,
+    "ingredient": "minecraft:cooked_mutton"
+  },
+  "main_output": {
+    "count": 2,
+    "id": "farmersdelight:cooked_mutton_chops"
+  }
+}

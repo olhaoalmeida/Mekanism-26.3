@@ -1,0 +1,40 @@
+{
+  "parent": "mekanism:basic_control_circuit",
+  "criteria": {
+    "factory": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#mekanism:factories"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "tier_installer": {
+      "conditions": {
+        "action": "any"
+      },
+      "trigger": "mekanism:use_tier_installer"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.mekanism.factory.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "mekanism:basic_smelting_factory"
+    },
+    "title": {
+      "translate": "advancements.mekanism.factory.title"
+    }
+  },
+  "requirements": [
+    [
+      "factory",
+      "tier_installer"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

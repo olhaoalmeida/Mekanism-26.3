@@ -1,0 +1,17 @@
+{
+  "type": "mekanism:nucleosynthesizing",
+  "chemical_input": {
+    "amount": 1,
+    "ingredient": "mekanism:antimatter"
+  },
+  "duration": 200,
+  "experience": 0.9,
+  "item_input": {
+    "count": 1,
+    "ingredient": "#c:ingots/tin"
+  },
+  "output": {
+    "id": "minecraft:iron_ingot"
+  },
+  "per_tick_usage": false
+}

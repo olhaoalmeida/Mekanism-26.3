@@ -1,0 +1,21 @@
+{
+  "type": "mekanism:painting",
+  "chemical_input": {
+    "amount": 32,
+    "ingredient": "mekanism:light_gray"
+  },
+  "experience": 0.1,
+  "group": "mekanism:terracotta_painting",
+  "item_input": {
+    "count": 1,
+    "ingredient": {
+      "neoforge:ingredient_type": "neoforge:difference",
+      "base": "#mekanism:colorable/terracotta",
+      "subtracted": "minecraft:light_gray_terracotta"
+    }
+  },
+  "output": {
+    "id": "minecraft:light_gray_terracotta"
+  },
+  "per_tick_usage": false
+}

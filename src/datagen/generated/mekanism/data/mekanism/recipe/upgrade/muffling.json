@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": "#minecraft:wool",
+    "I": "#mekanism:muffling_center"
+  },
+  "pattern": [
+    " # ",
+    "#I#",
+    " # "
+  ],
+  "result": {
+    "components": {
+      "mekanism:upgrade_type": "mekanism:muffling"
+    },
+    "id": "mekanism:upgrade"
+  }
+}

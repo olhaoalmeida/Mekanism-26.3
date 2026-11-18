@@ -1,0 +1,13 @@
+{
+  "type": "mekanism:enriching",
+  "category": "efficiency",
+  "experience": 1.0,
+  "group": "netherite_scrap",
+  "input": {
+    "count": 1,
+    "ingredient": "mekanism:dirty_netherite_scrap"
+  },
+  "output": {
+    "id": "minecraft:netherite_scrap"
+  }
+}

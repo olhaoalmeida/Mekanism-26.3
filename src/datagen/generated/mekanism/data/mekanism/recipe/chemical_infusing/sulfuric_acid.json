@@ -1,0 +1,16 @@
+{
+  "type": "mekanism:chemical_infusing",
+  "experience": 1.00000005E-4,
+  "left_input": {
+    "amount": 1,
+    "ingredient": "mekanism:sulfur_trioxide"
+  },
+  "output": {
+    "amount": 1,
+    "id": "mekanism:sulfuric_acid"
+  },
+  "right_input": {
+    "amount": 1,
+    "ingredient": "mekanism:water_vapor"
+  }
+}

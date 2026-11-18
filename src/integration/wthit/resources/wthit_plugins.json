@@ -1,0 +1,8 @@
+{
+  "mekanism:plugin": {
+    "entrypoints" : {
+      "common": "mekanism.common.integration.lookingat.wthit.MekanismWTHITPlugin",
+      "client": "mekanism.common.integration.lookingat.wthit.MekanismWTHITClientPlugin"
+    }
+  }
+}

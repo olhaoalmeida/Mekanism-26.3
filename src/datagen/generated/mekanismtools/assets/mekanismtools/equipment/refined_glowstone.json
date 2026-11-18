@@ -1,0 +1,37 @@
+{
+  "layers": {
+    "horse_body": [
+      {
+        "texture": "mekanismtools:refined_glowstone"
+      }
+    ],
+    "humanoid": [
+      {
+        "texture": "mekanismtools:refined_glowstone"
+      }
+    ],
+    "humanoid_baby": [
+      {
+        "texture": "mekanismtools:refined_glowstone"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "mekanismtools:refined_glowstone"
+      }
+    ],
+    "nautilus_body": [
+      {
+        "texture": "mekanismtools:refined_glowstone"
+      }
+    ]
+  },
+  "trim_overrides": [
+    {
+      "palette": "mekanism:trim/mekanism_refined_glowstone_lighter",
+      "when": {
+        "material": "mekanism:refined_glowstone"
+      }
+    }
+  ]
+}
