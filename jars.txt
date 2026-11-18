@@ -1,0 +1,9 @@
+./build/libs/Mekanism-26.3-10.8.0.homebaked-all.jar
+./build/libs/Mekanism-26.3-10.8.0.homebaked.jar
+./build/libs/MekanismTools-26.3-10.8.0.homebaked.jar
+./build/libs/Mekanism-26.3-10.8.0.homebaked-api.jar
+./build/libs/MekanismGenerators-26.3-10.8.0.homebaked.jar
+./build/libs/MekanismAdditions-26.3-10.8.0.homebaked.jar
+./build/libs/Mekanism-26.3-10.8.0.homebaked-sources.jar
+./annotation-processor/build/libs/annotation-processor-2.0.0.jar
+./buildSrc/build/libs/buildSrc.jar

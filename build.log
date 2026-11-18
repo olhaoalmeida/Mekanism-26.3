@@ -1,0 +1,189 @@
+Fetching distribution.
+Downloading https://services.gradle.org/distributions/gradle-9.9.0-all.zip
+......................10%.......................20%.......................30%.......................40%.......................50%.......................60%.......................70%.......................80%.......................90%.......................100%
+
+Welcome to Gradle 9.9.0!
+
+Here are the highlights of this release:
+ - Performance improvements for Kotlin DSL compilation
+ - Test filtering for non-method JUnit Platform tests
+ - Wrapper settings preserved on upgrade
+ - Predefined groups in the Problems API
+
+For more details see https://docs.gradle.org/9.9.0/release-notes.html
+
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.9.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Calculating task graph as no cached configuration is available for tasks: assemble
+> Task :buildSrc:compileJava NO-SOURCE
+> Task :buildSrc:compileGroovy
+> Task :buildSrc:processResources NO-SOURCE
+> Task :buildSrc:classes
+> Task :buildSrc:jar
+
+> Configure project :
+Disabling main datagen compilation of biomes_weve_gone integration
+Disabling main compilation of crafttweaker integration
+Disabling main datagen compilation of crafttweaker integration
+Disabling main compilation of emi integration
+Disabling main datagen compilation of emi integration
+Disabling additions compilation of emi integration
+Disabling generators compilation of emi integration
+Disabling tools compilation of emi integration
+Disabling main datagen compilation of farmers_delight integration
+Disabling main compilation of open_computers integration
+Disabling main compilation of projecte integration
+Disabling main datagen compilation of projecte integration
+Disabling main compilation of recipe_stages integration
+Creating Minecraft artifacts without recompilation.
+
+> Task :processApiResources NO-SOURCE
+> Task :annotation-processor:processResources
+> Task :processIntegrationJeiResources
+> Task :processAdditionsIntegrationJeiResources NO-SOURCE
+> Task :additionsJarJar NO-SOURCE
+> Task :processGeneratorsIntegrationJeiResources NO-SOURCE
+> Task :processIntegrationCuriosResources
+> Task :processIntegrationFramedblocksResources NO-SOURCE
+> Task :processIntegrationComputerCraftResources
+> Task :processIntegrationNerbResources NO-SOURCE
+> Task :processIntegrationTheOneProbeResources NO-SOURCE
+> Task :processIntegrationWthitResources
+> Task :processIntegrationJadeResources NO-SOURCE
+> Task :processToolsIntegrationJeiResources NO-SOURCE
+> Task :apiJarJar NO-SOURCE
+> Task :jarJar NO-SOURCE
+> Task :toolsJarJar NO-SOURCE
+> Task :generatorsJarJar NO-SOURCE
+
+> Task :annotation-processor:compileJava
+Note: /home/runner/work/Mekanism-26.3/Mekanism-26.3/annotation-processor/src/main/java/mekanism/builder/ComputerHandlerBuilder.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :annotation-processor:classes
+> Task :annotation-processor:jar
+> Task :annotation-processor:assemble
+
+> Task :createMinecraftArtifacts
+Loaded 135 artifacts from /home/runner/work/Mekanism-26.3/Mekanism-26.3/build/tmp/createMinecraftArtifacts/nfrt_artifact_manifest.properties
+[1m*** Started working on [4mdownloadManifest[23;0m[23;0m
+  ↓ https://piston-meta.mojang.com/mc/game/version_manifest_v2.json
+ [1m[92m✓[23;0m Completed [4mdownloadManifest[23;0m in 0.37s
+[1m*** Started working on [4mdownloadJson[23;0m[23;0m
+  ↓ https://piston-meta.mojang.com/mc/game/version_manifest_v2.json
+  ↓ https://piston-meta.mojang.com/v1/packages/ead839cbccf0ddf013c3f935f2840080b5cb0d26/26.3.json
+ [1m[92m✓[23;0m Completed [4mdownloadJson[23;0m in 0.06s
+[1m*** Started working on [4mdownloadClient[23;0m[23;0m
+[1m*** Started working on [4mdownloadServer[23;0m[23;0m
+  ↓ https://piston-data.mojang.com/v1/objects/e877b6a07acd633fb3bb475002175cec036e7b87/client.jar
+  ↓ https://piston-data.mojang.com/v1/objects/33680f5f2ac32864d6d7cf5e56a705fdb3e05f4c/server.jar
+ [1m[92m✓[23;0m Completed [4mdownloadClient[23;0m in 0.80s
+ [1m[92m✓[23;0m Completed [4mdownloadServer[23;0m in 0.90s
+[1m*** Started working on [4mpreProcessJar[23;0m[23;0m
+ ↳ Running external tool net.neoforged.installertools:installertools:4.0.17:fatjar
+ [1m[92m✓[23;0m Completed [4mpreProcessJar[23;0m in 2.07s
+[1m*** Started working on [4mbinaryPatch[23;0m[23;0m
+  [33mWARNING: [23;0mnet.neoforged.installertools:binarypatcher:4.0.17:fatjar is not present in the artifact manifest
+  ↓ https://maven.neoforged.net/releases/net/neoforged/installertools/binarypatcher/4.0.17/binarypatcher-4.0.17-fatjar.jar
+ ↳ Running external tool net.neoforged.installertools:binarypatcher:4.0.17:fatjar
+ [1m[92m✓[23;0m Completed [4mbinaryPatch[23;0m in 2.56s
+[1m*** Started working on [4mcopyUnpatchedClasses[23;0m[23;0m
+ [1m[92m✓[23;0m Completed [4mcopyUnpatchedClasses[23;0m in 1.98s
+[1m*** Started working on [4mapplyDevTransforms[23;0m[23;0m
+ ↳ Running external tool net.neoforged.installertools:installertools:4.0.12:fatjar
+ [1m[92m✓[23;0m Completed [4mapplyDevTransforms[23;0m in 2.17s
+Total runtime: 10.64s
+
+
+> Task :compileApiJava
+Note: /home/runner/work/Mekanism-26.3/Mekanism-26.3/src/api/java/mekanism/api/IIncrementalEnum.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :apiClasses
+> Task :apiJar
+
+> Task :compileJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :processResources
+> Task :classes
+> Task :compileIntegrationComputerCraftJava
+
+> Task :compileIntegrationJeiJava
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/src/integration/jei/main/java/mekanism/client/recipe_viewer/jei/ChemicalStackRenderer.java:62: warning: [removal] getTooltip(T,TooltipFlag) in IIngredientRenderer has been deprecated and marked for removal
+    public List<Component> getTooltip(ChemicalStack stack, TooltipFlag tooltipFlag) {
+                           ^
+  where T is a type-variable:
+    T extends Object declared in interface IIngredientRenderer
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/src/integration/jei/main/java/mekanism/client/recipe_viewer/jei/transfer/JeiMachineTransferHandler.java:91: warning: [removal] transferRecipe(C,R,IRecipeSlotsView,Player,boolean,boolean) in IRecipeTransferHandler has been deprecated and marked for removal
+    public final IRecipeTransferError transferRecipe(CONTAINER container, RecipeHolder<RECIPE> recipeHolder, IRecipeSlotsView recipeSlots, Player player,
+                                      ^
+  where C,R are type-variables:
+    C extends AbstractContainerMenu declared in interface IRecipeTransferHandler
+    R extends Object declared in interface IRecipeTransferHandler
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/src/integration/jei/main/java/mekanism/client/recipe_viewer/jei/transfer/JeiQIOCraftingTransferHandler.java:63: warning: [removal] transferRecipe(C,R,IRecipeSlotsView,Player,boolean,boolean) in IRecipeTransferHandler has been deprecated and marked for removal
+    public IRecipeTransferError transferRecipe(CONTAINER container, RecipeHolder<CraftingRecipe> recipeHolder, IRecipeSlotsView recipeSlots, Player player,
+                                ^
+  where C,R are type-variables:
+    C extends AbstractContainerMenu declared in interface IRecipeTransferHandler
+    R extends Object declared in interface IRecipeTransferHandler
+3 warnings
+
+> Task :integrationJeiClasses
+
+> Task :compileAdditionsJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :compileIntegrationCuriosJava
+Note: /home/runner/work/Mekanism-26.3/Mekanism-26.3/src/integration/curios/java/mekanism/client/integration/curios/MekanismCurioRenderer.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :compileIntegrationFramedblocksJava
+
+> Task :compileGeneratorsJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :compileIntegrationNerbJava
+> Task :compileIntegrationJadeJava
+> Task :processGeneratorsResources
+> Task :generatorsClasses
+> Task :compileIntegrationTheOneProbeJava
+> Task :compileIntegrationWthitJava
+> Task :integrationComputerCraftClasses
+> Task :integrationCuriosClasses
+> Task :integrationFramedblocksClasses
+> Task :integrationJadeClasses
+> Task :integrationNerbClasses
+> Task :integrationTheOneProbeClasses
+> Task :integrationWthitClasses
+> Task :compileGeneratorsIntegrationJeiJava
+> Task :generatorsIntegrationJeiClasses
+> Task :compileToolsJava
+> Task :processAdditionsResources
+> Task :additionsClasses
+> Task :generatorsJar
+> Task :processToolsResources
+> Task :toolsClasses
+> Task :compileAdditionsIntegrationJeiJava
+> Task :additionsIntegrationJeiClasses
+> Task :compileToolsIntegrationJeiJava
+> Task :toolsIntegrationJeiClasses
+> Task :additionsJar
+> Task :toolsJar
+> Task :jar
+> Task :mergeModuleResources
+> Task :sourcesJar
+> Task :allJar
+> Task :assemble
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795044700936.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/Mekanism-26.3/Mekanism-26.3/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 1m 21s
+38 actionable tasks: 38 executed
+Configuration cache entry stored.
