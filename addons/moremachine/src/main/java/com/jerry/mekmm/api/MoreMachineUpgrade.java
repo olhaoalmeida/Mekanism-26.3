@@ -1,6 +1,6 @@
 package com.jerry.mekmm.api;
 
-import mekanism.api.Upgrade;
+import Nonemekanism.api.upgrade.Upgrade;
 
 public class MoreMachineUpgrade {
 

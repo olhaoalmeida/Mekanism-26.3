@@ -4,7 +4,7 @@ import com.jerry.mekaf.common.tile.factory.base.TileEntityChemicalToChemicalFact
 import com.jerry.mekaf.common.upgrade.FluidChemicalToChemicalUpgradeData;
 
 import mekanism.api.IContentsListener;
-import mekanism.api.Upgrade;
+import Nonemekanism.api.upgrade.Upgrade;
 import mekanism.api.chemical.Chemical;
 import mekanism.api.chemical.ChemicalResource;
 import mekanism.api.chemical.IChemicalTank;

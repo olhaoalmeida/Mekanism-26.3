@@ -3,7 +3,7 @@ package com.jerry.mekmm.mixin;
 import com.jerry.mekmm.api.MoreMachineUpgrade;
 import com.jerry.mekmm.api.text.APIMoreMachineLang;
 
-import mekanism.api.Upgrade;
+import Nonemekanism.api.upgrade.Upgrade;
 import mekanism.api.text.EnumColor;
 import mekanism.api.text.ILangEntry;
 

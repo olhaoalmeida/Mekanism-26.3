@@ -6,7 +6,7 @@ import com.jerry.mekmm.common.item.ItemReflector;
 import com.jerry.mekmm.common.resource.MoreMachineResource;
 import com.jerry.mekmm.common.util.MoreMachineEnumUtils;
 
-import mekanism.api.Upgrade;
+import Nonemekanism.api.upgrade.Upgrade;
 import mekanism.common.item.ItemUpgrade;
 import mekanism.common.registration.impl.ItemDeferredRegister;
 import mekanism.common.registration.impl.ItemRegistryObject;
