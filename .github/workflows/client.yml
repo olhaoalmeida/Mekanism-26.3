@@ -1,0 +1,50 @@
+name: client
+on: workflow_dispatch
+permissions: { contents: write }
+jobs:
+  client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '25' }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb mesa-utils libgl1-mesa-dri libglx-mesa0 libgl1 libglu1-mesa xserver-xorg-core libegl1 libegl-mesa0 libgbm1 libgles2 libopenal1 x11-utils libxrandr2 libxinerama1 libxcursor1 libxi6 libxxf86vm1 > /dev/null
+      - name: Prepare world with server
+        run: |
+          set +e
+          mkdir -p runs/server && echo "eula=true" > runs/server/eula.txt
+          timeout 400 ./gradlew --no-daemon runServer < <(sleep 200; echo stop; sleep 40) > server.log 2>&1
+          mkdir -p runs/client/saves && cp -r runs/server/world runs/client/saves/world
+          ls runs/client/saves/world | head
+      - name: Client options and quickplay
+        run: |
+          printf "menuBackgroundBlurriness:0\nrenderDistance:2\nsimulationDistance:5\nmaxFps:20\nvsync:false\nsoundCategory_master:0.0\nnarrator:0\nparticles:0\nbiomeBlendRadius:0\nmipmapLevels:0\nentityShadows:false\n" > runs/client/options.txt
+          sed -i "0,/configureRun(baseMods, run, '', true)/s//programArguments.addAll('--width','320','--height','200','--quickPlaySingleplayer','world')\n        configureRun(baseMods, run, '', true)/" build.gradle
+          grep -n "quickPlaySingleplayer" build.gradle
+      - name: Run client
+        timeout-minutes: 22
+        run: |
+          set +e
+          export SDL_VIDEODRIVER=offscreen SDL_VIDEO_EGL_DRIVER=libEGL.so.1 GALLIUM_DRIVER=llvmpipe LIBGL_ALWAYS_SOFTWARE=1 MESA_GL_VERSION_OVERRIDE=4.5 MESA_GLSL_VERSION_OVERRIDE=450
+          Xvfb :99 -ac -screen 0 1280x720x24 +extension GLX +extension RANDR +render -noreset &
+          XVFB=$!
+          export DISPLAY=:99
+          sleep 3
+          (sleep 420; pkill -f net.minecraft) &
+          timeout 700 ./gradlew --no-daemon runClient > client.log 2>&1
+          echo "exit=$?" >> client.log
+          kill $XVFB || true
+          grep -nE "Mixin|FAILED|Exception|ERROR|Reloading|Stopping|Saving|Joined|logged in|Loaded .* models" client.log | head -150 > client-summary.txt || true
+          tail -40 client.log
+      - name: Publicar
+        if: always()
+        run: |
+          git config user.name ci; git config user.email ci@x
+          git checkout --orphan ci-client
+          git rm -rf -q --cached . >/dev/null
+          for f in client.log client-summary.txt server.log; do [ -f $f ] && git add -f $f; done
+          git commit -qm client && git push -f origin ci-client
