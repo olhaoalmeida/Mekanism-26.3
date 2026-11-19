@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": "mekanism:ultimate_pressurized_tube",
+    "A": "#mekanism:alloys/atomic",
+    "O": "#c:storage_blocks/osmium",
+    "T": "mekanism:ultimate_chemical_tank",
+    "X": "mekanism:steel_casing"
+  },
+  "pattern": [
+    "A#A",
+    "TXT",
+    "OOO"
+  ],
+  "result": {
+    "id": "mekmm:ambient_gas_collector"
+  }
+}

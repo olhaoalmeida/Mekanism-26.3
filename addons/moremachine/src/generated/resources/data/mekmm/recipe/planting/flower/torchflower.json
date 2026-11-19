@@ -1,0 +1,15 @@
+{
+  "type": "mekmm:planting",
+  "chemical_input": {
+    "amount": 1,
+    "chemical": "mekmm:nutrient_solution"
+  },
+  "item_input": {
+    "count": 1,
+    "ingredient": "minecraft:torchflower_seeds"
+  },
+  "main_output": {
+    "id": "minecraft:torchflower"
+  },
+  "per_tick_usage": true
+}

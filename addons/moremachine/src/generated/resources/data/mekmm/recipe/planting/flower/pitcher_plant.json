@@ -1,0 +1,15 @@
+{
+  "type": "mekmm:planting",
+  "chemical_input": {
+    "amount": 1,
+    "chemical": "mekmm:nutrient_solution"
+  },
+  "item_input": {
+    "count": 1,
+    "ingredient": "minecraft:pitcher_pod"
+  },
+  "main_output": {
+    "id": "minecraft:pitcher_plant"
+  },
+  "per_tick_usage": true
+}

@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mekanismgenerators"
+    }
+  ],
+  "type": "mekanism:mek_data",
+  "category": "misc",
+  "key": {
+    "B": "#c:storage_blocks/steel",
+    "E": "mekmm:advanced_electrolysis_core",
+    "R": "mekanism:robit",
+    "T": "mekmm:ultimate_max_chemical_tank"
+  },
+  "pattern": [
+    "TET",
+    "BRB",
+    "TET"
+  ],
+  "result": {
+    "id": "mekmm:large_gas_burning_generator"
+  }
+}

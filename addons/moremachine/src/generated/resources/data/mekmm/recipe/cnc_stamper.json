@@ -1,0 +1,21 @@
+{
+  "type": "mekanism:mek_data",
+  "category": "misc",
+  "key": {
+    "#": [
+      "minecraft:piston",
+      "minecraft:sticky_piston"
+    ],
+    "A": "#mekanism:alloys/basic",
+    "C": "#c:circuits/basic",
+    "X": "mekanism:steel_casing"
+  },
+  "pattern": [
+    "ACA",
+    "#X#",
+    "ACA"
+  ],
+  "result": {
+    "id": "mekmm:cnc_stamper"
+  }
+}

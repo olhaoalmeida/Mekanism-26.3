@@ -1,0 +1,19 @@
+{
+  "type": "mekanism:mek_data",
+  "category": "misc",
+  "key": {
+    "#": "mekmm:uu_matter",
+    "A": "#mekanism:alloys/atomic",
+    "C": "#c:circuits/ultimate",
+    "S": "#c:chests",
+    "X": "mekanism:steel_casing"
+  },
+  "pattern": [
+    "A#A",
+    "CXC",
+    "ASA"
+  ],
+  "result": {
+    "id": "mekmm:replicator"
+  }
+}

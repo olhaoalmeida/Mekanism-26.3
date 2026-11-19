@@ -1,0 +1,7 @@
+{
+  "parent": "mekmm:block/cnc_stamper",
+  "textures": {
+    "3": "mekmm:block/cnc_stamper/front_active",
+    "4": "mekmm:block/cnc_stamper/side_active"
+  }
+}

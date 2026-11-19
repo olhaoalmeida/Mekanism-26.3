@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mekanismgenerators"
+    }
+  ],
+  "type": "mekanism:mek_data",
+  "category": "misc",
+  "key": {
+    "B": "#c:storage_blocks/steel",
+    "L": "mekanism:laser",
+    "R": "mekanism:robit",
+    "S": "mekanismgenerators:advanced_solar_generator",
+    "T": "mekmm:ultimate_max_chemical_tank"
+  },
+  "pattern": [
+    "SSS",
+    "BRB",
+    "TLT"
+  ],
+  "result": {
+    "id": "mekmm:large_solar_neutron_activator"
+  }
+}

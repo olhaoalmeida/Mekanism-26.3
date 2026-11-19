@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mekanismgenerators"
+    }
+  ],
+  "type": "mekanism:mek_data",
+  "category": "misc",
+  "key": {
+    "B": "#c:storage_blocks/steel",
+    "R": "mekanism:robit",
+    "S": "mekanism:superheating_element",
+    "T": "mekanism:ultimate_fluid_tank"
+  },
+  "pattern": [
+    "BSB",
+    "TRT",
+    "BSB"
+  ],
+  "result": {
+    "id": "mekmm:large_heat_generator"
+  }
+}

@@ -1,0 +1,61 @@
+package com.jerry.mekmm.api.recipes.cache;
+
+import com.jerry.mekmm.api.recipes.PlantingRecipe;
+
+import mekanism.api.chemical.Chemical;
+import mekanism.api.chemical.ChemicalStack;
+import mekanism.api.recipes.MekanismRecipe;
+import mekanism.api.recipes.SawmillRecipe.ChanceOutput;
+import mekanism.api.recipes.ingredients.InputIngredient;
+import mekanism.api.recipes.inputs.IInputHandler;
+import mekanism.api.recipes.outputs.IOutputHandler;
+
+import net.minecraft.core.TypedInstance;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
+
+import org.jspecify.annotations.NullMarked;
+
+import java.util.function.*;
+
+@NullMarked
+public class PlantingNoPerTickUsageCacheRecipe<HOLDER_A, INPUT_A extends TypedInstance<HOLDER_A>, HOLDER_B, INPUT_B extends TypedInstance<HOLDER_B>, OUTPUT, RECIPE extends MekanismRecipe<?> & BiPredicate<INPUT_A, INPUT_B>> extends MoreMachineTwoInputCachedRecipe<HOLDER_A, INPUT_A, HOLDER_B, INPUT_B, OUTPUT, RECIPE> {
+
+    /**
+     * @param recipe                   Recipe.
+     * @param recheckAllErrors         Returns {@code true} if processing should be continued even if an error is hit in
+     *                                 order to gather all the errors. It is recommended
+     *                                 to not do this every tick or if there is no one viewing recipes.
+     * @param inputHandler             Main input handler.
+     * @param secondaryInputHandler    Secondary input handler.
+     * @param outputHandler            Output handler.
+     * @param inputSupplier            Supplier of the recipe's input ingredient.
+     * @param secondaryInputSupplier   Supplier of the recipe's secondary input ingredient.
+     * @param outputGetter             Gets the recipe's output when given the corresponding inputs.
+     * @param inputEmptyCheck          Checks if the primary input is empty.
+     * @param secondaryInputEmptyCheck Checks if the secondary input is empty.
+     * @param outputEmptyCheck         Checks if the output is empty (indicating something went horribly wrong).
+     */
+    protected PlantingNoPerTickUsageCacheRecipe(RECIPE recipe, BooleanSupplier recheckAllErrors, IInputHandler<HOLDER_A, INPUT_A> inputHandler, IInputHandler<HOLDER_B, INPUT_B> secondaryInputHandler, IOutputHandler<OUTPUT> outputHandler, Supplier<InputIngredient<HOLDER_A, INPUT_A>> inputSupplier, Supplier<InputIngredient<HOLDER_B, INPUT_B>> secondaryInputSupplier, BiFunction<INPUT_A, INPUT_B, OUTPUT> outputGetter, Predicate<INPUT_A> inputEmptyCheck, Predicate<INPUT_B> secondaryInputEmptyCheck, Predicate<OUTPUT> outputEmptyCheck) {
+        super(recipe, recheckAllErrors, inputHandler, secondaryInputHandler, outputHandler, inputSupplier, secondaryInputSupplier, outputGetter, inputEmptyCheck, secondaryInputEmptyCheck, outputEmptyCheck);
+    }
+
+    public static PlantingNoPerTickUsageCacheRecipe<Item, ItemStack, Chemical, ChemicalStack, ChanceOutput, PlantingRecipe> planting(PlantingRecipe recipe, BooleanSupplier recheckAllErrors,
+                                                                                                                                     IInputHandler<Item, ItemStack> itemInputHandler,
+                                                                                                                                     IInputHandler<Chemical, ChemicalStack> chemicalInputHandler,
+                                                                                                                                     IOutputHandler<ChanceOutput> outputHandler) {
+        return new PlantingNoPerTickUsageCacheRecipe<>(recipe, recheckAllErrors, itemInputHandler, chemicalInputHandler, outputHandler, recipe::getItemInput, recipe::getChemicalInput, recipe::getOutput,
+                ItemStack::isEmpty, ChemicalStack::isEmpty, _ -> false);
+    }
+
+    @Override
+    protected boolean finishProcessing(int operations, TransactionContext transaction) {
+        if (input != null && secondaryInput != null && output != null && !inputEmptyCheck.test(input) && !secondaryInputEmptyCheck.test(secondaryInput) &&
+                !outputEmptyCheck.test(output)) {
+            return secondaryInputHandler.use(secondaryInput, operations, transaction) &&
+                    outputHandler.handleOutput(output, operations, transaction);
+        }
+        return false;
+    }
+}

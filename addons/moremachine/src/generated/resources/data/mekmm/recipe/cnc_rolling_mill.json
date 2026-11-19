@@ -1,0 +1,18 @@
+{
+  "type": "mekanism:mek_data",
+  "category": "misc",
+  "key": {
+    "A": "#mekanism:alloys/basic",
+    "C": "#c:circuits/basic",
+    "S": "#c:ingots/steel",
+    "X": "mekanism:steel_casing"
+  },
+  "pattern": [
+    "ACA",
+    "SXS",
+    "ACA"
+  ],
+  "result": {
+    "id": "mekmm:cnc_rolling_mill"
+  }
+}

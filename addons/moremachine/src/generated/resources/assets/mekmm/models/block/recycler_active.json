@@ -1,0 +1,6 @@
+{
+  "parent": "mekmm:block/recycler",
+  "textures": {
+    "front": "mekmm:block/recycler/front_active"
+  }
+}

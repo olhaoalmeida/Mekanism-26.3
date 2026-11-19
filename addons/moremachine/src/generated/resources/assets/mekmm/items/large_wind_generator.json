@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "mekmm:item/large_wind_generator",
+    "model": {
+      "type": "mekmm:large_wind_generator"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_name",
+              "source": "block_entity"
+            },
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "mekanism:ejector",
+                "mekanism:owner",
+                "mekanism:redstone_control",
+                "mekanism:security",
+                "mekanism:side_config",
+                "mekmm:chemicals_rate",
+                "mekmm:energy_rate",
+                "mekmm:fluids_rate",
+                "mekmm:heat_rate",
+                "mekmm:items_rate",
+                "mekanism:fluids",
+                "mekanism:chemicals"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "mekmm:wireless_transmission_station"
+        }
+      ],
+      "name": "main",
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "mekmm:blocks/wireless_transmission_station"
+}

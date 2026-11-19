@@ -1,0 +1,19 @@
+{
+	"type": "mekmm:pressing",
+	"primary_input": {
+		"count": 3,
+		"ingredient": "#c:glass_panes"
+	},
+	"secondary_input": {
+		"count": 3,
+		"ingredient": "#c:ingots/silver"
+	},
+	"tertiary_input": {
+		"count": 3,
+		"ingredient": "mekanism:hdpe_sheet"
+	},
+	"output": {
+		"count": 1,
+		"id": "mekmm:reflector"
+	}
+}
