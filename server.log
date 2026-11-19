@@ -1,0 +1,279 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.9.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Calculating task graph as no cached configuration is available for tasks: runServer
+> Task :buildSrc:compileJava NO-SOURCE
+> Task :buildSrc:compileGroovy
+> Task :buildSrc:processResources NO-SOURCE
+> Task :buildSrc:classes
+> Task :buildSrc:jar
+
+> Configure project :
+Disabling main datagen compilation of biomes_weve_gone integration
+Disabling main compilation of crafttweaker integration
+Disabling main datagen compilation of crafttweaker integration
+Disabling main compilation of emi integration
+Disabling main datagen compilation of emi integration
+Disabling additions compilation of emi integration
+Disabling generators compilation of emi integration
+Disabling tools compilation of emi integration
+Disabling main datagen compilation of farmers_delight integration
+Disabling main compilation of open_computers integration
+Disabling main compilation of projecte integration
+Disabling main datagen compilation of projecte integration
+Disabling main compilation of recipe_stages integration
+Creating Minecraft artifacts without recompilation.
+
+> Task :processApiResources NO-SOURCE
+> Task :processIntegrationJeiResources
+> Task :annotation-processor:processResources
+> Task :processAdditionsIntegrationJeiResources NO-SOURCE
+> Task :processGeneratorsIntegrationJeiResources NO-SOURCE
+> Task :processIntegrationComputerCraftResources
+> Task :processIntegrationCuriosResources
+> Task :processIntegrationFramedblocksResources NO-SOURCE
+> Task :processIntegrationNerbResources NO-SOURCE
+> Task :processIntegrationJadeResources NO-SOURCE
+> Task :processIntegrationTheOneProbeResources NO-SOURCE
+> Task :processToolsIntegrationJeiResources NO-SOURCE
+> Task :processIntegrationWthitResources
+> Task :processRunMainResources NO-SOURCE
+
+> Task :annotation-processor:compileJava
+Note: /home/runner/work/Mekanism-26.3/Mekanism-26.3/annotation-processor/src/main/java/mekanism/builder/ComputerHandlerBuilder.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :annotation-processor:classes
+> Task :annotation-processor:jar
+
+> Task :createMinecraftArtifacts
+Loaded 135 artifacts from /home/runner/work/Mekanism-26.3/Mekanism-26.3/build/tmp/createMinecraftArtifacts/nfrt_artifact_manifest.properties
+[1m*** Started working on [4mdownloadManifest[23;0m[23;0m
+  ↓ https://piston-meta.mojang.com/mc/game/version_manifest_v2.json
+ [1m[92m✓[23;0m Completed [4mdownloadManifest[23;0m in 0.56s
+[1m*** Started working on [4mdownloadJson[23;0m[23;0m
+ [1m[92m✓[23;0m Completed [4mdownloadJson[23;0m in 0.00s
+[1m*** Started working on [4mdownloadClient[23;0m[23;0m
+[1m*** Started working on [4mdownloadServer[23;0m[23;0m
+ [1m[92m✓[23;0m Completed [4mdownloadClient[23;0m in 0.04s
+ [1m[92m✓[23;0m Completed [4mdownloadServer[23;0m in 0.04s
+[1m*** Started working on [4mpreProcessJar[23;0m[23;0m
+ [1m[92m♻[23;0m Used cache of [4mpreProcessJar[23;0m in 0.00s
+[1m*** Started working on [4mbinaryPatch[23;0m[23;0m
+ [1m[92m♻[23;0m Used cache of [4mbinaryPatch[23;0m in 0.00s
+[1m*** Started working on [4mcopyUnpatchedClasses[23;0m[23;0m
+ [1m[92m♻[23;0m Used cache of [4mcopyUnpatchedClasses[23;0m in 0.00s
+[1m*** Started working on [4mapplyDevTransforms[23;0m[23;0m
+ [1m[92m♻[23;0m Used cache of [4mapplyDevTransforms[23;0m in 0.00s
+Total runtime: 2.02s
+
+
+> Task :downloadAssets
+Loaded 135 artifacts from /home/runner/work/Mekanism-26.3/Mekanism-26.3/build/tmp/downloadAssets/nfrt_artifact_manifest.properties
+Downloading asset index 34
+Using Minecraft asset root: /home/runner/.gradle/caches/neoformruntime/assets
+  ↓ https://piston-meta.mojang.com/v1/packages/f3df28b441565ca4e5deb9cda856d90df62e1433/34.json
+
+> Task :prepareServerRun
+
+> Task :compileApiJava
+Note: /home/runner/work/Mekanism-26.3/Mekanism-26.3/src/api/java/mekanism/api/IIncrementalEnum.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :apiClasses
+
+> Task :compileJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :processResources
+> Task :classes
+
+> Task :compileIntegrationJeiJava
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/src/integration/jei/main/java/mekanism/client/recipe_viewer/jei/ChemicalStackRenderer.java:62: warning: [removal] getTooltip(T,TooltipFlag) in IIngredientRenderer has been deprecated and marked for removal
+    public List<Component> getTooltip(ChemicalStack stack, TooltipFlag tooltipFlag) {
+                           ^
+  where T is a type-variable:
+    T extends Object declared in interface IIngredientRenderer
+
+> Task :compileIntegrationComputerCraftJava
+
+> Task :compileAdditionsJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :compileIntegrationJeiJava
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/src/integration/jei/main/java/mekanism/client/recipe_viewer/jei/transfer/JeiMachineTransferHandler.java:91: warning: [removal] transferRecipe(C,R,IRecipeSlotsView,Player,boolean,boolean) in IRecipeTransferHandler has been deprecated and marked for removal
+    public final IRecipeTransferError transferRecipe(CONTAINER container, RecipeHolder<RECIPE> recipeHolder, IRecipeSlotsView recipeSlots, Player player,
+                                      ^
+  where C,R are type-variables:
+    C extends AbstractContainerMenu declared in interface IRecipeTransferHandler
+    R extends Object declared in interface IRecipeTransferHandler
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/src/integration/jei/main/java/mekanism/client/recipe_viewer/jei/transfer/JeiQIOCraftingTransferHandler.java:63: warning: [removal] transferRecipe(C,R,IRecipeSlotsView,Player,boolean,boolean) in IRecipeTransferHandler has been deprecated and marked for removal
+    public IRecipeTransferError transferRecipe(CONTAINER container, RecipeHolder<CraftingRecipe> recipeHolder, IRecipeSlotsView recipeSlots, Player player,
+                                ^
+  where C,R are type-variables:
+    C extends AbstractContainerMenu declared in interface IRecipeTransferHandler
+    R extends Object declared in interface IRecipeTransferHandler
+3 warnings
+
+> Task :integrationJeiClasses
+
+> Task :compileIntegrationCuriosJava
+Note: /home/runner/work/Mekanism-26.3/Mekanism-26.3/src/integration/curios/java/mekanism/client/integration/curios/MekanismCurioRenderer.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :compileIntegrationFramedblocksJava
+> Task :compileIntegrationNerbJava
+> Task :compileIntegrationJadeJava
+
+> Task :compileGeneratorsJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :compileIntegrationTheOneProbeJava
+> Task :compileIntegrationWthitJava
+> Task :integrationComputerCraftClasses
+> Task :integrationCuriosClasses
+> Task :integrationFramedblocksClasses
+> Task :integrationJadeClasses
+> Task :integrationNerbClasses
+> Task :integrationTheOneProbeClasses
+> Task :integrationWthitClasses
+> Task :processGeneratorsResources
+> Task :generatorsClasses
+> Task :compileGeneratorsIntegrationJeiJava
+> Task :generatorsIntegrationJeiClasses
+> Task :processAdditionsResources
+> Task :additionsClasses
+> Task :compileToolsJava
+> Task :processToolsResources
+> Task :toolsClasses
+> Task :compileAdditionsIntegrationJeiJava
+> Task :additionsIntegrationJeiClasses
+> Task :compileToolsIntegrationJeiJava
+> Task :toolsIntegrationJeiClasses
+> Task :compileRunMainJava NO-SOURCE
+> Task :runMainClasses UP-TO-DATE
+
+> Task :runServer
+2026-11-19T00:32:53.134328816Z main WARN Advanced terminal features are not available in this environment
+[00:32:53] [main/INFO] [ne.ne.fm.st.Entrypoint/]: JVM Uptime at startup: 146ms
+[00:32:53] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Starting FancyModLoader version 12.0.12 (DEDICATED_SERVER in DEV)
+[00:32:53] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Game directory: /home/runner/work/Mekanism-26.3/Mekanism-26.3/runs/server
+[00:32:53] [main/INFO] [ne.ne.fm.lo.EarlyServiceDiscovery/]: Found 2 early service jars (out of 112) in 28ms
+[00:32:53] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Loading FML Early Services:
+[00:32:53] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - /home/runner/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/12.0.12/f097a25d6289aa0b289e7cdb6de83a5c8c72f77e/loader-12.0.12.jar
+[00:32:53] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - /home/runner/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/earlydisplay/12.0.12/8437387fd35033b1ea0d3fac7cc28ced4efdc6b/earlydisplay-12.0.12.jar
+[00:32:53] [main/INFO] [ne.ne.fm.lo.ImmediateWindowHandler/]: Not loading early display in headless mode.
+[00:32:53] [main/INFO] [ne.ne.fm.lo.mo.lo.GameLocator/]: Detected a joined NeoForge and Minecraft configuration. Applying filtering...
+[00:32:53] [main/INFO] [ne.ne.fm.lo.mo.lo.InDevFolderLocator/CORE]: Got mod coordinates additions%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/additions:additions%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/additions:additions%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/additionsIntegrationJei:additions%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/additionsIntegrationJei:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/api:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/api:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/main:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/main:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationComputerCraft:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/integrationComputerCraft:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationCurios:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/integrationCurios:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationFramedblocks:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/integrationFramedblocks:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationJade:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/integrationJade:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationJei:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/integrationJei:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationNerb:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/integrationNerb:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationTheOneProbe:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/integrationTheOneProbe:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationWthit:mekanism%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/integrationWthit:generators%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/generators:generators%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/generators:generators%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/generatorsIntegrationJei:generators%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/generatorsIntegrationJei:tools%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/tools:tools%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/tools:tools%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/toolsIntegrationJei:tools%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/toolsIntegrationJei from env
+[00:32:53] [main/WARN] [ne.ne.ja.se.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: mezz_config. Using jar(/home/runner/.gradle/caches/modules-2/files-2.1/net.mezzdev.config/mezz_config-26.3-neoforge/0.6.10/803b8c2f8e29bf3683c2f5c170b07a13253b7b6e/mezz_config-26.3-neoforge-0.6.10.jar)
+[00:32:53] [main/INFO] [ne.ne.fm.lo.mo.lo.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection
+[00:32:53] [main/INFO] [ne.ne.fm.lo.mo.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Jade 26.3.5+neoforge (jade)
+		Just Enough Items 31.17.0.109 (jei)
+		Mekanism 10.8.0 (mekanism)
+		Mekanism: Additions 10.8.0 (mekanismadditions)
+		Mekanism: Generators 10.8.0 (mekanismgenerators)
+		Mekanism: Tools 10.8.0 (mekanismtools)
+		MezzConfig 0.6.10 (mezz_config)
+		Minecraft 26.3 (minecraft)
+		NeoForge 26.3.0.110 (neoforge)
+		The One Probe 26.3_neo-16.0.2-3 (theoneprobe)
+[00:32:54] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/home/runner/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.17.4+mixin.0.8.7/5f66cc9f59b8efaa942155a3d5a30599bf6640dd/sponge-mixin-0.17.4+mixin.0.8.7.jar Service=FML Env=SERVER
+[00:32:54] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Loading FML Plugins:
+[00:32:54] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - /home/runner/.gradle/caches/modules-2/files-2.1/net.neoforged/neoforge/26.3.0.110/6806e70566b6aab685d29f480e0072c76ad22df2/neoforge-26.3.0.110-universal.jar > net.neoforged.neoforge-coremods-26.3.0.110.jar
+[00:32:54] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Building game content classloader:
+ - jade (jar(/home/runner/.gradle/caches/modules-2/files-2.1/curse.maven/jade-324717/9042207/add5199928930724adbe6f9dfaaf646bd1027294/jade-324717-9042207.jar))
+ - jei (jar(/home/runner/.gradle/caches/modules-2/files-2.1/mezz.jei/jei-26.3-neoforge/31.17.0.109/1b94e7a5d33587855a24d869214407a607953801/jei-26.3-neoforge-31.17.0.109.jar))
+ - mekanism (composite(folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/api), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/main), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/main), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationComputerCraft), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/integrationComputerCraft), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationCurios), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/integrationCurios), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationFramedblocks), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationJade), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationJei), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/integrationJei), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationNerb), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationTheOneProbe), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/integrationWthit), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/integrationWthit)))
+ - mekanismadditions (composite(folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/additions), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/additions), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/additionsIntegrationJei)))
+ - mekanismgenerators (composite(folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/generators), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/generators), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/generatorsIntegrationJei)))
+ - mekanismtools (composite(folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/tools), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/resources/tools), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/classes/java/toolsIntegrationJei)))
+ - mezz_config (jar(/home/runner/.gradle/caches/modules-2/files-2.1/net.mezzdev.config/mezz_config-26.3-neoforge/0.6.10/803b8c2f8e29bf3683c2f5c170b07a13253b7b6e/mezz_config-26.3-neoforge-0.6.10.jar))
+ - minecraft (composite(filtered(jar(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/moddev/artifacts/minecraft-patched-26.3.0.110.jar)), filtered(jar(/home/runner/work/Mekanism-26.3/Mekanism-26.3/build/moddev/artifacts/minecraft-patched-26.3.0.110.jar))))
+ - mixinextras.neoforge (jar(/home/runner/.gradle/caches/modules-2/files-2.1/net.neoforged/neoforge/26.3.0.110/6806e70566b6aab685d29f480e0072c76ad22df2/neoforge-26.3.0.110-universal.jar > mixinextras-neoforge-0.5.5.jar))
+ - neoforge (composite(filtered(jar(/home/runner/.gradle/caches/modules-2/files-2.1/net.neoforged/neoforge/26.3.0.110/6806e70566b6aab685d29f480e0072c76ad22df2/neoforge-26.3.0.110-universal.jar))))
+ - net.neoforged.fml.generated (empty(VirtualJar/net.neoforged.fml.generated))
+ - theoneprobe (jar(/home/runner/.gradle/caches/modules-2/files-2.1/mcjty.theoneprobe/theoneprobe/26.3_neo-16.0.2-3/8a056186ec9826a0c38a3b3b81fb3d96f0b8fcc4/theoneprobe-26.3_neo-16.0.2-3.jar))
+[00:32:54] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Built game content classloader in 56ms
+[00:32:56] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).
+[00:33:02] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[00:33:02] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[00:33:02] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[00:33:02] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[00:33:02] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[00:33:02] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [time, set, time] and [time, set, timemarker] with inputs: [0, 0s, 0d, 0t]
+[00:33:02] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [time, set, timemarker] and [time, set, time] with inputs: [012]
+[00:33:02] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [time, of, clock, set, time] and [time, of, clock, set, timemarker] with inputs: [0, 0s, 0d, 0t]
+[00:33:02] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [time, of, clock, set, timemarker] and [time, of, clock, set, time] with inputs: [012]
+[00:33:02] [modloading-worker-0/INFO] [ne.ne.ne.co.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 26.3.0.110, for MC 26.3
+[00:33:04] [modloading-worker-0/INFO] [me.co.Mekanism/]: Version 10.8.0 initializing...
+[00:33:04] [modloading-worker-0/INFO] [ne.ne.ne.co.VersionChecker/]: No mods enabled for version check
+[00:33:04] [modloading-worker-0/INFO] [me.co.Mekanism/]: Initialized HolidayManager.
+[00:33:04] [modloading-worker-0/INFO] [me.co.Mekanism/]: Fake player readout: UUID = 46e82cd0-d480-3d48-800a-77431ede078e, name = [Mekanism]
+[00:33:04] [modloading-worker-0/INFO] [me.co.Mekanism/]: Mod loaded.
+[00:33:04] [modloading-worker-0/INFO] [me.co.Mekanism/]: Loaded 'Mekanism: Tools' module.
+[00:33:04] [modloading-worker-0/INFO] [me.co.Mekanism/]: Loaded 'Mekanism: Additions' module.
+[00:33:04] [modloading-worker-0/INFO] [me.co.Mekanism/]: Loaded 'Mekanism: Generators' module.
+[00:33:05] [modloading-sync-worker/INFO] [sn.ja.Jade/]: Start loading plugin from Mekanism: mekanism.common.integration.lookingat.jade.MekanismJadePlugin
+[00:33:05] [modloading-sync-worker/INFO] [sn.ja.Jade/]: mekanism.common.integration.lookingat.jade.MekanismJadePlugin loaded: 1.156 ms
+[00:33:05] [modloading-sync-worker/INFO] [sn.ja.Jade/]: Start loading plugin from Jade: snownee.jade.addon.access.AccessibilityPlugin
+[00:33:05] [modloading-sync-worker/INFO] [sn.ja.Jade/]: snownee.jade.addon.access.AccessibilityPlugin loaded: 3.596 μs
+[00:33:05] [modloading-sync-worker/INFO] [sn.ja.Jade/]: Start loading plugin from Jade: snownee.jade.addon.core.CorePlugin
+[00:33:05] [modloading-sync-worker/INFO] [sn.ja.Jade/]: snownee.jade.addon.core.CorePlugin loaded: 1.950 ms
+[00:33:05] [modloading-sync-worker/INFO] [sn.ja.Jade/]: Start loading plugin from Jade: snownee.jade.addon.debug.DebugPlugin
+[00:33:05] [modloading-sync-worker/INFO] [sn.ja.Jade/]: snownee.jade.addon.debug.DebugPlugin loaded: 1.065 ms
+[00:33:05] [modloading-sync-worker/INFO] [sn.ja.Jade/]: Start loading plugin from Jade: snownee.jade.addon.universal.UniversalPlugin
+[00:33:05] [modloading-sync-worker/INFO] [sn.ja.Jade/]: snownee.jade.addon.universal.UniversalPlugin loaded: 9.068 ms
+[00:33:05] [modloading-sync-worker/INFO] [sn.ja.Jade/]: Start loading plugin from Jade: snownee.jade.addon.vanilla.VanillaPlugin
+[00:33:05] [modloading-sync-worker/INFO] [sn.ja.Jade/]: snownee.jade.addon.vanilla.VanillaPlugin loaded: 8.251 ms
+[00:33:05] [main/ERROR] [minecraft/Settings]: Failed to load properties from file: server.properties
+java.nio.file.NoSuchFileException: server.properties
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92) ~[?:?] {}
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106) ~[?:?] {}
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111) ~[?:?] {}
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newFileChannel(UnixFileSystemProvider.java:213) ~[?:?] {}
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:244) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:357) ~[?:?] {}
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:399) ~[?:?] {}
+	at java.base/java.nio.file.spi.FileSystemProvider.newInputStream(FileSystemProvider.java:371) ~[?:?] {}
+	at java.base/java.nio.file.Files.newInputStream(Files.java:154) ~[?:?] {}
+	at TRANSFORMER/minecraft@26.3/net.minecraft.server.dedicated.Settings.loadFromFile(Settings.java:36) [minecraft-patched-26.3.0.110.jar:?] {}
+	at TRANSFORMER/minecraft@26.3/net.minecraft.server.dedicated.DedicatedServerProperties.fromFile(DedicatedServerProperties.java:159) [minecraft-patched-26.3.0.110.jar:?] {}
+	at TRANSFORMER/minecraft@26.3/net.minecraft.server.dedicated.DedicatedServerSettings.<init>(DedicatedServerSettings.java:12) [minecraft-patched-26.3.0.110.jar:?] {}
+	at TRANSFORMER/minecraft@26.3/net.minecraft.server.Main.main(Main.java:122) [minecraft-patched-26.3.0.110.jar:?] {}
+	at net.neoforged.fml.startup.Server.main(Server.java:19) [loader-12.0.12.jar:12.0] {}
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104) ~[?:?] {}
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565) ~[?:?] {}
+	at net.neoforged.devlaunch.Main.main(Main.java:57) [DevLaunch-1.0.2.jar:?] {}
+[00:33:05] [main/INFO] [mojang/MinecraftServicesDiscoveryService]: Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
+[00:33:07] [Worker-Main-2/INFO] [minecraft/Main]: No existing world data, creating new world
+[00:33:08] [Worker-Main-3/INFO] [minecraft/AdvancementTree]: Loaded 5200 advancements
+[00:33:08] [main/INFO] [ne.ne.ne.co.cr.RecipePriorityManager/]: Loaded 0 recipe priority overrides
+[00:33:08] [main/INFO] [sn.ja.Jade/]: LootTableMineableCollector took 6.192 ms
+[00:33:08] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 26.3
+[00:33:08] [Server thread/INFO] [minecraft/DedicatedServer]: Loading properties
+[00:33:08] [Server thread/INFO] [minecraft/DedicatedServer]: Default game type: SURVIVAL
+[00:33:08] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
+[00:33:08] [Server thread/INFO] [minecraft/DedicatedServer]: Starting Minecraft server on *:25565
+[00:33:08] [Server thread/WARN] [minecraft/DedicatedServer]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[00:33:08] [Server thread/WARN] [minecraft/DedicatedServer]: The server will make no attempt to authenticate usernames. Beware.
+[00:33:08] [Server thread/WARN] [minecraft/DedicatedServer]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[00:33:08] [Server thread/WARN] [minecraft/DedicatedServer]: To change this, set "online-mode" to "true" in the server.properties file.
+[00:33:09] [Server thread/INFO] [minecraft/DedicatedServer]: Preparing level "world"
+[00:33:09] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Selecting global world spawn...
+[00:33:12] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 0 persistent chunks...
+[00:33:12] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 100%
+[00:33:12] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Time elapsed: 3669 ms
+[00:33:12] [Server thread/INFO] [minecraft/DedicatedServer]: Done (3.983s)! For help, type "help"
+[00:33:12] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[00:33:13] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[00:33:13] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[00:33:13] [Server thread/INFO] [ne.ne.ne.se.pe.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[00:34:13] [Server thread/INFO] [minecraft/MinecraftServer]: Server empty for 60 seconds, pausing
