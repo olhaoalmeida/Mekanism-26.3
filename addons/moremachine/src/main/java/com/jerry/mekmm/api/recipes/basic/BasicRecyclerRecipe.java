@@ -4,6 +4,12 @@ import com.jerry.mekmm.api.recipes.MoreMachineRecipeSerializers;
 import com.jerry.mekmm.api.recipes.RecyclerRecipe;
 
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
+import mekanism.api.recipes.book.SawingBookCategory.SawingBookInfo;
+import mekanism.api.recipes.display.slot.ChanceSlotDisplay;
+import net.minecraft.core.TypedInstance;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
@@ -23,11 +29,8 @@ public class BasicRecyclerRecipe extends RecyclerRecipe {
     private final ItemStackTemplate chanceOutput;
     private final double chance;
 
-    public BasicRecyclerRecipe(ItemStackIngredient input, ItemStack chanceOutput, double chance) {
-        this(input, ItemStackTemplate.fromNonEmptyStack(chanceOutput), chance);
-    }
-
-    public BasicRecyclerRecipe(ItemStackIngredient input, ItemStackTemplate chanceOutput, double chance) {
+    public BasicRecyclerRecipe(Recipe.CommonInfo commonInfo, SawingBookInfo bookInfo, ItemStackIngredient input, ItemStackTemplate chanceOutput, double chance) {
+        super(commonInfo, bookInfo);
         this.input = Objects.requireNonNull(input, "Input cannot be null.");
         Objects.requireNonNull(chanceOutput, "Output cannot be null.");
         if (chance < 0 || chance > 1) {
@@ -38,13 +41,8 @@ public class BasicRecyclerRecipe extends RecyclerRecipe {
     }
 
     @Override
-    public boolean test(ItemStack stack) {
-        return this.input.test(stack);
-    }
-
-    @Override
     @Contract(value = "_ -> new")
-    public ChanceOutput getOutput(ItemStack input) {
+    public ChanceOutput getOutput(TypedInstance<Item> input) {
         return new BasicChanceOutput(chance > 0 ? RANDOM.nextDouble() : 0);
     }
 
@@ -60,6 +58,11 @@ public class BasicRecyclerRecipe extends RecyclerRecipe {
     @Override
     public List<ItemStack> getChanceOutputDefinition() {
         return Collections.singletonList(chanceOutput.create());
+    }
+
+    @Override
+    public SlotDisplay getOutputDisplay() {
+        return ChanceSlotDisplay.create(new SlotDisplay.ItemStackSlotDisplay(chanceOutput), chance);
     }
 
     @Override

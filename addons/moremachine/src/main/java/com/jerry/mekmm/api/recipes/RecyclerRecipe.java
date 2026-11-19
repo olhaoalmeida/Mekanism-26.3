@@ -2,8 +2,16 @@ package com.jerry.mekmm.api.recipes;
 
 import com.jerry.mekmm.Mekmm;
 
-import mekanism.api.recipes.MekanismRecipe;
-import mekanism.api.recipes.ingredients.ItemStackIngredient;
+import mekanism.api.recipes.SingleInputRecipe;
+import mekanism.api.recipes.book.SawingBookCategory;
+import mekanism.api.recipes.book.SawingBookCategory.SawingBookInfo;
+import mekanism.api.recipes.display.recipe.SawingRecipeDisplay;
+import net.minecraft.core.TypedInstance;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import java.util.Collections;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -24,74 +32,46 @@ import java.util.List;
 import java.util.function.Predicate;
 
 @NullMarked
-public abstract class RecyclerRecipe extends MekanismRecipe<SingleRecipeInput> implements Predicate<@NotNull ItemStack> {
+public abstract class RecyclerRecipe extends SingleInputRecipe.ItemInputRecipe<RecyclerRecipe.ChanceOutput, SawingBookCategory, SawingBookInfo> {
 
     protected static final RandomSource RANDOM = RandomSource.create();
     private static final Holder<Item> RECYCLER = DeferredHolder.create(Registries.ITEM, Identifier.fromNamespaceAndPath(Mekmm.MOD_ID, "recycler"));
 
-    @Override
-    public abstract boolean test(ItemStack stack);
-
-    @Override
-    public boolean matches(SingleRecipeInput input, Level level) {
-        // Don't match incomplete recipes or ones that don't match
-        return !isIncomplete() && test(input.item());
+    protected RecyclerRecipe(Recipe.CommonInfo commonInfo, SawingBookInfo bookInfo) {
+        super(commonInfo, bookInfo, 0F);
     }
 
     /**
      * Gets a new chance output based on the given input.
-     *
-     * @param input Specific input.
-     *
-     * @return New chance output.
-     *
-     * @apiNote While Mekanism does not currently make use of the input, it is important to support it and pass the
-     *          proper value in case any addons define input based
-     *          outputs where things like NBT may be different.
-     * @implNote The passed in input should <strong>NOT</strong> be modified.
      */
+    @Override
     @Contract(value = "_ -> new")
-    public abstract ChanceOutput getOutput(ItemStack input);
+    public abstract ChanceOutput getOutput(TypedInstance<Item> input);
 
     /**
-     * For JEI, gets the chance output representations to display.
-     *
-     * @return Representation of the chance output, <strong>MUST NOT</strong> be modified.
+     * For recipe viewers, gets the chance output representations to display.
      */
     public abstract List<ItemStack> getChanceOutputDefinition();
+
+    @Override
+    @Deprecated
+    public List<ChanceOutput> getOutputDefinition(ContextMap contextMap) {
+        return Collections.emptyList();
+    }
 
     /**
      * Gets the chance (between 0 and 1) of the chance output being produced.
      */
     public abstract double getOutputChance();
 
-    /**
-     * Gets the input ingredient.
-     */
-    public abstract ItemStackIngredient getInput();
-
     @Override
-    public boolean isIncomplete() {
-        return getInput().hasNoMatchingInstances();
-    }
-
-    @Override
-    public void logMissingTags() {
-        getInput().logMissingTags();
+    public List<RecipeDisplay> display() {
+        return List.of(new SawingRecipeDisplay(getInput().display(), getOutputDisplay(), new SlotDisplay.ItemSlotDisplay(RECYCLER), experience()));
     }
 
     @Override
     public final RecipeType<RecyclerRecipe> getType() {
         return MoreMachineRecipeTypes.TYPE_RECYCLER.value();
-    }
-
-    public String getGroup() {
-        return "recycler";
-    }
-
-    @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(RECYCLER);
     }
 
     /**

@@ -9,6 +9,10 @@ import com.jerry.mekmm.common.recipe.lookup.cache.MoreMachineInputRecipeCache;
 
 import mekanism.api.recipes.ItemStackToItemStackRecipe;
 import mekanism.api.recipes.MekanismRecipe;
+import mekanism.api.recipes.book.MekanismBookCategory;
+import mekanism.common.registries.MekanismRecipeBookCategories;
+import mekanism.common.registration.impl.RecipeBookCategoryDeferredRegister;
+import net.minecraft.world.item.crafting.Recipe;
 import mekanism.common.recipe.MekanismRecipeType;
 import mekanism.common.recipe.lookup.cache.IInputRecipeCache;
 import mekanism.common.recipe.lookup.cache.InputRecipeCache;
@@ -29,24 +33,25 @@ import java.util.function.Function;
 public class MixinMekanismRecipeType {
 
     @Shadow
-    private static <VANILLA_INPUT extends RecipeInput, RECIPE extends MekanismRecipe<VANILLA_INPUT>, INPUT_CACHE extends IInputRecipeCache> RecipeTypeRegistryObject<VANILLA_INPUT, RECIPE, INPUT_CACHE> register(
-                                                                                                                                                                                                                  Identifier name,
-                                                                                                                                                                                                                  Function<MekanismRecipeType<VANILLA_INPUT, RECIPE, INPUT_CACHE>, INPUT_CACHE> inputCacheCreator) {
+    private static <VANILLA_INPUT extends RecipeInput, BOOK_CATEGORY extends MekanismBookCategory, BOOK_INFO extends Recipe.BookInfo<BOOK_CATEGORY>, RECIPE extends MekanismRecipe<VANILLA_INPUT, BOOK_CATEGORY, BOOK_INFO>, INPUT_CACHE extends IInputRecipeCache> RecipeTypeRegistryObject<VANILLA_INPUT, BOOK_CATEGORY, BOOK_INFO, RECIPE, INPUT_CACHE> register(
+            Identifier name,
+            RecipeBookCategoryDeferredRegister.MekanismRecipeBookTypes recipeBookTypes,
+            Function<MekanismRecipeType<VANILLA_INPUT, BOOK_CATEGORY, BOOK_INFO, RECIPE, INPUT_CACHE>, INPUT_CACHE> inputCacheCreator) {
         return null;
     }
 
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void mekmm$initRecipe(CallbackInfo ci) {
-        MoreMachineRecipeType.RECYCLING = register(MoreMachineRecipeTypes.NAME_RECYCLING, recipeType -> new InputRecipeCache.SingleItem<>(recipeType, RecyclerRecipe::getInput));
+        MoreMachineRecipeType.RECYCLING = register(MoreMachineRecipeTypes.NAME_RECYCLING, MekanismRecipeBookCategories.SAWING, recipeType -> new InputRecipeCache.SingleItem<>(recipeType, RecyclerRecipe::getInput));
 
-        MoreMachineRecipeType.PLANTING_STATION = register(MoreMachineRecipeTypes.NAME_PLANTING, recipeType -> new InputRecipeCache.ItemChemical<>(recipeType, PlantingRecipe::getItemInput, PlantingRecipe::getChemicalInput));
+        MoreMachineRecipeType.PLANTING_STATION = register(MoreMachineRecipeTypes.NAME_PLANTING, MekanismRecipeBookCategories.INJECTING, recipeType -> new InputRecipeCache.ItemChemical<>(recipeType, PlantingRecipe::getItemInput, PlantingRecipe::getChemicalInput));
 
-        MoreMachineRecipeType.STAMPING = register(MoreMachineRecipeTypes.NAME_STAMPING, recipeType -> new InputRecipeCache.DoubleItem<>(recipeType, StamperRecipe::getInput, StamperRecipe::getMold));
+        MoreMachineRecipeType.STAMPING = register(MoreMachineRecipeTypes.NAME_STAMPING, MekanismRecipeBookCategories.COMBINING, recipeType -> new InputRecipeCache.DoubleItem<>(recipeType, StamperRecipe::getInput, StamperRecipe::getMold));
 
-        MoreMachineRecipeType.LATHING = register(MoreMachineRecipeTypes.NAME_LATHING, recipeType -> new InputRecipeCache.SingleItem<>(recipeType, ItemStackToItemStackRecipe::getInput));
+        MoreMachineRecipeType.LATHING = register(MoreMachineRecipeTypes.NAME_LATHING, MekanismRecipeBookCategories.CRUSHING, recipeType -> new InputRecipeCache.SingleItem<>(recipeType, ItemStackToItemStackRecipe::getInput));
 
-        MoreMachineRecipeType.ROLLING_MILL = register(MoreMachineRecipeTypes.NAME_ROLLING_MILL, recipeType -> new InputRecipeCache.SingleItem<>(recipeType, ItemStackToItemStackRecipe::getInput));
+        MoreMachineRecipeType.ROLLING_MILL = register(MoreMachineRecipeTypes.NAME_ROLLING_MILL, MekanismRecipeBookCategories.CRUSHING, recipeType -> new InputRecipeCache.SingleItem<>(recipeType, ItemStackToItemStackRecipe::getInput));
 
-        MoreMachineRecipeType.PRESSING = register(MoreMachineRecipeTypes.NAME_PRESSING, MoreMachineInputRecipeCache.Pressing::new);
+        MoreMachineRecipeType.PRESSING = register(MoreMachineRecipeTypes.NAME_PRESSING, MekanismRecipeBookCategories.COMBINING, MoreMachineInputRecipeCache.Pressing::new);
     }
 }

@@ -7,6 +7,8 @@ import mekanism.api.SerializationConstants;
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.world.item.crafting.Recipe;
+import mekanism.api.recipes.book.SawingBookCategory.SawingBookInfo;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStackTemplate;
@@ -24,13 +26,21 @@ public class RecyclerRecipeSerializer {
 
     private RecyclerRecipeSerializer() {}
 
-    public static RecipeSerializer<BasicRecyclerRecipe> create(Function3<ItemStackIngredient, ItemStackTemplate, Double, BasicRecyclerRecipe> factory) {
+    @FunctionalInterface
+    public interface Factory extends com.mojang.datafixers.util.Function5<Recipe.CommonInfo, SawingBookInfo, ItemStackIngredient, ItemStackTemplate, Double, BasicRecyclerRecipe> {}
+    
+
+    public static RecipeSerializer<BasicRecyclerRecipe> create(Factory factory) {
         Codec<Double> chanceCodec = Codec.DOUBLE.validate(d -> d > 0 && d <= 1 ? DataResult.success(d) : DataResult.error(() -> "Expected chance to be greater than zero, and less than or equal to one. Found " + d));
         MapCodec<BasicRecyclerRecipe> codec = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                Recipe.CommonInfo.MAP_CODEC.forGetter(RecyclerRecipe::commonInfo),
+                SawingBookInfo.MAP_CODEC.forGetter(RecyclerRecipe::bookInfo),
                 ItemStackIngredient.CODEC.fieldOf(SerializationConstants.INPUT).forGetter(RecyclerRecipe::getInput),
                 ItemStackTemplate.CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(BasicRecyclerRecipe::getChanceOutputRaw),
                 chanceCodec.fieldOf("chance").forGetter(BasicRecyclerRecipe::getOutputChance)).apply(instance, factory));
         StreamCodec<RegistryFriendlyByteBuf, BasicRecyclerRecipe> streamCodec = StreamCodec.composite(
+                Recipe.CommonInfo.STREAM_CODEC, RecyclerRecipe::commonInfo,
+                SawingBookInfo.STREAM_CODEC, RecyclerRecipe::bookInfo,
                 ItemStackIngredient.STREAM_CODEC, RecyclerRecipe::getInput,
                 ItemStackTemplate.STREAM_CODEC, BasicRecyclerRecipe::getChanceOutputRaw,
                 ByteBufCodecs.DOUBLE, RecyclerRecipe::getOutputChance,
