@@ -1,5 +1,6 @@
 package com.jerry.meklm.common.tile.machine;
 
+import mekanism.common.recipe.lookup.IRecipeLookupHandler.RecipeContainers;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.util.context.ContextMap;
@@ -218,6 +219,11 @@ public class TileEntityLargeAntiprotonicNucleosynthesizer extends TileEntityProg
             cachedRecipe = new TwoInputCachedRecipe<>(recipe, recheckAllRecipeErrors, itemInputHandler, gasInputHandler, outputHandler);
         }
         return setCommonSettings(cachedRecipe).setBaselineMaxOperations(() -> 64);
+    }
+
+    @Override
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return recipeContainers;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.jerry.mekmm.common.util;
 
-import mekanism.common.util.WorldUtils;
+import mekanism.common.util.LightLevelUtils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -40,7 +40,7 @@ public class WorldUtil {
         }
 
         public void recheckCanSeeSun() {
-            canSeeSun = WorldUtils.canSeeSun(world, pos);
+            canSeeSun = LightLevelUtils.canSeeSun(world, pos);
         }
 
         public boolean canSeeSun() {

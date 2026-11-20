@@ -252,7 +252,7 @@ public class TileEntityLargeChemicalInfuser extends TileEntityRecipeMachine<Chem
 
     @NotNull
     @Override
-    public IMekanismRecipeTypeProvider<BiChemicalRecipeInput, ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo>, InputRecipeCache.EitherSideChemical<ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo>>> getRecipeType() {
+    public IMekanismRecipeTypeProvider<BiChemicalRecipeInput, ChemicalInfusingBookCategory, ChemicalInfusingBookInfo, ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo>, InputRecipeCache.EitherSideChemical<ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo>>> getRecipeType() {
         return MekanismRecipeType.CHEMICAL_INFUSING;
     }
 

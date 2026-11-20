@@ -1,5 +1,15 @@
 package com.jerry.meklm.common.tile.machine;
 
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.Holder;
+import mekanism.api.upgrade.UpgradeIds;
+import mekanism.common.recipe.lookup.IRecipeLookupHandler.RecipeContainers;
+import mekanism.common.recipe.lookup.monitor.RecipeCacheLookupMonitor;
+import mekanism.api.recipes.book.ActivatingBookCategory.ActivatingBookInfo;
+import mekanism.api.recipes.book.ActivatingBookCategory;
 import com.jerry.meklm.common.capabilities.holder.chemical.AdjustableChemicalTankHelper;
 import com.jerry.meklm.common.registries.LargeMachineBlocks;
 import com.jerry.meklm.common.tile.INotNeedConfig;
@@ -79,7 +89,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TileEntityLargeSolarNeutronActivator extends TileEntityRecipeMachine<ChemicalToChemicalRecipe> implements IBoundingBlock, ChemicalRecipeLookupHandler<ChemicalToChemicalRecipe>, INotNeedConfig {
+public class TileEntityLargeSolarNeutronActivator extends TileEntityRecipeMachine<ChemicalToChemicalRecipe<ActivatingBookCategory, ActivatingBookInfo>, RecipeCacheLookupMonitor<ChemicalToChemicalRecipe<ActivatingBookCategory, ActivatingBookInfo>>> implements IBoundingBlock, ChemicalRecipeLookupHandler<ChemicalToChemicalRecipe<ActivatingBookCategory, ActivatingBookInfo>>, INotNeedConfig {
 
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_INPUT,
@@ -185,6 +195,16 @@ public class TileEntityLargeSolarNeutronActivator extends TileEntityRecipeMachin
     }
 
     @Override
+    protected boolean hasItemOutput() {
+        return false;
+    }
+
+    @Override
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return new RecipeContainers(List.of(inputTank), outputTank);
+    }
+
+    @Override
     protected boolean onUpdateServer(net.minecraft.server.level.ServerLevel level) {
         boolean sendUpdatePacket = super.onUpdateServer(level);
         if (solarCheck == null) {
@@ -194,7 +214,7 @@ public class TileEntityLargeSolarNeutronActivator extends TileEntityRecipeMachin
         inputSlot.fillTankFromSlot(null);
         outputSlot.drainTankIntoSlot(null);
         productionRate = recalculateProductionRate();
-        recipeCacheLookupMonitor.updateAndProcess();
+        recipeCacheLookupMonitor.updateAndProcess(level);
         handleEject();
         return sendUpdatePacket;
     }
@@ -232,18 +252,18 @@ public class TileEntityLargeSolarNeutronActivator extends TileEntityRecipeMachin
 
     @NotNull
     @Override
-    public IMekanismRecipeTypeProvider<SingleChemicalRecipeInput, ChemicalToChemicalRecipe, InputRecipeCache.SingleChemical<ChemicalToChemicalRecipe>> getRecipeType() {
+    public IMekanismRecipeTypeProvider<SingleChemicalRecipeInput, ActivatingBookCategory, ActivatingBookInfo, ChemicalToChemicalRecipe<ActivatingBookCategory, ActivatingBookInfo>, InputRecipeCache.SingleChemical<ChemicalToChemicalRecipe<ActivatingBookCategory, ActivatingBookInfo>>> getRecipeType() {
         return MekanismRecipeType.ACTIVATING;
     }
 
     @Override
-    public IRecipeViewerRecipeType<ChemicalToChemicalRecipe> recipeViewerType() {
+    public IRecipeViewerRecipeType<ChemicalToChemicalRecipe<ActivatingBookCategory, ActivatingBookInfo>> recipeViewerType() {
         return RecipeViewerRecipeType.ACTIVATING;
     }
 
     @Nullable
     @Override
-    public ChemicalToChemicalRecipe getRecipe(int cacheIndex) {
+    public RecipeHolder<ChemicalToChemicalRecipe<ActivatingBookCategory, ActivatingBookInfo>> getRecipe(int cacheIndex) {
         return findFirstRecipe(inputHandler);
     }
 
@@ -307,22 +327,18 @@ public class TileEntityLargeSolarNeutronActivator extends TileEntityRecipeMachin
 
     @NotNull
     @Override
-    public CachedRecipe<ChemicalToChemicalRecipe> createNewCachedRecipe(@NotNull ChemicalToChemicalRecipe recipe, int cacheIndex) {
-        return new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors, inputHandler, outputHandler)
-                .setErrorsChanged(this::onErrorsChanged)
-                .setCanHolderFunction(this::canFunction)
-                .setActive(this::setActive)
-                .setOnFinish(this::markForSave)
+    public CachedRecipe<ChemicalToChemicalRecipe<ActivatingBookCategory, ActivatingBookInfo>> createNewCachedRecipe(@NotNull ChemicalToChemicalRecipe<ActivatingBookCategory, ActivatingBookInfo> recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors, inputHandler, outputHandler))
                 // Edge case handling, this should almost always end up being 1
                 .setRequiredTicks(() -> productionRate > 0 && productionRate < 1 ? Mth.ceil(1 / productionRate) : 1)
                 .setBaselineMaxOperations(() -> baselineMaxOperations * (productionRate > 0 && productionRate < 1 ? 1 : (int) productionRate));
     }
 
     @Override
-    public void recalculateUpgrades(Upgrade upgrade) {
-        super.recalculateUpgrades(upgrade);
-        if (upgrade == Upgrade.SPEED) {
-            baselineMaxOperations = (int) Math.pow(2, getUpgrades(Upgrade.SPEED));
+    public void recalculateUpgrades(HolderGetter<Upgrade> upgrades, Holder<Upgrade> upgrade, int totalInstalled) {
+        super.recalculateUpgrades(upgrades, upgrade, totalInstalled);
+        if (upgrade.is(UpgradeIds.SPEED)) {
+            baselineMaxOperations = (int) Math.pow(2, totalInstalled);
         }
     }
 
@@ -342,7 +358,7 @@ public class TileEntityLargeSolarNeutronActivator extends TileEntityRecipeMachin
     }
 
     @Override
-    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel) {
+    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel, @Nullable Orientation orientation) {
         if (oldLevel > 0) {
             if (newLevel == 0) {
                 numPowering--;
