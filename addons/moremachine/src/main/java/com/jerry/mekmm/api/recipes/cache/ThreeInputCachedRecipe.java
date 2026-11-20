@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.function.*;
 
 @NullMarked
-public class ThreeInputCachedRecipe<HOLDER_A, INPUT_A extends TypedInstance<HOLDER_A>, HOLDER_B, INPUT_B extends TypedInstance<HOLDER_B>, HOLDER_C, INPUT_C extends TypedInstance<HOLDER_C>, OUTPUT, RECIPE extends MekanismRecipe<?> & TriPredicate<INPUT_A, INPUT_B, INPUT_C>> extends CachedRecipe<RECIPE> {
+public class ThreeInputCachedRecipe<HOLDER_A, INPUT_A extends TypedInstance<HOLDER_A>, HOLDER_B, INPUT_B extends TypedInstance<HOLDER_B>, HOLDER_C, INPUT_C extends TypedInstance<HOLDER_C>, OUTPUT, RECIPE extends MekanismRecipe<?, ?, ?> & TriPredicate<INPUT_A, INPUT_B, INPUT_C>> extends CachedRecipe<RECIPE> {
 
     protected final IInputHandler<HOLDER_A, INPUT_A> primaryInputHandler;
     protected final IInputHandler<HOLDER_B, INPUT_B> secondaryInputHandler;

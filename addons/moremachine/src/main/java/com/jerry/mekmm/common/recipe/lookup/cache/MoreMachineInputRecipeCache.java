@@ -18,7 +18,7 @@ public class MoreMachineInputRecipeCache {
 
     private MoreMachineInputRecipeCache() {}
 
-    public static class TripleItem<RECIPE extends MekanismRecipe<?> & TriPredicate<ItemStack, ItemStack, ItemStack>>
+    public static class TripleItem<RECIPE extends MekanismRecipe<?, ?, ?> & TriPredicate<ItemStack, ItemStack, ItemStack>>
                                   extends TripleInputRecipeCache<Item, ItemStack, ItemStackIngredient, Item, ItemStack, ItemStackIngredient, Item, ItemStack, ItemStackIngredient, RECIPE, ItemInputCache<RECIPE>, ItemInputCache<RECIPE>, ItemInputCache<RECIPE>> {
 
         public TripleItem(MekanismRecipeType<?, RECIPE, ?> recipeType, Function<RECIPE, ItemStackIngredient> inputAExtractor,

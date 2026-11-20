@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.ToIntBiFunction;
 
-public abstract class TileEntityItemToItemAdvancedFactory<RECIPE extends MekanismRecipe<?>> extends TileEntityAdvancedFactoryBase<RECIPE> {
+public abstract class TileEntityItemToItemAdvancedFactory<RECIPE extends MekanismRecipe<?, ?, ?>> extends TileEntityAdvancedFactoryBase<RECIPE> {
 
     private IIProcessInfo[] processInfoSlots;
 
@@ -353,7 +353,7 @@ public abstract class TileEntityItemToItemAdvancedFactory<RECIPE extends Mekanis
     public record IIProcessInfo(int process, @NotNull AdvancedFactoryInputInventorySlot inputSlot,
                                 @NotNull IInventorySlot outputSlot) {}
 
-    protected static class IIRecipeProcessInfo<ITEM, RECIPE extends MekanismRecipe<?>> {
+    protected static class IIRecipeProcessInfo<ITEM, RECIPE extends MekanismRecipe<?, ?, ?>> {
 
         private final List<IIProcessInfo> processes = new ArrayList<>();
         @Nullable

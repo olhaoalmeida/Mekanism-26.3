@@ -81,7 +81,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 
-public abstract class TileEntityAdvancedFactoryBase<RECIPE extends MekanismRecipe<?>> extends TileEntityConfigurableMachine implements IRecipeLookupHandler<RECIPE>, IFactoryStyle {
+public abstract class TileEntityAdvancedFactoryBase<RECIPE extends MekanismRecipe<?, ?, ?>> extends TileEntityConfigurableMachine implements IRecipeLookupHandler<RECIPE>, IFactoryStyle {
 
     /**
      * How many ticks it takes, by default, to run an operation.

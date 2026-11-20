@@ -1,5 +1,6 @@
 package com.jerry.mekmm.common.upgrade;
 
+import mekanism.common.recipe.lookup.monitor.ProgressRecipeCacheLookupMonitor;
 import mekanism.api.chemical.IChemicalTank;
 import mekanism.api.energy.IEnergyContainer;
 import mekanism.api.inventory.IInventorySlot;
@@ -24,17 +25,18 @@ public class PlantingUpgradeData extends MachineUpgradeData {
     public final int[] usedSoFar;
 
     // Planting Station Constructor
-    public PlantingUpgradeData(HolderLookup.Provider provider, boolean redstone, RedstoneControl controlType, IEnergyContainer energyContainer, int operatingTicks, int usedSoFar, IChemicalTank chemicalTank,
-                               EnergyInventorySlot energySlot, ChemicalInventorySlot chemicalSlot, InputInventorySlot inputSlot, OutputInventorySlot outputSlot, OutputInventorySlot secondaryOutputSlot,
-                               List<ITileComponent> components, PathElement problemPath) {
-        this(provider, redstone, controlType, energyContainer, new int[] { operatingTicks }, new int[] { usedSoFar }, chemicalTank, energySlot, chemicalSlot,
-                Collections.singletonList(inputSlot), List.of(outputSlot, secondaryOutputSlot), false, components, problemPath);
+    public PlantingUpgradeData(HolderLookup.Provider provider, boolean redstone, RedstoneControl controlType, IEnergyContainer energyContainer, ProgressRecipeCacheLookupMonitor<?> cacheLookupMonitor,
+                               int usedSoFar, IChemicalTank chemicalTank, EnergyInventorySlot energySlot, ChemicalInventorySlot chemicalSlot, InputInventorySlot inputSlot,
+                               OutputInventorySlot outputSlot, OutputInventorySlot secondaryOutputSlot, List<ITileComponent> components, PathElement problemPath) {
+        this(provider, redstone, controlType, energyContainer, new ProgressRecipeCacheLookupMonitor<?>[] { cacheLookupMonitor }, new int[] { usedSoFar }, chemicalTank, energySlot,
+                chemicalSlot, Collections.singletonList(inputSlot), List.of(outputSlot, secondaryOutputSlot), false, components, problemPath);
     }
 
     // Planting Factory Constructor
-    public PlantingUpgradeData(HolderLookup.Provider provider, boolean redstone, RedstoneControl controlType, IEnergyContainer energyContainer, int[] progress, int[] usedSoFar, IChemicalTank chemicalTank,
-                               EnergyInventorySlot energySlot, ChemicalInventorySlot chemicalSlot, List<IInventorySlot> inputSlots, List<IInventorySlot> outputSlots, boolean sorting, List<ITileComponent> components, PathElement problemPath) {
-        super(provider, redstone, controlType, energyContainer, progress, energySlot, inputSlots, outputSlots, sorting, components, problemPath);
+    public PlantingUpgradeData(HolderLookup.Provider provider, boolean redstone, RedstoneControl controlType, IEnergyContainer energyContainer, ProgressRecipeCacheLookupMonitor<?>[] cacheLookupMonitors,
+                               int[] usedSoFar, IChemicalTank chemicalTank, EnergyInventorySlot energySlot, ChemicalInventorySlot chemicalSlot, List<IInventorySlot> inputSlots,
+                               List<IInventorySlot> outputSlots, boolean sorting, List<ITileComponent> components, PathElement problemPath) {
+        super(provider, redstone, controlType, energyContainer, energySlot, cacheLookupMonitors, inputSlots, outputSlots, sorting, components, problemPath);
         this.chemicalTank = chemicalTank;
         this.chemicalSlot = chemicalSlot;
         this.usedSoFar = usedSoFar;

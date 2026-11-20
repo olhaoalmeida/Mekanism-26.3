@@ -74,7 +74,7 @@
 // Mekmm.rl("info/unstable_dimensional_gas")));
 // }
 //
-// public static <RECIPE extends MekanismRecipe<?>, TYPE extends IRecipeViewerRecipeType<RECIPE> &
+// public static <RECIPE extends MekanismRecipe<?, ?, ?>, TYPE extends IRecipeViewerRecipeType<RECIPE> &
 // IMekanismRecipeTypeProvider<?, RECIPE, ?>> void addCategoryAndRecipes(
 // EmiRegistry registry, TYPE recipeType, BiFunction<MekanismEmiRecipeCategory, RecipeHolder<RECIPE>,
 // MekanismEmiRecipe<RECIPE>> recipeCreator) {

@@ -20,7 +20,7 @@ import java.util.function.*;
  * Base class to help implement handling of recipes with two inputs.
  */
 @NullMarked
-public class MoreMachineTwoInputCachedRecipe<HOLDER_A, INPUT_A extends TypedInstance<HOLDER_A>, HOLDER_B, INPUT_B extends TypedInstance<HOLDER_B>, OUTPUT, RECIPE extends MekanismRecipe<?> & BiPredicate<INPUT_A, INPUT_B>> extends CachedRecipe<RECIPE> {
+public class MoreMachineTwoInputCachedRecipe<HOLDER_A, INPUT_A extends TypedInstance<HOLDER_A>, HOLDER_B, INPUT_B extends TypedInstance<HOLDER_B>, OUTPUT, RECIPE extends MekanismRecipe<?, ?, ?> & BiPredicate<INPUT_A, INPUT_B>> extends CachedRecipe<RECIPE> {
 
     protected final IInputHandler<HOLDER_A, INPUT_A> inputHandler;
     protected final IInputHandler<HOLDER_B, INPUT_B> secondaryInputHandler;

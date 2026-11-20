@@ -44,7 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.ToIntBiFunction;
 
-public abstract class TileEntityChemicalToItemFactory<RECIPE extends MekanismRecipe<?>> extends TileEntityAdvancedFactoryBase<RECIPE> {
+public abstract class TileEntityChemicalToItemFactory<RECIPE extends MekanismRecipe<?, ?, ?>> extends TileEntityAdvancedFactoryBase<RECIPE> {
 
     protected CIProcessInfo[] processInfoSlots;
     public OutputInventorySlot[] outputSlot;
@@ -390,7 +390,7 @@ public abstract class TileEntityChemicalToItemFactory<RECIPE extends MekanismRec
 
     public record CIProcessInfo(int process, @NotNull IChemicalTank inputTank, @NotNull IInventorySlot outputSlot) {}
 
-    protected static class CIRecipeProcessInfo<ITEM, RECIPE extends MekanismRecipe<?>> {
+    protected static class CIRecipeProcessInfo<ITEM, RECIPE extends MekanismRecipe<?, ?, ?>> {
 
         private final List<CIProcessInfo> processes = new ArrayList<>();
         @Nullable

@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = RecipeCacheLookupMonitor.class, remap = false)
-public abstract class MixinRecipeCacheLookupMonitor<RECIPE extends MekanismRecipe<?>> implements ICachedRecipeHolder<RECIPE>, IContentsListener {
+public abstract class MixinRecipeCacheLookupMonitor<RECIPE extends MekanismRecipe<?, ?, ?>> implements ICachedRecipeHolder<RECIPE>, IContentsListener {
 
     @Shadow
     @Final

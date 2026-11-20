@@ -76,7 +76,7 @@ import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.ToIntBiFunction;
 
-public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe<?>> extends TileEntityConfigurableMachine implements IRecipeLookupHandler<RECIPE> {
+public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe<?, ?, ?>> extends TileEntityConfigurableMachine implements IRecipeLookupHandler<RECIPE> {
 
     /**
      * How many ticks it takes, by default, to run an operation.
@@ -744,7 +744,7 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
     public record ProcessInfo(int process, @NotNull MoreMachineFactoryInputInventorySlot inputSlot, @NotNull IInventorySlot outputSlot,
                               @Nullable IInventorySlot secondaryOutputSlot) {}
 
-    private static class RecipeProcessInfo<ITEM, RECIPE extends MekanismRecipe<?>> {
+    private static class RecipeProcessInfo<ITEM, RECIPE extends MekanismRecipe<?, ?, ?>> {
 
         private final List<ProcessInfo> processes = new ArrayList<>();
         private final ITEM item;

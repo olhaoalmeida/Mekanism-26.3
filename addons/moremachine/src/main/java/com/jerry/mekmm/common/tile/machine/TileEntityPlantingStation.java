@@ -151,10 +151,10 @@ public class TileEntityPlantingStation extends TileEntityProgressMachine<Plantin
         }
 
         ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM)
-                .setCanTankEject(tank -> tank != chemicalTank);
+                .setCanChemicalTankEject((_, tank) -> tank != chemicalTank);
 
         itemInputHandler = InputHelper.getInputHandler(inputSlot, RecipeError.NOT_ENOUGH_INPUT);
-        chemicalInputHandler = InputHelper.getConstantInputHandler(chemicalTank);
+        chemicalInputHandler = InputHelper.getInputHandler(chemicalTank, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
         recipeContainers = new RecipeContainers(List.of(inputSlot, chemicalTank), List.of(mainOutputSlot, secondaryOutputSlot));
         outputHandler = OutputHelper.getOutputHandler(mainOutputSlot, RecipeError.NOT_ENOUGH_OUTPUT_SPACE, secondaryOutputSlot, NOT_ENOUGH_SPACE_SECONDARY_OUTPUT_ERROR);
 
@@ -277,7 +277,7 @@ public class TileEntityPlantingStation extends TileEntityProgressMachine<Plantin
 
     @Override
     public @NotNull PlantingUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new PlantingUpgradeData(provider, redstone, getControlType(), getEnergyContainer(), getOperatingTicks(), usedSoFar, chemicalTank, energySlot, chemicalSlot, inputSlot,
+        return new PlantingUpgradeData(provider, redstone, getControlType(), energyContainer, recipeCacheLookupMonitor, usedSoFar, chemicalTank, energySlot, chemicalSlot, inputSlot,
                 mainOutputSlot, secondaryOutputSlot, getComponents(), problemPath());
     }
 

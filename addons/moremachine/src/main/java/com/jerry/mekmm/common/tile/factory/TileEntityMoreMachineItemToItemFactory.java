@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Set;
 
-public abstract class TileEntityMoreMachineItemToItemFactory<RECIPE extends MekanismRecipe<?>> extends TileEntityMoreMachineFactory<RECIPE> {
+public abstract class TileEntityMoreMachineItemToItemFactory<RECIPE extends MekanismRecipe<?, ?, ?>> extends TileEntityMoreMachineFactory<RECIPE> {
 
     protected IInputHandler<Item, @NotNull ItemStack>[] inputHandlers;
     protected IOutputHandler<@NotNull ItemStackTemplate>[] outputHandlers;

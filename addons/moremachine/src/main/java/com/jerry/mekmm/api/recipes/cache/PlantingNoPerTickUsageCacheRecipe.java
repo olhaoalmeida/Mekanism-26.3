@@ -20,7 +20,7 @@ import org.jspecify.annotations.NullMarked;
 import java.util.function.*;
 
 @NullMarked
-public class PlantingNoPerTickUsageCacheRecipe<HOLDER_A, INPUT_A extends TypedInstance<HOLDER_A>, HOLDER_B, INPUT_B extends TypedInstance<HOLDER_B>, OUTPUT, RECIPE extends MekanismRecipe<?> & BiPredicate<INPUT_A, INPUT_B>> extends MoreMachineTwoInputCachedRecipe<HOLDER_A, INPUT_A, HOLDER_B, INPUT_B, OUTPUT, RECIPE> {
+public class PlantingNoPerTickUsageCacheRecipe<HOLDER_A, INPUT_A extends TypedInstance<HOLDER_A>, HOLDER_B, INPUT_B extends TypedInstance<HOLDER_B>, OUTPUT, RECIPE extends MekanismRecipe<?, ?, ?> & BiPredicate<INPUT_A, INPUT_B>> extends MoreMachineTwoInputCachedRecipe<HOLDER_A, INPUT_A, HOLDER_B, INPUT_B, OUTPUT, RECIPE> {
 
     /**
      * @param recipe                   Recipe.

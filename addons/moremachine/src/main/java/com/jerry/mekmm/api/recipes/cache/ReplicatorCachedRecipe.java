@@ -31,7 +31,7 @@ import java.util.Objects;
 import java.util.function.*;
 
 @NullMarked
-public class ReplicatorCachedRecipe<HOLDER, INPUT extends TypedInstance<HOLDER>, OUTPUT, RECIPE extends MekanismRecipe<?> & BiPredicate<INPUT, ChemicalStack>> extends CachedRecipe<RECIPE> {
+public class ReplicatorCachedRecipe<HOLDER, INPUT extends TypedInstance<HOLDER>, OUTPUT, RECIPE extends MekanismRecipe<?, ?, ?> & BiPredicate<INPUT, ChemicalStack>> extends CachedRecipe<RECIPE> {
 
     private final IInputHandler<HOLDER, INPUT> inputHandler;
     private final IInputHandler<Chemical, ChemicalStack> secondaryInputHandler;

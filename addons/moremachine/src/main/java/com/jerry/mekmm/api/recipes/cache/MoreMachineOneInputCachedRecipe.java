@@ -28,7 +28,7 @@ import java.util.function.Supplier;
  * Base class to help implement handling of recipes with one input.
  */
 @NullMarked
-public class MoreMachineOneInputCachedRecipe<HOLDER, INPUT extends TypedInstance<HOLDER>, OUTPUT, RECIPE extends MekanismRecipe<?> & Predicate<INPUT>> extends CachedRecipe<RECIPE> {
+public class MoreMachineOneInputCachedRecipe<HOLDER, INPUT extends TypedInstance<HOLDER>, OUTPUT, RECIPE extends MekanismRecipe<?, ?, ?> & Predicate<INPUT>> extends CachedRecipe<RECIPE> {
 
     private final IInputHandler<HOLDER, INPUT> inputHandler;
     private final IOutputHandler<OUTPUT> outputHandler;
