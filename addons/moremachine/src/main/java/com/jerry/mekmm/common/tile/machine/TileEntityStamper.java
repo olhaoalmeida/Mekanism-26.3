@@ -158,7 +158,7 @@ public class TileEntityStamper extends TileEntityProgressMachine<StamperRecipe> 
     @NotNull
     @Override
     public StamperUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new StamperUpgradeData(provider, redstone, getControlType(), getEnergyContainer(), getOperatingTicks(), energySlot, moldInputSlot, itemInputSlot, outputSlot, getComponents(), problemPath());
+        return new StamperUpgradeData(provider, redstone, getControlType(), energyContainer, energySlot, recipeCacheLookupMonitor, moldInputSlot, itemInputSlot, outputSlot, getComponents(), problemPath());
     }
 
     @Override

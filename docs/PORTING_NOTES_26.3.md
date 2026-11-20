@@ -27,3 +27,15 @@ Descobertas acumuladas (atualizar a cada rodada).
 - O MM usa um mixin em `MekanismRecipeType` (registra tipos sob o modid do Mekanism): precisa ser revisto para a nova assinatura.
 - Tiles: `getRecipe(int)` devolve `RecipeHolder<R>`; `createNewCachedRecipe(recipe, idx, ContextMap)`; novos: `hasItemOutput()`, `getRecipeContainers(int)`, `energyContainer()`; `updateAndProcess(level)`; `*UpgradeData` novo padrão.
 - Ordem: receitas -> registros/tipos -> tiles/fábricas -> GUI/JEI -> modelos.
+
+## More Machine port — deltas learned (batch 2)
+
+- **Item+Chemical→Item recipes** (Planting): extend `ItemStackChemicalToObjectRecipe<OUT, InjectingBookCategory, InjectingBookInfo>`; implement `getOutput(TypedInstance<Item>, TypedInstance<Chemical>)`, `getOutputDefinition(ContextMap)`, `getOutputDisplay()`; `display()` → `InjectingRecipeDisplay(itemDisplay, chemicalDisplay, perTick, experience, outputDisplay, craftingStation)`. Serializer groups gain `Recipe.CommonInfo.MAP_CODEC` + `XBookInfo.MAP_CODEC` first (Function8 etc.).
+- **Chemical per-tick input**: `InputHelper.getConstantInputHandler` is gone → `getInputHandler(tank, RecipeError.NOT_ENOUGH_SECONDARY_INPUT)`; constant usage is flagged in `calculateOperationsCanSupport(tracker, stack, true, usage)`.
+- **Ejector**: `setCanTankEject(tank->…)` → `setCanChemicalTankEject((dataType, tank)->…)`.
+- **Tiles**: `recalculateUpgrades(HolderGetter<Upgrade>, Holder<Upgrade>, int)` with `UpgradeIds.SPEED/CHEMICAL/XP_CONTAINMENT` and `UpgradeUtils.getTicks/getOperationsPerTick/getBaseUsage/getGasPerTickMeanMultiplier(upgrades, tile)`; `getRecipe()` returns `RecipeHolder<R>`; `createNewCachedRecipe(recipe, idx, ContextMap)` and end with `setCommonSettings(cached)`; `recipeCacheLookupMonitor.updateAndProcess(level)`; `usedSoFar` is `int` (`getIntOr/putInt`, `used -> usedSoFar = used`).
+- **UpgradeData**: `MachineUpgradeData(provider, redstone, control, energyContainer, energySlot, monitor(s), inputSlot(s), outputSlot(s)[, sorting], components, problemPath)`; `data.progress` removed → `cacheLookupMonitors[i].getSavedOperatingTicks(i)` / `monitor.inheritSavedOperatingTicks(...)`. AdvancedMachineUpgradeData takes monitor(s) + `usedSoFar` before chemical tank.
+- **Factories**: `CommonWorldTickHandler.flushTagAndRecipeCaches` → `Mekanism.worldTickHandler.flushTagAndRecipeCaches`; `findRecipe` returns `RecipeHolder<RECIPE>`; `updateCachedRecipe(holder, SlotDisplayContext.fromLevel(level))`; `updateAndProcess(SlotDisplayContext.fromLevel(level))`.
+- **Block shapes**: `VoxelShape[]` + `VoxelShapeUtils.setShape(shape, arr)` → `Map<Direction, VoxelShape> X = Shapes.rotateHorizontal(shape)` (script: scratchpad `fixshapes.py`, balanced-paren parser).
+- `MekanismRecipe<?>` → `MekanismRecipe<?, ?, ?>` (global sed).
+- Large* machines (meklm) are copies of Mekanism machines: Electrolytic Separator now extends `TileEntityExponentialMachine<R, RecipeCacheLookupMonitor<R>>` with `ElectroSeparatorEnergyContainer`; `FixedUsageEnergyContainer`/`NBTUtils` no longer exist (use ValueInput/ValueOutput).
