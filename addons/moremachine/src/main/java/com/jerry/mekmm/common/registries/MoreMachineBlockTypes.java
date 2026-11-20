@@ -21,7 +21,7 @@ import com.jerry.mekmm.common.tile.machine.TileEntityWirelessTransmissionStation
 import com.jerry.mekmm.common.util.MoreMachineEnumUtils;
 import com.jerry.mekmm.common.util.MoreMachineUtils;
 
-import Nonemekanism.api.upgrade.Upgrade;
+import mekanism.api.upgrade.Upgrade;
 import mekanism.api.math.MathUtils;
 import mekanism.common.block.attribute.*;
 import mekanism.common.content.blocktype.BlockTypeTile;

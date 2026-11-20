@@ -1,6 +1,6 @@
 package com.jerry.mekmm.mixin;
 
-import Nonemekanism.api.upgrade.Upgrade;
+import mekanism.api.upgrade.Upgrade;
 import mekanism.common.util.UpgradeUtils;
 
 import net.minecraft.core.Holder;

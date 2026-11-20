@@ -3,12 +3,12 @@ package com.jerry.mekaf.common.tile.factory.base;
 import com.jerry.mekaf.common.upgrade.ChemicalToChemicalUpgradeData;
 
 import mekanism.api.IContentsListener;
-import Nonemekanism.api.upgrade.Upgrade;
+import mekanism.api.upgrade.Upgrade;
 import mekanism.api.chemical.BasicChemicalTank;
 import mekanism.api.chemical.ChemicalResource;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.chemical.IChemicalTank;
-import Nonemekanism.api.chemical.ChemicalAttributeValidator;
+import mekanism.api.chemical.ChemicalAttributeValidator;
 import mekanism.api.inventory.IInventorySlot;
 import mekanism.api.recipes.MekanismRecipe;
 import mekanism.api.recipes.cache.CachedRecipe;

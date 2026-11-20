@@ -3,7 +3,7 @@ package com.jerry.meklg.client.render;
 import com.jerry.mekmm.common.base.MoreMachineProfilerConstants;
 
 import mekanism.client.render.MekanismRenderer;
-import Nonemekanism.client.render.outline.IWireFrameRenderer;
+import mekanism.client.render.outline.IWireFrameRenderer;
 import mekanism.client.render.tileentity.MekanismTileEntityRenderer;
 
 import net.minecraft.client.renderer.SubmitNodeCollector;

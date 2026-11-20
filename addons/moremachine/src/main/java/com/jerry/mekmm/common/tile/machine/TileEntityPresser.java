@@ -26,7 +26,7 @@ import mekanism.common.capabilities.holder.single.SingleConfigHolder;
 import mekanism.common.integration.computer.SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper;
 import mekanism.common.integration.computer.annotation.ComputerMethod;
 import mekanism.common.integration.computer.annotation.WrappingComputerMethod;
-import Nonemekanism.common.integration.computer.ComputerConstants;
+import mekanism.common.integration.computer.ComputerConstants;
 import mekanism.common.inventory.container.slot.ContainerSlotType;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;

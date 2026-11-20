@@ -8,7 +8,7 @@ import com.jerry.mekmm.common.util.MoreMachineUtils;
 
 import mekanism.api.IContentsListener;
 import mekanism.api.SerializationConstants;
-import Nonemekanism.api.upgrade.Upgrade;
+import mekanism.api.upgrade.Upgrade;
 import mekanism.api.energy.IEnergyContainer;
 import mekanism.api.inventory.IInventorySlot;
 import mekanism.api.recipes.MekanismRecipe;
@@ -26,7 +26,7 @@ import mekanism.common.integration.computer.ComputerException;
 import mekanism.common.integration.computer.SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper;
 import mekanism.common.integration.computer.annotation.ComputerMethod;
 import mekanism.common.integration.computer.annotation.WrappingComputerMethod;
-import Nonemekanism.common.integration.computer.ComputerConstants;
+import mekanism.common.integration.computer.ComputerConstants;
 import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.sync.SyncableBoolean;
 import mekanism.common.inventory.container.sync.SyncableInt;

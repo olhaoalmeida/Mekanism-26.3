@@ -12,7 +12,7 @@ import com.jerry.meklm.common.tile.prefab.TileEntityLargeChemicalTank;
 import com.jerry.mekmm.common.block.attribute.MoreMachineBounding;
 import com.jerry.mekmm.common.config.MoreMachineConfig;
 
-import Nonemekanism.api.upgrade.Upgrade;
+import mekanism.api.upgrade.Upgrade;
 import mekanism.api.math.MathUtils;
 import mekanism.common.MekanismLang;
 import mekanism.common.block.attribute.*;

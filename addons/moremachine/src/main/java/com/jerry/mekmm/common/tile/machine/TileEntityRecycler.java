@@ -26,18 +26,23 @@ import mekanism.common.capabilities.holder.single.SingleConfigHolder;
 import mekanism.common.integration.computer.SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper;
 import mekanism.common.integration.computer.annotation.ComputerMethod;
 import mekanism.common.integration.computer.annotation.WrappingComputerMethod;
-import Nonemekanism.common.integration.computer.ComputerConstants;
+import mekanism.common.integration.computer.ComputerConstants;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
 import mekanism.common.inventory.warning.WarningTracker.WarningType;
 import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.recipe.IMekanismRecipeTypeProvider;
-import mekanism.common.recipe.lookup.ISingleRecipeLookupHandler;
+import mekanism.common.recipe.lookup.IRecipeLookupHandler.RecipeContainers;
 import mekanism.common.recipe.lookup.cache.InputRecipeCache.SingleItem;
 import mekanism.common.tile.prefab.TileEntityProgressMachine;
 import mekanism.common.upgrade.MachineUpgradeData;
 
+import mekanism.api.recipes.book.SawingBookCategory;
+import mekanism.api.recipes.book.SawingBookCategory.SawingBookInfo;
+import mekanism.common.recipe.lookup.ISingleRecipeLookupHandler.ItemRecipeLookupHandler;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -53,7 +58,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class TileEntityRecycler extends TileEntityProgressMachine<RecyclerRecipe> implements ISingleRecipeLookupHandler.ItemRecipeLookupHandler<RecyclerRecipe> {
+public class TileEntityRecycler extends TileEntityProgressMachine<RecyclerRecipe> implements ItemRecipeLookupHandler<RecyclerRecipe> {
 
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,
@@ -65,6 +70,8 @@ public class TileEntityRecycler extends TileEntityProgressMachine<RecyclerRecipe
 
     private final IOutputHandler<@NotNull ChanceOutput> chanceOutputHandler;
     private final IInputHandler<Item, @NotNull ItemStack> inputHandler;
+
+    private final RecipeContainers recipeContainers;
 
     private MachineEnergyContainer<TileEntityRecycler> energyContainer;
 
@@ -84,6 +91,22 @@ public class TileEntityRecycler extends TileEntityProgressMachine<RecyclerRecipe
 
         inputHandler = InputHelper.getInputHandler(inputSlot, RecipeError.NOT_ENOUGH_INPUT);
         chanceOutputHandler = MoreMachineOutputHelper.getOutputHandler(outputSlot, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
+        recipeContainers = new RecipeContainers(inputSlot, List.of(outputSlot));
+    }
+
+    @Override
+    protected boolean hasItemOutput() {
+        return true;
+    }
+
+    @Override
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return recipeContainers;
+    }
+
+    @Override
+    public MachineEnergyContainer<TileEntityRecycler> energyContainer() {
+        return energyContainer;
     }
 
     @NotNull
@@ -115,12 +138,12 @@ public class TileEntityRecycler extends TileEntityProgressMachine<RecyclerRecipe
     protected boolean onUpdateServer(net.minecraft.server.level.ServerLevel level) {
         boolean sendUpdatePacket = super.onUpdateServer(level);
         energySlot.fillContainerOrConvert(null);
-        recipeCacheLookupMonitor.updateAndProcess();
+        recipeCacheLookupMonitor.updateAndProcess(level);
         return sendUpdatePacket;
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<SingleRecipeInput, RecyclerRecipe, SingleItem<RecyclerRecipe>> getRecipeType() {
+    public IMekanismRecipeTypeProvider<SingleRecipeInput, SawingBookCategory, SawingBookInfo, RecyclerRecipe, SingleItem<RecyclerRecipe>> getRecipeType() {
         return MoreMachineRecipeType.RECYCLING;
     }
 
@@ -130,13 +153,13 @@ public class TileEntityRecycler extends TileEntityProgressMachine<RecyclerRecipe
     }
 
     @Override
-    public @Nullable RecyclerRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<RecyclerRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(inputHandler);
     }
 
     @NotNull
     @Override
-    public CachedRecipe<RecyclerRecipe> createNewCachedRecipe(@NotNull RecyclerRecipe recipe, int cacheIndex) {
+    public CachedRecipe<RecyclerRecipe> createNewCachedRecipe(RecyclerRecipe recipe, int cacheIndex, ContextMap recipeContext) {
         return MoreMachineOneInputCachedRecipe.recycler(recipe, recheckAllRecipeErrors, inputHandler, chanceOutputHandler)
                 .setErrorsChanged(this::onErrorsChanged)
                 .setCanHolderFunction(this::canFunction)
@@ -156,7 +179,7 @@ public class TileEntityRecycler extends TileEntityProgressMachine<RecyclerRecipe
     @NotNull
     @Override
     public MachineUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new MachineUpgradeData(provider, redstone, getControlType(), getEnergyContainer(), getOperatingTicks(), energySlot, inputSlot, outputSlot, getComponents(), problemPath());
+        return new MachineUpgradeData(provider, redstone, getControlType(), energyContainer, energySlot, recipeCacheLookupMonitor, inputSlot, outputSlot, getComponents(), problemPath());
     }
 
     // Methods relating to IComputerTile
