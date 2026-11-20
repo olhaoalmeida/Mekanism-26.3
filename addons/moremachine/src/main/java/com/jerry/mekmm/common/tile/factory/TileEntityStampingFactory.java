@@ -155,6 +155,6 @@ public class TileEntityStampingFactory extends TileEntityMoreMachineItemToItemFa
     @NotNull
     @Override
     public StamperUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new StamperUpgradeData(provider, redstone, getControlType(), energyContainer, progress, energySlot, extraSlot, inputSlots, outputSlots, isSorting(), getComponents(), problemPath());
+        return new StamperUpgradeData(provider, redstone, getControlType(), energyContainer, energySlot, recipeCacheLookupMonitors, extraSlot, inputSlots, outputSlots, isSorting(), getComponents(), problemPath());
     }
 }

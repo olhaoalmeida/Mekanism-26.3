@@ -115,6 +115,6 @@ public class TileEntityMoreMachineItemStackToItemStackFactory extends TileEntity
     @NotNull
     @Override
     public MachineUpgradeData getUpgradeData(Provider provider) {
-        return new MachineUpgradeData(provider, redstone, getControlType(), energyContainer, progress, energySlot, inputSlots, outputSlots, isSorting(), getComponents(), problemPath());
+        return new MachineUpgradeData(provider, redstone, getControlType(), energyContainer, energySlot, recipeCacheLookupMonitors, inputSlots, outputSlots, isSorting(), getComponents(), problemPath());
     }
 }

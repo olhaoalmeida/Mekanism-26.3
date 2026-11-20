@@ -216,7 +216,7 @@ public class TileEntityReplicatingFactory extends TileEntityMoreMachineItemToIte
 
     @Override
     public @Nullable AdvancedMachineUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new AdvancedMachineUpgradeData(provider, redstone, getControlType(), energyContainer, progress, null, chemicalTank, chemicalSlot, energySlot,
+        return new AdvancedMachineUpgradeData(provider, redstone, getControlType(), energyContainer, recipeCacheLookupMonitors, new int[recipeCacheLookupMonitors.length], chemicalTank, chemicalSlot, energySlot,
                 inputSlots, outputSlots, isSorting(), getComponents(), problemPath());
     }
 

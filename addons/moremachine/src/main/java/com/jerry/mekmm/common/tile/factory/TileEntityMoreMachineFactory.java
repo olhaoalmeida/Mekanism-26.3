@@ -1,5 +1,11 @@
 package com.jerry.mekmm.common.tile.factory;
 
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.core.HolderGetter;
+import mekanism.api.upgrade.UpgradeIds;
 import com.jerry.mekmm.Mekmm;
 import com.jerry.mekmm.common.block.attribute.MoreMachineAttributeFactoryType;
 import com.jerry.mekmm.common.content.blocktype.MoreMachineFactoryType;
@@ -248,7 +254,7 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
             // being required), we want to make sure we are able to fill those slots
             // with other items.
             sortInventory();
-        } else if (!sortingNeeded && CommonWorldTickHandler.flushTagAndRecipeCaches) {
+        } else if (!sortingNeeded && Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
             // Otherwise, if sorting isn't currently needed and the recipe cache is invalid
             // Mark sorting as being needed again for the next check as recipes may
             // have changed so our current sort may be incorrect
@@ -258,9 +264,10 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
         // Copy this so that if it changes we still have the original amount. Don't bother making it a constant though
         // as this way
         // we can then use minusEqual instead of subtract to remove an extra copy call
+        ContextMap recipeContext = SlotDisplayContext.fromLevel(level);
         long prev = energyContainer.getAmountAsLong();
         for (int i = 0; i < recipeCacheLookupMonitors.length; i++) {
-            if (!recipeCacheLookupMonitors[i].updateAndProcess()) {
+            if (!recipeCacheLookupMonitors[i].updateAndProcess(recipeContext)) {
                 // If we don't have a recipe in that slot make sure that our active state for that position is false
                 activeStates[i] = false;
             }
@@ -309,7 +316,7 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
     @Nullable
     protected RECIPE getRecipeForInput(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot,
                                        boolean updateCache, boolean ignoreCache) {
-        if (!ignoreCache && !CommonWorldTickHandler.flushTagAndRecipeCaches) {
+        if (!ignoreCache && !Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
             // If our recipe caches are valid, grab our cached recipe and see if it is still valid
             CachedRecipe<RECIPE> cached = getCachedRecipe(process);
             if (isCachedRecipeValid(cached, fallbackInput)) {
@@ -319,20 +326,20 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
         }
         // If there is no cached item input, or it doesn't match our fallback then it is an out of date cache, so we
         // ignore the fact that we have a cache
-        RECIPE foundRecipe = findRecipe(process, fallbackInput, outputSlot, secondaryOutputSlot);
+        RecipeHolder<RECIPE> foundRecipe = findRecipe(process, fallbackInput, outputSlot, secondaryOutputSlot);
         if (foundRecipe == null) {
             // We could not find any valid recipe for the given item that matches the items in the current output slots
             return null;
         }
-        if (updateCache) {
+        if (updateCache && level != null) {
             // If we want to update the cache, then create a new cache with the recipe we found and update the cache
-            recipeCacheLookupMonitors[process].updateCachedRecipe(foundRecipe);
+            recipeCacheLookupMonitors[process].updateCachedRecipe(foundRecipe, SlotDisplayContext.fromLevel(level));
         }
-        return foundRecipe;
+        return foundRecipe.value();
     }
 
     @Nullable
-    protected abstract RECIPE findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot,
+    protected abstract RecipeHolder<RECIPE> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot,
                                          @Nullable IInventorySlot secondaryOutputSlot);
 
     protected abstract int getNeededInput(RECIPE recipe, ItemResource inputStack);
@@ -447,12 +454,16 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
     }
 
     @Override
-    public void recalculateUpgrades(Upgrade upgrade) {
-        super.recalculateUpgrades(upgrade);
-        if (upgrade == Upgrade.SPEED) {
-            ticksRequired = MekanismUtils.getTicks(this, BASE_TICKS_REQUIRED);
-            operationsPerTick = MekanismUtils.getOperationsPerTick(this, BASE_TICKS_REQUIRED, 1);
+    public void recalculateUpgrades(HolderGetter<Upgrade> upgrades, Holder<Upgrade> upgrade, int totalInstalled) {
+        if (upgrade.is(UpgradeIds.SPEED)) {
+            ticksRequired = UpgradeUtils.getTicks(BASE_TICKS_REQUIRED, upgrade, totalInstalled);
+            operationsPerTick = UpgradeUtils.getOperationsPerTick(BASE_TICKS_REQUIRED, 1, upgrade, totalInstalled);
+        } else if (upgrade.is(UpgradeIds.XP_CONTAINMENT) && level instanceof ServerLevel serverLevel) {
+            for (FactoryRecipeCacheLookupMonitor<RECIPE> recipeCacheLookupMonitor : recipeCacheLookupMonitors) {
+                recipeCacheLookupMonitor.xpContainmentChanged(serverLevel, Vec3.atCenterOf(worldPosition), totalInstalled > 0);
+            }
         }
+        super.recalculateUpgrades(upgrades, upgrade, totalInstalled);
     }
 
     @NotNull
@@ -490,7 +501,9 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
             sorting = data.sorting;
             ProblemReporter.PathElement problemPath = problemPath();
             energySlot.copyContents(data.energySlot, transaction);
-            System.arraycopy(data.progress, 0, progress, 0, data.progress.length);
+            for (int i = 0; i < data.cacheLookupMonitors.length; i++) {
+                recipeCacheLookupMonitors[i].inheritSavedOperatingTicks(data.cacheLookupMonitors[i].getSavedOperatingTicks(i));
+            }
             for (int i = 0; i < data.inputSlots.size(); i++) {
                 inputSlots.get(i).copyContents(data.inputSlots.get(i), transaction);
             }
@@ -564,7 +577,7 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
                 // 计算该堆栈的物品总数
                 recipeProcessInfo.totalCount += inputSlot.amountAsLong();
                 // 如果lazyMinPerSlot尚未初始化，并且配方缓存未被刷新，则尝试从缓存中获取配方。
-                if (recipeProcessInfo.lazyMinPerSlot == null && !CommonWorldTickHandler.flushTagAndRecipeCaches) {
+                if (recipeProcessInfo.lazyMinPerSlot == null && !Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
                     // If we don't have a lazily initialized min per slot calculation set for it yet
                     // and our cache is not invalid/out of date due to a reload
                     // 获得每个线程的cachedRecipe

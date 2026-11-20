@@ -324,7 +324,7 @@ public class TileEntityPlantingFactory extends TileEntityMoreMachineFactory<Plan
     @NotNull
     @Override
     public PlantingUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new PlantingUpgradeData(provider, redstone, getControlType(), energyContainer, progress, usedSoFar, chemicalTank, energySlot, chemicalSlot,
+        return new PlantingUpgradeData(provider, redstone, getControlType(), energyContainer, recipeCacheLookupMonitors, usedSoFar, chemicalTank, energySlot, chemicalSlot,
                 inputSlots, outputSlots, isSorting(), getComponents(), problemPath());
     }
 
