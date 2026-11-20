@@ -95,7 +95,7 @@ public class RenderLargePigmentMixer extends MekanismTileEntityRenderer<TileEnti
     private void setupRenderer(Direction direction, float rotation, PoseStack matrix) {
         matrix.pushPose();
         matrix.translate(0.5F, 1, 0.5F);
-        matrix.mulPose(Axis.YN.rotationDegrees(rotation));
+        matrix.rotateDegrees(Axis.YN, rotation);
     }
 
     @Override

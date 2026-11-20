@@ -63,7 +63,7 @@ public class RenderLargeAntiprotonicNucleosynthesizer extends MekanismTileEntity
             case EAST -> matrix.translate(13.5 / 16F, 1.5, 2.5 / 16);
         }
         matrix.scale(0.5F, 0.5F, 0.5F);
-        matrix.mulPose(Axis.YP.rotationDegrees(scaledTicks));
+        matrix.rotateDegrees(Axis.YP, scaledTicks);
         matrix.mulPose(RenderEnergyCube.coreVec.rotationDegrees(36F + scaledTicks));
         core.collect(EnumColor.PURPLE.getPackedColor(), matrix, nodeCollector, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, false);
         matrix.popPose();

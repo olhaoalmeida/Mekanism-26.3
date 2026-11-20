@@ -41,7 +41,7 @@ public class RenderLargeWindGeneratorItem implements SpecialModelRenderer<LargeW
         windGenerator.setupAnim(argument);
         matrix.pushPose();
         matrix.translate(0.5, 0.5, 0.5);
-        matrix.mulPose(Axis.ZP.rotationDegrees(180));
+        matrix.rotateDegrees(Axis.ZP, 180);
         windGenerator.collect(argument, matrix, submitNodeCollector, lightCoords, overlayCoords, hasFoil);
         matrix.popPose();
     }

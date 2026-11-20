@@ -45,7 +45,7 @@ public class RenderLargeWindGenerator extends MekanismTileEntityRenderer<TileEnt
             poseStack.pushPose();
             poseStack.translate(0.5, 1.5, 0.5);
             MekanismRenderer.rotate(poseStack, generator.getDirection(), 0, 180, 90, 270);
-            poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+            poseStack.rotateDegrees(Axis.ZP, 180);
             float angle = generator.getAngle();
             if (generator.getActive() && partialTick > 0) {
                 angle = (angle + generator.getHeightSpeedRatio() * partialTick) % 360;
@@ -81,7 +81,7 @@ public class RenderLargeWindGenerator extends MekanismTileEntityRenderer<TileEnt
             poseStack.pushPose();
             poseStack.translate(0.5, 1.5, 0.5);
             MekanismRenderer.rotate(poseStack, state.direction, 0, 180, 90, 270);
-            poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+            poseStack.rotateDegrees(Axis.ZP, 180);
             this.model.collect(
                     state.rotation,
                     poseStack,

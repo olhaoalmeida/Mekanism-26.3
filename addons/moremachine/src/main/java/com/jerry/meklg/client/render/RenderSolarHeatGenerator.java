@@ -45,7 +45,7 @@ public class RenderSolarHeatGenerator extends MekanismTileEntityRenderer<TileEnt
             poseStack.pushPose();
             poseStack.translate(0.5, 1.5, 0.5);
             MekanismRenderer.rotate(poseStack, solarHeatGenerator.getDirection(), 0, 180, 90, 270);
-            poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+            poseStack.rotateDegrees(Axis.ZP, 180);
             model.renderWireFrame(poseStack, buffer, new SolarHeatGeneratorRotationRenderState(solarHeatGenerator.getAngle()), getPanelVisibility(solarHeatGenerator), isHighContrast);
             poseStack.popPose();
         }
@@ -57,7 +57,7 @@ public class RenderSolarHeatGenerator extends MekanismTileEntityRenderer<TileEnt
             poseStack.pushPose();
             poseStack.translate(0.5, 1.5, 0.5);
             MekanismRenderer.rotate(poseStack, state.direction, 0, 180, 90, 270);
-            poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+            poseStack.rotateDegrees(Axis.ZP, 180);
             state.model.collectBlock(state.rotation, poseStack, nodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, state.panels);
             poseStack.popPose();
         }

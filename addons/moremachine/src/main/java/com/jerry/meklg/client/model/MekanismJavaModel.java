@@ -52,7 +52,7 @@ public abstract class MekanismJavaModel<STATE> {
     protected void collectParts(List<ModelPart> parts, PoseStack poseStack, RenderType renderType, SubmitNodeCollector collector, int light, int overlayLight, int color,
           ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling, boolean hasEffect) {
         for (ModelPart part : parts) {
-            collector.submitModelPart(part, poseStack, renderType, light, overlayLight, (TextureAtlasSprite) null, false, hasEffect, color, crumbling, 0);
+            collector.submitModelPart(part, poseStack, renderType, light, overlayLight, null, color);
         }
     }
 

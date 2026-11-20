@@ -30,7 +30,7 @@ public class RenderSolarHeatGeneratorItem implements SpecialModelRenderer<SolarH
     public void submit(@Nullable SolarHeatGeneratorRotationRenderState argument, PoseStack matrix, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
         matrix.pushPose();
         matrix.translate(0.5, 0.5, 0.5);
-        matrix.mulPose(Axis.ZP.rotationDegrees(180));
+        matrix.rotateDegrees(Axis.ZP, 180);
         solarHeatGenerator.collectItem(argument, matrix, submitNodeCollector, lightCoords, overlayCoords, hasFoil);
         matrix.popPose();
     }
