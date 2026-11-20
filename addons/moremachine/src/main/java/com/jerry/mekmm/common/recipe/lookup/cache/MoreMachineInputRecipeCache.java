@@ -21,7 +21,7 @@ public class MoreMachineInputRecipeCache {
     public static class TripleItem<RECIPE extends MekanismRecipe<?, ?, ?> & TriPredicate<ItemStack, ItemStack, ItemStack>>
                                   extends TripleInputRecipeCache<Item, ItemStack, ItemStackIngredient, Item, ItemStack, ItemStackIngredient, Item, ItemStack, ItemStackIngredient, RECIPE, ItemInputCache<RECIPE>, ItemInputCache<RECIPE>, ItemInputCache<RECIPE>> {
 
-        public TripleItem(MekanismRecipeType<?, RECIPE, ?> recipeType, Function<RECIPE, ItemStackIngredient> inputAExtractor,
+        public TripleItem(MekanismRecipeType<?, ?, ?, RECIPE, ?> recipeType, Function<RECIPE, ItemStackIngredient> inputAExtractor,
                           Function<RECIPE, ItemStackIngredient> inputBExtractor, Function<RECIPE, ItemStackIngredient> inputCExtractor) {
             super(recipeType, inputAExtractor, new ItemInputCache<>(), inputBExtractor, new ItemInputCache<>(), inputCExtractor, new ItemInputCache<>());
         }
@@ -29,7 +29,7 @@ public class MoreMachineInputRecipeCache {
 
     public static class Pressing extends TripleItem<TripleItemToItemRecipe> {
 
-        public Pressing(MekanismRecipeType<?, TripleItemToItemRecipe, ?> recipeType) {
+        public Pressing(MekanismRecipeType<?, ?, ?, TripleItemToItemRecipe, ?> recipeType) {
             super(recipeType, TripleItemToItemRecipe::getFirstInput, TripleItemToItemRecipe::getSecondInput, TripleItemToItemRecipe::getThirdInput);
         }
     }

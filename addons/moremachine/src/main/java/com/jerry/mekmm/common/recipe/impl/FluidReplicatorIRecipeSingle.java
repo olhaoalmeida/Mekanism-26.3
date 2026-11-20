@@ -24,7 +24,7 @@ public class FluidReplicatorIRecipeSingle extends BasicFluidChemicalToFluidRecip
      * @param output        Output.
      */
     public FluidReplicatorIRecipeSingle(FluidStackIngredient fluidInput, ChemicalStackIngredient chemicalInput, FluidStackTemplate output) {
-        super(fluidInput, chemicalInput, output);
+        super(new net.minecraft.world.item.crafting.Recipe.CommonInfo(false), new mekanism.api.recipes.book.WashingBookCategory.WashingBookInfo(mekanism.api.recipes.book.WashingBookCategory.MISC, ""), fluidInput, chemicalInput, output);
     }
 
     @Override
@@ -37,8 +37,4 @@ public class FluidReplicatorIRecipeSingle extends BasicFluidChemicalToFluidRecip
         return null;
     }
 
-    @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(MoreMachineBlocks.FLUID_REPLICATOR);
-    }
 }

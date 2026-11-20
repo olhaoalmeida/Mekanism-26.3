@@ -2,7 +2,7 @@ package com.jerry.mekmm.api.recipes;
 
 import com.jerry.mekmm.Mekmm;
 
-import mekanism.api.recipes.SimpleTwoInputRecipe;
+import mekanism.api.recipes.TwoInputMekRecipe.SimpleTwoInputRecipe;
 import mekanism.api.recipes.book.CombiningBookCategory;
 import mekanism.api.recipes.book.CombiningBookCategory.CombiningBookInfo;
 import mekanism.api.recipes.display.recipe.CombiningRecipeDisplay;

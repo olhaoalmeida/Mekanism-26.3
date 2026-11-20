@@ -1,5 +1,13 @@
 package com.jerry.mekmm.api.recipes.basic;
 
+import mekanism.api.chemical.Chemical;
+import mekanism.api.recipes.book.WashingBookCategory.WashingBookInfo;
+import net.minecraft.core.TypedInstance;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.fluids.crafting.display.FluidStackSlotDisplay;
 import com.jerry.mekmm.api.recipes.FluidChemicalToFluidRecipe;
 
 import mekanism.api.chemical.ChemicalStack;
@@ -28,16 +36,12 @@ public abstract class BasicFluidChemicalToFluidRecipe extends FluidChemicalToFlu
      * @param chemicalInput Chemical input.
      * @param output        Output.
      */
-    public BasicFluidChemicalToFluidRecipe(FluidStackIngredient fluidInput, ChemicalStackIngredient chemicalInput, FluidStackTemplate output) {
+    public BasicFluidChemicalToFluidRecipe(Recipe.CommonInfo commonInfo, WashingBookInfo bookInfo, FluidStackIngredient fluidInput, ChemicalStackIngredient chemicalInput, FluidStackTemplate output) {
+        super(commonInfo, bookInfo);
         this.fluidInput = Objects.requireNonNull(fluidInput, "Fluid input cannot be null.");
         this.chemicalInput = Objects.requireNonNull(chemicalInput, "Chemical input cannot be null.");
         Objects.requireNonNull(output, "Output cannot be null.");
         this.output = output;
-    }
-
-    @Override
-    public boolean test(FluidStack fluidStack, ChemicalStack chemicalStack) {
-        return fluidInput.test(fluidStack) && chemicalInput.test(chemicalStack);
     }
 
     @Override
@@ -51,13 +55,18 @@ public abstract class BasicFluidChemicalToFluidRecipe extends FluidChemicalToFlu
     }
 
     @Override
-    public List<FluidStack> getOutputDefinition() {
-        return Collections.singletonList(output.create());
+    public List<FluidStackTemplate> getOutputDefinition(ContextMap contextMap) {
+        return Collections.singletonList(output);
+    }
+
+    @Override
+    public SlotDisplay getOutputDisplay() {
+        return new FluidStackSlotDisplay(output);
     }
 
     @Override
     @Contract(value = "_, _ -> new", pure = true)
-    public FluidStackTemplate getOutput(FluidStack fluidStack, ChemicalStack chemicalStack) {
+    public FluidStackTemplate getOutput(TypedInstance<Fluid> fluidStack, TypedInstance<Chemical> chemicalStack) {
         return output;
     }
 
