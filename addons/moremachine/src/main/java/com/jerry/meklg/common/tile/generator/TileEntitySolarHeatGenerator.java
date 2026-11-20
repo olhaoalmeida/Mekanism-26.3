@@ -1,5 +1,6 @@
 package com.jerry.meklg.common.tile.generator;
 
+import mekanism.common.util.LightLevelUtils;
 import com.jerry.mekmm.api.datamaps.IMoreMachineDataMapTypes;
 import com.jerry.mekmm.api.datamaps.SolarHeatFluid;
 import com.jerry.mekmm.common.config.MoreMachineConfig;
@@ -349,7 +350,7 @@ public class TileEntitySolarHeatGenerator extends TileEntityMoreMachineGenerator
             productionMultiplier += check.getProductionMultiplier();
         }
         productionMultiplier /= solarChecks.length;
-        double sunBrightness = WorldUtils.getSunBrightness(level, getBlockPos().above(3));
+        double sunBrightness = LightLevelUtils.getSunBrightness(level, getBlockPos().above(3));
         double directionMultiplier;
         if (isEastWestFacing()) {
             double angle = calculateSunRayGroundAngle();

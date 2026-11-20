@@ -1,5 +1,6 @@
 package com.jerry.meklm.common.tile.machine;
 
+import mekanism.common.util.LightLevelUtils;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.util.context.ContextMap;
@@ -144,7 +145,7 @@ public class TileEntityLargeSolarNeutronActivator extends TileEntityRecipeMachin
         }
 
         ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM, TransmissionType.CHEMICAL)
-                .setCanTankEject(tank -> tank != inputTank);
+                .setCanChemicalTankEject((_, tank) -> tank != inputTank);
         inputHandler = InputHelper.getInputHandler(inputTank, RecipeError.NOT_ENOUGH_INPUT);
         outputHandler = OutputHelper.getOutputHandler(outputTank, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
     }
@@ -156,7 +157,7 @@ public class TileEntityLargeSolarNeutronActivator extends TileEntityRecipeMachin
         AdjustableChemicalTankHelper builder = AdjustableChemicalTankHelper.forSide(facingSupplier, side -> side == RelativeSide.RIGHT || side == RelativeSide.LEFT, side -> side == RelativeSide.BACK);
         // Allow extracting out of the input gas tank if it isn't external OR the output tank is empty AND the input is
         // radioactive
-        builder.addTank(inputTank = BasicChemicalTank.create(MAX_GAS, MekContainerHelper.radioactiveInputTankPredicate(() -> outputTank),
+        builder.addTank(inputTank = BasicChemicalTank.create(MAX_GAS, MekContainerHelper.radioactiveInputTankPredicate(() -> outputTank, this::getLevel),
                 ConstantPredicates.alwaysTrueBi(), this::containsRecipe, ChemicalAttributeValidator.ALWAYS_ALLOW, recipeCacheListener), RelativeSide.RIGHT, RelativeSide.LEFT, RelativeSide.BACK);
         builder.addTank(outputTank = BasicChemicalTank.output(MAX_GAS, recipeCacheUnpauseListener), RelativeSide.BACK);
         return builder.build();
@@ -316,7 +317,7 @@ public class TileEntityLargeSolarNeutronActivator extends TileEntityRecipeMachin
         // Get the brightness of the sun; note that there are some implementations that depend on the base
         // brightness function which doesn't take into account the fact that rain can't occur in some biomes.
         // 这里会计算对应的峰值，因此不需要在之前计算
-        float brightness = WorldUtils.getSunBrightness(level, worldPosition);
+        float brightness = LightLevelUtils.getSunBrightness(level, worldPosition);
         float generationMultiplier = solarCheck.getProductionMultiplier();
         for (LargeSNA check : solarChecks) {
             generationMultiplier += check.getProductionMultiplier();

@@ -105,6 +105,7 @@ public class TileEntityLargeAntiprotonicNucleosynthesizer extends TileEntityProg
     private int usedSoFar;
     private int numPowering;
 
+    private final RecipeContainers recipeContainers;
     protected final IOutputHandler<@NotNull ItemStackTemplate> outputHandler;
     protected final IInputHandler<Item, @NotNull ItemStack> itemInputHandler;
     protected final IInputHandler<Chemical, @NotNull ChemicalStack> gasInputHandler;
@@ -132,6 +133,7 @@ public class TileEntityLargeAntiprotonicNucleosynthesizer extends TileEntityProg
         itemInputHandler = InputHelper.getInputHandler(inputSlot, RecipeError.NOT_ENOUGH_INPUT);
         gasInputHandler = InputHelper.getInputHandler(gasTank, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
         outputHandler = OutputHelper.getOutputHandler(outputSlot, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
+        recipeContainers = new RecipeContainers(List.of(inputSlot, gasTank), outputSlot);
     }
 
     @Override
