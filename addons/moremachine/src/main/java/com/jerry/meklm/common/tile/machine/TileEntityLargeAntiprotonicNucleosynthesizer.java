@@ -1,5 +1,11 @@
 package com.jerry.meklm.common.tile.machine;
 
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
+import mekanism.common.recipe.lookup.monitor.ProgressRecipeCacheLookupMonitor;
+import mekanism.api.recipes.book.NucleosynthesizingBookCategory.NucleosynthesizingBookInfo;
+import mekanism.api.recipes.book.NucleosynthesizingBookCategory;
 import com.jerry.meklm.common.capabilities.holder.chemical.AdjustableChemicalTankHelper;
 import com.jerry.meklm.common.inventory.slot.BigStackInputInventorySlot;
 import com.jerry.meklm.common.inventory.slot.BigStackOutputInventorySlot;
@@ -95,7 +101,7 @@ public class TileEntityLargeAntiprotonicNucleosynthesizer extends TileEntityProg
     public IChemicalTank gasTank;
 
     private final ChemicalUsageMultiplier chemicalUsageMultiplier = ChemicalUsageMultiplier.constantUse(() -> ticksRequired, this::getTicksRequired);
-    private long usedSoFar;
+    private int usedSoFar;
     private int numPowering;
 
     protected final IOutputHandler<@NotNull ItemStackTemplate> outputHandler;
@@ -128,7 +134,7 @@ public class TileEntityLargeAntiprotonicNucleosynthesizer extends TileEntityProg
     }
 
     @Override
-    protected RecipeCacheLookupMonitor<NucleosynthesizingRecipe> createNewCacheMonitor() {
+    protected ProgressRecipeCacheLookupMonitor<NucleosynthesizingRecipe> createNewCacheMonitor() {
         return new NucleosynthesizerRecipeCacheLookupMonitor(this);
     }
 
@@ -171,8 +177,8 @@ public class TileEntityLargeAntiprotonicNucleosynthesizer extends TileEntityProg
     }
 
     @Override
-    public void onCachedRecipeChanged(@Nullable CachedRecipe<NucleosynthesizingRecipe> cachedRecipe, int cacheIndex) {
-        super.onCachedRecipeChanged(cachedRecipe, cacheIndex);
+    public void onCachedRecipeChanged(@Nullable CachedRecipe<NucleosynthesizingRecipe> cachedRecipe, int cacheIndex, ContextMap recipeContext) {
+        super.onCachedRecipeChanged(cachedRecipe, cacheIndex, recipeContext);
         // Note: Because we don't support speed upgrades we can do this in a much cleaner way than how we have to do it
         // for the PRC
         ticksRequired = cachedRecipe == null ? BASE_TICKS_REQUIRED : cachedRecipe.getRecipe().getDuration();
@@ -183,12 +189,12 @@ public class TileEntityLargeAntiprotonicNucleosynthesizer extends TileEntityProg
         boolean sendUpdatePacket = super.onUpdateServer(level);
         energySlot.fillContainerOrConvert(null);
         gasInputSlot.fillTankOrConvert(null);
-        clientEnergyUsed = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
+        clientEnergyUsed = ((NucleosynthesizerRecipeCacheLookupMonitor) recipeCacheLookupMonitor).updateAndProcess(level, energyContainer);
         return sendUpdatePacket;
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<SingleItemChemicalRecipeInput, NucleosynthesizingRecipe, ItemChemical<NucleosynthesizingRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<SingleItemChemicalRecipeInput, NucleosynthesizingBookCategory, NucleosynthesizingBookInfo, NucleosynthesizingRecipe, ItemChemical<NucleosynthesizingRecipe>> getRecipeType() {
         return MekanismRecipeType.NUCLEOSYNTHESIZING;
     }
 
@@ -198,12 +204,12 @@ public class TileEntityLargeAntiprotonicNucleosynthesizer extends TileEntityProg
     }
 
     @Override
-    public @Nullable NucleosynthesizingRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<NucleosynthesizingRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(itemInputHandler, gasInputHandler);
     }
 
     @Override
-    public @NotNull CachedRecipe<NucleosynthesizingRecipe> createNewCachedRecipe(@NotNull NucleosynthesizingRecipe recipe, int cacheIndex) {
+    public @NotNull CachedRecipe<NucleosynthesizingRecipe> createNewCachedRecipe(@NotNull NucleosynthesizingRecipe recipe, int cacheIndex, ContextMap recipeContext) {
         CachedRecipe<NucleosynthesizingRecipe> cachedRecipe;
         if (recipe.perTickUsage()) {
             cachedRecipe = ItemStackConstantChemicalToObjectCachedRecipe.create(recipe, recheckAllRecipeErrors, itemInputHandler, gasInputHandler,
@@ -211,32 +217,29 @@ public class TileEntityLargeAntiprotonicNucleosynthesizer extends TileEntityProg
         } else {
             cachedRecipe = new TwoInputCachedRecipe<>(recipe, recheckAllRecipeErrors, itemInputHandler, gasInputHandler, outputHandler);
         }
-        return cachedRecipe
-                .setErrorsChanged(this::onErrorsChanged)
-                .setCanHolderFunction(this::canFunction)
-                .setActive(this::setActive)
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(this::setOperatingTicks)
-                .setBaselineMaxOperations(() -> 64);
+        return setCommonSettings(cachedRecipe).setBaselineMaxOperations(() -> 64);
+    }
+
+    @Override
+    public MachineEnergyContainer<TileEntityLargeAntiprotonicNucleosynthesizer> energyContainer() {
+        return energyContainer;
     }
 
     @Override
     public int getSavedUsedSoFar(int cacheIndex) {
-        return MathUtils.clampToInt(usedSoFar);
+        return usedSoFar;
     }
 
     @Override
     public void loadAdditional(@NotNull ValueInput input) {
         super.loadAdditional(input);
-        usedSoFar = input.getLongOr(SerializationConstants.USED_SO_FAR, usedSoFar);
+        usedSoFar = input.getIntOr(SerializationConstants.USED_SO_FAR, 0);
     }
 
     @Override
     public void saveAdditional(@NotNull ValueOutput output) {
         super.saveAdditional(output);
-        output.putLong(SerializationConstants.USED_SO_FAR, usedSoFar);
+        output.putInt(SerializationConstants.USED_SO_FAR, usedSoFar);
     }
 
     @Override
@@ -251,7 +254,7 @@ public class TileEntityLargeAntiprotonicNucleosynthesizer extends TileEntityProg
     }
 
     @Override
-    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel) {
+    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel, @Nullable Orientation orientation) {
         if (oldLevel > 0) {
             if (newLevel == 0) {
                 numPowering--;
