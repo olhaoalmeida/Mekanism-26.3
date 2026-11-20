@@ -1,5 +1,11 @@
 package com.jerry.mekaf.common.content.blocktype;
 
+import net.minecraft.world.phys.shapes.Shapes;
+
+import net.minecraft.core.Direction;
+
+import java.util.Map;
+
 import mekanism.common.util.EnumUtils;
 import mekanism.common.util.VoxelShapeUtils;
 
@@ -14,18 +20,18 @@ public class AdvancedFactoryBlockShapes {
         return Block.box(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
-    public static final VoxelShape[] OXIDIZING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] DISSOLVING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] WASHING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] CRYSTALLIZING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] PRESSURISED_REACTING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] CENTRIFUGING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] LIQUIFYING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] PIGMENT_EXTRACTING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] PAINTING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
+    public static final Map<Direction, VoxelShape> OXIDIZING_FACTORY;
+    public static final Map<Direction, VoxelShape> DISSOLVING_FACTORY;
+    public static final Map<Direction, VoxelShape> WASHING_FACTORY;
+    public static final Map<Direction, VoxelShape> CRYSTALLIZING_FACTORY;
+    public static final Map<Direction, VoxelShape> PRESSURISED_REACTING_FACTORY;
+    public static final Map<Direction, VoxelShape> CENTRIFUGING_FACTORY;
+    public static final Map<Direction, VoxelShape> LIQUIFYING_FACTORY;
+    public static final Map<Direction, VoxelShape> PIGMENT_EXTRACTING_FACTORY;
+    public static final Map<Direction, VoxelShape> PAINTING_FACTORY;
 
     static {
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        OXIDIZING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(0, 0, 4, 16, 4, 16),
@@ -36,9 +42,9 @@ public class AdvancedFactoryBlockShapes {
                 box(1, 4, 4, 15, 14, 15),
                 box(7, 14, 12, 9, 15, 14),
                 box(11, 14, 9, 12, 15, 10),
-                box(13, 14, 9, 14, 15, 10)), OXIDIZING_FACTORY);
+                box(13, 14, 9, 14, 15, 10)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        DISSOLVING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(0, 0, 0, 16, 16, 4),
@@ -47,9 +53,9 @@ public class AdvancedFactoryBlockShapes {
                 box(2, 4, 4, 14, 12, 15),
                 box(0, 9, 5, 16, 11, 16),
                 box(0, 5, 5, 16, 7, 16),
-                box(1, 7, 4, 15, 9, 13)), DISSOLVING_FACTORY);
+                box(1, 7, 4, 15, 9, 13)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        WASHING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(0, 0, 0, 16, 16, 4),
@@ -67,9 +73,9 @@ public class AdvancedFactoryBlockShapes {
                 box(7, 14, 5, 9, 16, 6),
                 box(7, 14, 7, 9, 16, 8),
                 box(3, 14, 9, 6, 15, 10),
-                box(10, 14, 9, 13, 15, 10)), WASHING_FACTORY);
+                box(10, 14, 9, 13, 15, 10)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        CRYSTALLIZING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(0, 0, 0, 16, 16, 4),
@@ -90,9 +96,9 @@ public class AdvancedFactoryBlockShapes {
                 box(15, 4, 13, 16, 6, 14),
                 box(15, 10, 13, 16, 12, 14),
                 box(15, 10, 11, 16, 12, 12),
-                box(15, 10, 9, 16, 12, 10)), CRYSTALLIZING_FACTORY);
+                box(15, 10, 9, 16, 12, 10)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        PRESSURISED_REACTING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(0, 0, 0, 16, 16, 4),
@@ -116,9 +122,9 @@ public class AdvancedFactoryBlockShapes {
                 box(14, 8, 9, 16, 9, 10),
                 box(14, 10, 9, 16, 11, 10),
                 box(14, 12, 9, 16, 13, 10),
-                box(14, 14, 9, 16, 15, 10)), PRESSURISED_REACTING_FACTORY);
+                box(14, 14, 9, 16, 15, 10)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        CENTRIFUGING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(4, 16, 1, 12, 26, 2),
@@ -156,9 +162,9 @@ public class AdvancedFactoryBlockShapes {
                 box(6, 19, 4, 7, 25, 5),
                 box(7, 16, 11, 8, 18, 12),
                 box(7, 18, 11, 10, 19, 12),
-                box(9, 19, 11, 10, 25, 12)), CENTRIFUGING_FACTORY);
+                box(9, 19, 11, 10, 25, 12)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        LIQUIFYING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(0, 0, 0, 16, 16, 4),
@@ -175,9 +181,9 @@ public class AdvancedFactoryBlockShapes {
                 box(0, 5, 11, 1, 6, 12),
                 box(0, 10, 11, 1, 11, 12),
                 box(15, 10, 11, 16, 11, 12),
-                box(15, 5, 11, 16, 6, 12)), LIQUIFYING_FACTORY);
+                box(15, 5, 11, 16, 6, 12)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        PIGMENT_EXTRACTING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(0, 0, 0, 16, 16, 4),
@@ -192,9 +198,9 @@ public class AdvancedFactoryBlockShapes {
                 box(7, 14, 13, 9, 15, 14),
                 box(7, 14, 11, 9, 15, 12),
                 box(4, 0, 15, 7, 4, 16),
-                box(9, 0, 15, 12, 4, 16)), PIGMENT_EXTRACTING_FACTORY);
+                box(9, 0, 15, 12, 4, 16)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        PAINTING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(0, 0, 0, 16, 16, 4),
@@ -207,7 +213,7 @@ public class AdvancedFactoryBlockShapes {
                 box(15, 0, 12, 16, 1, 15),
                 box(1, 0, 4, 15, 14, 15),
                 box(0, 4, 4, 1, 8, 12),
-                box(15, 4, 4, 16, 8, 12)), PAINTING_FACTORY);
+                box(15, 4, 4, 16, 8, 12)));
     }
 
     public static VoxelShape[] getShape(AdvancedFactoryType type) {

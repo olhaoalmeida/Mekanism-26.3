@@ -18,18 +18,18 @@ import java.util.Set;
 
 public class LargeGeneratorBlockShapes {
 
-    public static final VoxelShape[] LARGE_HEAT_GENERATOR = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] LARGE_GAS_BURNING_GENERATOR = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] LARGE_WIND_GENERATOR = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] SOLAR_HEAT_GENERATOR = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
+    public static final Map<Direction, VoxelShape> LARGE_HEAT_GENERATOR;
+    public static final Map<Direction, VoxelShape> LARGE_GAS_BURNING_GENERATOR;
+    public static final Map<Direction, VoxelShape> LARGE_WIND_GENERATOR;
+    public static final Map<Direction, VoxelShape> SOLAR_HEAT_GENERATOR;
     private static final Map<BlockPos, VoxelShape>[] LARGE_WIND_GENERATOR_PARTS = new Map[EnumUtils.HORIZONTAL_DIRECTIONS.length];
 
     static {
         VoxelShape largeGenerator = box(-16, 0, -16, 32, 48, 32);
-        VoxelShapeUtils.setShape(largeGenerator, LARGE_GAS_BURNING_GENERATOR);
-        VoxelShapeUtils.setShape(largeGenerator, LARGE_HEAT_GENERATOR);
+        LARGE_GAS_BURNING_GENERATOR = Shapes.rotateHorizontal(largeGenerator);
+        LARGE_HEAT_GENERATOR = Shapes.rotateHorizontal(largeGenerator);
 
-        // VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        // LARGE_WIND_GENERATOR = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
         // box(-40, 0, -40, 56, 8, 56),
         // box(-32, 8, -32, 48, 24, 48),
         // box(-16, 0, -48, 32, 20, -32),
@@ -44,15 +44,15 @@ public class LargeGeneratorBlockShapes {
         // box(-18, 515, -52, 34, 567, -22),
         // box(-16, 510, 58, 32, 567, 88),
         // box(-8, 569, -16, 24, 575, 20),
-        // box(6, 556, 64, 10, 582, 79)), LARGE_WIND_GENERATOR);
+        // box(6, 556, 64, 10, 582, 79)));
 
         VoxelShape largeWindGenerator = VoxelShapeUtils.combine(
                 largeWindGeneratorBoxes());
-        VoxelShapeUtils.setShape(largeWindGenerator, LARGE_WIND_GENERATOR);
+        LARGE_WIND_GENERATOR = Shapes.rotateHorizontal(largeWindGenerator);
         setSplitShapes(largeWindGenerator, LARGE_WIND_GENERATOR_PARTS);
 
         VoxelShape solarHeatGenerator = box(-48, 0, -48, 64, 112, 64);
-        VoxelShapeUtils.setShape(solarHeatGenerator, SOLAR_HEAT_GENERATOR);
+        SOLAR_HEAT_GENERATOR = Shapes.rotateHorizontal(solarHeatGenerator);
     }
 
     private LargeGeneratorBlockShapes() {}

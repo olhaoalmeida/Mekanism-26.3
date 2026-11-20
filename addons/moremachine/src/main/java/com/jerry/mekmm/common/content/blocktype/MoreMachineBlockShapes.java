@@ -1,5 +1,11 @@
 package com.jerry.mekmm.common.content.blocktype;
 
+import net.minecraft.world.phys.shapes.Shapes;
+
+import net.minecraft.core.Direction;
+
+import java.util.Map;
+
 import mekanism.common.util.EnumUtils;
 import mekanism.common.util.VoxelShapeUtils;
 
@@ -15,25 +21,25 @@ public class MoreMachineBlockShapes {
     }
 
     // Machine
-    public static final VoxelShape[] PLANTING_STATION = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] REPLICATOR = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
+    public static final Map<Direction, VoxelShape> PLANTING_STATION;
+    public static final Map<Direction, VoxelShape> REPLICATOR;
     // Factories
-    public static final VoxelShape[] RECYCLING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] PLANTING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] STAMPING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] PRESSING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] LATHING_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] ROLLING_MILL_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] REPLICATOR_FACTORY = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] AMBIENT_GAS_COLLECTOR = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] WIRELESS_CHARGING_STATION = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] WIRELESS_TRANSMISSION_STATION = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
+    public static final Map<Direction, VoxelShape> RECYCLING_FACTORY;
+    public static final Map<Direction, VoxelShape> PLANTING_FACTORY;
+    public static final Map<Direction, VoxelShape> STAMPING_FACTORY;
+    public static final Map<Direction, VoxelShape> PRESSING_FACTORY;
+    public static final Map<Direction, VoxelShape> LATHING_FACTORY;
+    public static final Map<Direction, VoxelShape> ROLLING_MILL_FACTORY;
+    public static final Map<Direction, VoxelShape> REPLICATOR_FACTORY;
+    public static final Map<Direction, VoxelShape> AMBIENT_GAS_COLLECTOR;
+    public static final Map<Direction, VoxelShape> WIRELESS_CHARGING_STATION;
+    public static final Map<Direction, VoxelShape> WIRELESS_TRANSMISSION_STATION;
     // Doll
-    public static final VoxelShape[] AUTHOR_DOLL = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] FUMO = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
+    public static final Map<Direction, VoxelShape> AUTHOR_DOLL;
+    public static final Map<Direction, VoxelShape> FUMO;
 
     static {
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        PLANTING_STATION = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(0, 4, 4, 0, 12, 12),
                 box(16, 4, 4, 16, 12, 12),
@@ -66,9 +72,9 @@ public class MoreMachineBlockShapes {
                 box(4, 16, 2, 12, 28, 3),
                 box(2, 16, 4, 3, 28, 12),
                 box(4, 16, 13, 12, 28, 14),
-                box(13, 16, 4, 14, 28, 12)), PLANTING_STATION);
+                box(13, 16, 4, 14, 28, 12)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        REPLICATOR = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 Block.box(4, 4, 16, 12, 12, 16),
                 Block.box(1, 8, 14, 2, 10, 15),
                 Block.box(3, 8, 14, 4, 10, 15),
@@ -96,9 +102,9 @@ public class MoreMachineBlockShapes {
                 Block.box(7, 10, 4, 8, 13, 6),
                 Block.box(12, 10, 4, 13, 13, 6),
                 Block.box(7, 8, 1, 13, 15, 1),
-                Block.box(7, 15, 1, 13, 15, 9)), REPLICATOR);
+                Block.box(7, 15, 1, 13, 15, 9)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        RECYCLING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(0, 0, 0, 16, 16, 4),
@@ -115,9 +121,9 @@ public class MoreMachineBlockShapes {
                 box(0, 4, 5, 1, 12, 6),
                 box(0, 4, 10, 1, 12, 11),
                 box(15, 4, 5, 16, 12, 6),
-                box(15, 4, 10, 16, 12, 11)), RECYCLING_FACTORY);
+                box(15, 4, 10, 16, 12, 11)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        PLANTING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(6, 25, 6, 10, 27, 10),
                 box(4, 4, 15, 12, 12, 16),
@@ -145,9 +151,9 @@ public class MoreMachineBlockShapes {
                 box(4, 16, 2, 12, 27, 3),
                 box(2, 16, 4, 3, 27, 12),
                 box(4, 16, 13, 12, 27, 14),
-                box(13, 16, 4, 14, 27, 12)), PLANTING_FACTORY);
+                box(13, 16, 4, 14, 27, 12)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        STAMPING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(0, 0, 0, 16, 16, 4),
@@ -162,9 +168,9 @@ public class MoreMachineBlockShapes {
                 box(1, 9, 4, 15, 12, 15),
                 box(3, 0, 13, 13, 3, 16),
                 box(2, 3, 4, 14, 9, 14),
-                box(4, 3, 14, 12, 9, 15)), STAMPING_FACTORY);
+                box(4, 3, 14, 12, 9, 15)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        LATHING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(4, 3, 14, 12, 12, 15),
@@ -190,9 +196,9 @@ public class MoreMachineBlockShapes {
                 box(3, 9, 14, 4, 10, 15),
                 box(12, 5, 14, 13, 6, 15),
                 box(12, 7, 14, 13, 8, 15),
-                box(12, 9, 14, 13, 10, 15)), LATHING_FACTORY);
+                box(12, 9, 14, 13, 10, 15)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        ROLLING_MILL_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(4, 3, 14, 12, 9, 15),
@@ -206,9 +212,9 @@ public class MoreMachineBlockShapes {
                 box(1, 3, 6, 2, 7, 10),
                 box(1, 8, 6, 2, 12, 10),
                 box(14, 3, 6, 15, 7, 10),
-                box(14, 8, 6, 15, 12, 10)), ROLLING_MILL_FACTORY);
+                box(14, 8, 6, 15, 12, 10)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        PRESSING_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(0, 0, 0, 16, 16, 4),
@@ -219,9 +225,9 @@ public class MoreMachineBlockShapes {
                 box(12, 4, 12, 15, 12, 15),
                 box(12, 4, 4, 15, 12, 7),
                 box(2, 4, 7, 4, 12, 12),
-                box(12, 4, 7, 14, 12, 12)), PRESSING_FACTORY);
+                box(12, 4, 7, 14, 12, 12)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        REPLICATOR_FACTORY = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(4, 4, 15, 12, 12, 16),
                 box(0, 0, 0, 16, 16, 4),
@@ -236,9 +242,9 @@ public class MoreMachineBlockShapes {
                 box(12, 4, 14, 13, 10, 15),
                 box(14, 4, 14, 15, 10, 15),
                 box(0, 5, 14, 16, 6, 16),
-                box(0, 8, 14, 16, 9, 16)), REPLICATOR_FACTORY);
+                box(0, 8, 14, 16, 9, 16)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        AMBIENT_GAS_COLLECTOR = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 0, 12, 12, 0),
                 box(0, 4, 4, 0, 12, 12),
                 box(4, 4, 16, 12, 12, 16),
@@ -263,9 +269,9 @@ public class MoreMachineBlockShapes {
                 box(12, 8, 12, 16, 9, 16),
                 box(12, 10, 12, 16, 11, 16),
                 box(12, 8, 0, 16, 9, 4),
-                box(12, 10, 0, 16, 11, 4)), AMBIENT_GAS_COLLECTOR);
+                box(12, 10, 0, 16, 11, 4)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        WIRELESS_CHARGING_STATION = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, -16, 4, 12, -16, 12),
                 box(4, -12, 0, 12, -4, 0),
                 box(0, -12, 4, 0, -4, 12),
@@ -308,9 +314,9 @@ public class MoreMachineBlockShapes {
                 box(12, 21.5, 15, 16, 22.5, 15),
                 box(0, 21.5, 15, 4, 22.5, 15),
                 box(12, 21.5, 1, 16, 22.5, 1),
-                box(0, 21.5, 1, 4, 22.5, 1)).move(0, 1, 0), WIRELESS_CHARGING_STATION);
+                box(0, 21.5, 1, 4, 22.5, 1)).move(0, 1, 0));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        WIRELESS_TRANSMISSION_STATION = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(0, 20, 1, 4, 22, 1),
                 box(12, 20, 1, 16, 22, 1),
                 box(0, 20, 15, 4, 22, 15),
@@ -350,25 +356,25 @@ public class MoreMachineBlockShapes {
                 box(0, 19, 14, 4, 23, 15),
                 box(12, 19, 14, 16, 23, 15),
                 box(4, 17, 7, 6, 21, 9),
-                box(10, 17, 7, 12, 21, 9)).move(0, 1, 0), WIRELESS_TRANSMISSION_STATION);
+                box(10, 17, 7, 12, 21, 9)).move(0, 1, 0));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        AUTHOR_DOLL = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4.35, 6.2, 7.35, 11.65, 13.5, 14.65), // head
                 box(5, 4.2, 7.08248, 6.5, 6.2, 13.08248), // left_arm
                 box(9.6, 4.54246, 6.979, 11.1, 6.54246, 12.979), // right_arm
                 box(8, 0.1, 4, 10, 2.1, 10), // left_leg
                 box(6, 0.1, 4, 8, 2.1, 10), // right_leg
                 box(5.6, 0.2, 9.6, 10.4, 6.2, 12.4) // body
-        ), AUTHOR_DOLL);
+        ));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        FUMO = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4.1, 5.9, 7, 11.8, 13.5, 14.7), // head and hat layer
                 box(2.4, -0.1, 9.9, 6.9, 6.6, 12.2), // left arm and layer
                 box(8.9, 0.1, 9.8, 13.5, 6.8, 12.1), // right arm and layer
                 box(8.2, -0.2, 4.4, 12.7, 2, 11), // left leg and layer
                 box(3.3, -0.2, 4.4, 7.8, 2, 11), // right leg and layer
                 box(5.5, -0.1, 9.5, 10.5, 6.1, 12.5) // body and layer
-        ), FUMO);
+        ));
     }
 
     public static VoxelShape[] getShape(MoreMachineFactoryType type) {

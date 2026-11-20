@@ -1,5 +1,11 @@
 package com.jerry.meklm.common.content.blocktype;
 
+import net.minecraft.world.phys.shapes.Shapes;
+
+import net.minecraft.core.Direction;
+
+import java.util.Map;
+
 import com.jerry.meklm.api.tier.ILargeChemicalTankTier;
 import com.jerry.meklm.common.tier.MidChemicalTankTier;
 
@@ -11,17 +17,17 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class LargeMachineBlockShapes {
 
-    public static final VoxelShape[] MID_CHEMICAL_TANK = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] MAX_CHEMICAL_TANK = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] LARGE_ROTARY_CONDENSENTRATOR = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] LARGE_CHEMICAL_INFUSER = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] LARGE_ELECTROLYTIC_SEPARATOR = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] LARGE_SOLAR_NEUTRON_ACTIVATOR = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] LARGE_ANTIPROTONIC_NUCLEOSYNTHESIZER = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
-    public static final VoxelShape[] LARGE_PIGMENT_MIXER = new VoxelShape[EnumUtils.HORIZONTAL_DIRECTIONS.length];
+    public static final Map<Direction, VoxelShape> MID_CHEMICAL_TANK;
+    public static final Map<Direction, VoxelShape> MAX_CHEMICAL_TANK;
+    public static final Map<Direction, VoxelShape> LARGE_ROTARY_CONDENSENTRATOR;
+    public static final Map<Direction, VoxelShape> LARGE_CHEMICAL_INFUSER;
+    public static final Map<Direction, VoxelShape> LARGE_ELECTROLYTIC_SEPARATOR;
+    public static final Map<Direction, VoxelShape> LARGE_SOLAR_NEUTRON_ACTIVATOR;
+    public static final Map<Direction, VoxelShape> LARGE_ANTIPROTONIC_NUCLEOSYNTHESIZER;
+    public static final Map<Direction, VoxelShape> LARGE_PIGMENT_MIXER;
 
     static {
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        MID_CHEMICAL_TANK = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, 4, 16, 12, 12, 16),
                 box(3, 29, 3, 13, 29, 13),
                 box(3, 29, 3, 6, 32, 4),
@@ -39,9 +45,9 @@ public class LargeMachineBlockShapes {
                 box(4.5, 16, 1.99, 11.5, 24, 1.99),
                 box(1.99, 16, 4.5, 1.99, 24, 11.5),
                 box(14.01, 16, 4.5, 14.01, 24, 11.5),
-                box(4.5, 16, 14.01, 11.5, 24, 14.01)), MID_CHEMICAL_TANK);
+                box(4.5, 16, 14.01, 11.5, 24, 14.01)));
 
-        VoxelShapeUtils.setShape(VoxelShapeUtils.combine(
+        MAX_CHEMICAL_TANK = Shapes.rotateHorizontal(VoxelShapeUtils.combine(
                 box(4, -12, 16, 12, -4, 16),
                 box(3, 29, 3, 13, 29, 13),
                 box(3, 29, 3, 6, 32, 4),
@@ -60,16 +66,16 @@ public class LargeMachineBlockShapes {
                 box(15.01, 4, 4.5, 15.01, 12, 11.5),
                 box(0.99, 4, 4.5, 0.99, 12, 11.5),
                 box(4.5, 4, 0.99, 11.5, 12, 0.99),
-                box(4.5, 4, 15.01, 11.5, 12, 15.01)).move(0, 1, 0), MAX_CHEMICAL_TANK);
+                box(4.5, 4, 15.01, 11.5, 12, 15.01)).move(0, 1, 0));
 
         VoxelShape twoHighLargeMachine = box(-16, 0, -16, 32, 32, 32);
         VoxelShape threeHighLargeMachine = box(-16, 0, -16, 32, 48, 32);
-        VoxelShapeUtils.setShape(threeHighLargeMachine, LARGE_ROTARY_CONDENSENTRATOR);
-        VoxelShapeUtils.setShape(threeHighLargeMachine, LARGE_CHEMICAL_INFUSER);
-        VoxelShapeUtils.setShape(twoHighLargeMachine, LARGE_ELECTROLYTIC_SEPARATOR);
-        VoxelShapeUtils.setShape(threeHighLargeMachine, LARGE_SOLAR_NEUTRON_ACTIVATOR);
-        VoxelShapeUtils.setShape(threeHighLargeMachine, LARGE_ANTIPROTONIC_NUCLEOSYNTHESIZER);
-        VoxelShapeUtils.setShape(threeHighLargeMachine, LARGE_PIGMENT_MIXER);
+        LARGE_ROTARY_CONDENSENTRATOR = Shapes.rotateHorizontal(threeHighLargeMachine);
+        LARGE_CHEMICAL_INFUSER = Shapes.rotateHorizontal(threeHighLargeMachine);
+        LARGE_ELECTROLYTIC_SEPARATOR = Shapes.rotateHorizontal(twoHighLargeMachine);
+        LARGE_SOLAR_NEUTRON_ACTIVATOR = Shapes.rotateHorizontal(threeHighLargeMachine);
+        LARGE_ANTIPROTONIC_NUCLEOSYNTHESIZER = Shapes.rotateHorizontal(threeHighLargeMachine);
+        LARGE_PIGMENT_MIXER = Shapes.rotateHorizontal(threeHighLargeMachine);
     }
 
     public static VoxelShape[] getLargeChemicalTank(ILargeChemicalTankTier tier) {
