@@ -221,6 +221,11 @@ public class TileEntityLargeAntiprotonicNucleosynthesizer extends TileEntityProg
     }
 
     @Override
+    protected boolean hasItemOutput() {
+        return true;
+    }
+
+    @Override
     public MachineEnergyContainer<TileEntityLargeAntiprotonicNucleosynthesizer> energyContainer() {
         return energyContainer;
     }

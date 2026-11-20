@@ -1,5 +1,15 @@
 package com.jerry.meklm.common.tile.machine;
 
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.Holder;
+import mekanism.api.upgrade.UpgradeIds;
+import mekanism.common.recipe.lookup.IRecipeLookupHandler.RecipeContainers;
+import mekanism.common.recipe.lookup.monitor.RecipeCacheLookupMonitor;
+import mekanism.api.recipes.book.ChemicalInfusingBookCategory.ChemicalInfusingBookInfo;
+import mekanism.api.recipes.book.ChemicalInfusingBookCategory;
 import com.jerry.meklm.common.capabilities.holder.chemical.AdjustableChemicalTankHelper;
 import com.jerry.meklm.common.registries.LargeMachineBlocks;
 import com.jerry.meklm.common.tile.INotNeedConfig;
@@ -76,7 +86,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
-public class TileEntityLargeChemicalInfuser extends TileEntityRecipeMachine<ChemicalChemicalToChemicalRecipe> implements IBoundingBlock, EitherSideChemicalRecipeLookupHandler<ChemicalChemicalToChemicalRecipe>, INotNeedConfig {
+public class TileEntityLargeChemicalInfuser extends TileEntityRecipeMachine<ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo>, RecipeCacheLookupMonitor<ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo>>> implements IBoundingBlock, EitherSideChemicalRecipeLookupHandler<ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo>>, INotNeedConfig {
 
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,
@@ -107,6 +117,7 @@ public class TileEntityLargeChemicalInfuser extends TileEntityRecipeMachine<Chem
     public IChemicalTank centerTank;
 
     private long clientEnergyUsed = 0L;
+    private final RecipeContainers recipeContainers;
     private int baselineMaxOperations = 1;
     private int baseOperations = 1;
     private int numPowering;
@@ -149,11 +160,22 @@ public class TileEntityLargeChemicalInfuser extends TileEntityRecipeMachine<Chem
         }
 
         ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM, TransmissionType.CHEMICAL)
-                .setCanTankEject(tank -> tank == centerTank);
+                .setCanChemicalTankEject((_, tank) -> tank == centerTank);
 
         leftInputHandler = InputHelper.getInputHandler(leftTank, RecipeError.NOT_ENOUGH_LEFT_INPUT);
         rightInputHandler = InputHelper.getInputHandler(rightTank, RecipeError.NOT_ENOUGH_RIGHT_INPUT);
         outputHandler = OutputHelper.getOutputHandler(centerTank, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
+        recipeContainers = new RecipeContainers(List.of(leftTank, rightTank), centerTank);
+    }
+
+    @Override
+    protected boolean hasItemOutput() {
+        return false;
+    }
+
+    @Override
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return recipeContainers;
     }
 
     @NotNull
@@ -197,7 +219,12 @@ public class TileEntityLargeChemicalInfuser extends TileEntityRecipeMachine<Chem
         leftInputSlot.fillTankFromSlot(null);
         rightInputSlot.fillTankFromSlot(null);
         outputSlot.drainTankIntoSlot(null);
-        clientEnergyUsed = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
+        long prevEnergy = energyContainer.getAmountAsLong();
+        if (recipeCacheLookupMonitor.updateAndProcess(level)) {
+            clientEnergyUsed = Math.max(0, prevEnergy - energyContainer.getAmountAsLong());
+        } else {
+            clientEnergyUsed = 0;
+        }
         handleEject();
         return sendUpdatePacket;
     }
@@ -225,38 +252,34 @@ public class TileEntityLargeChemicalInfuser extends TileEntityRecipeMachine<Chem
 
     @NotNull
     @Override
-    public IMekanismRecipeTypeProvider<BiChemicalRecipeInput, ChemicalChemicalToChemicalRecipe, InputRecipeCache.EitherSideChemical<ChemicalChemicalToChemicalRecipe>> getRecipeType() {
+    public IMekanismRecipeTypeProvider<BiChemicalRecipeInput, ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo>, InputRecipeCache.EitherSideChemical<ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo>>> getRecipeType() {
         return MekanismRecipeType.CHEMICAL_INFUSING;
     }
 
     @Override
-    public IRecipeViewerRecipeType<ChemicalChemicalToChemicalRecipe> recipeViewerType() {
+    public IRecipeViewerRecipeType<ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo>> recipeViewerType() {
         return RecipeViewerRecipeType.CHEMICAL_INFUSING;
     }
 
     @Nullable
     @Override
-    public ChemicalChemicalToChemicalRecipe getRecipe(int cacheIndex) {
+    public RecipeHolder<ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo>> getRecipe(int cacheIndex) {
         return findFirstRecipe(leftInputHandler, rightInputHandler);
     }
 
     @NotNull
     @Override
-    public CachedRecipe<ChemicalChemicalToChemicalRecipe> createNewCachedRecipe(@NotNull ChemicalChemicalToChemicalRecipe recipe, int cacheIndex) {
-        return new OrderlessTwoInputCachedRecipe<>(recipe, recheckAllRecipeErrors, leftInputHandler, rightInputHandler, outputHandler)
-                .setErrorsChanged(this::onErrorsChanged)
-                .setCanHolderFunction(this::canFunction)
-                .setActive(this::setActive)
+    public CachedRecipe<ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo>> createNewCachedRecipe(@NotNull ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo> recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(new OrderlessTwoInputCachedRecipe<>(recipe, recheckAllRecipeErrors, leftInputHandler, rightInputHandler, outputHandler))
                 .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setBaselineMaxOperations(() -> baseOperations * baselineMaxOperations)
-                .setOnFinish(this::markForSave);
+                .setBaselineMaxOperations(() -> baseOperations * baselineMaxOperations);
     }
 
     @Override
-    public void recalculateUpgrades(Upgrade upgrade) {
-        super.recalculateUpgrades(upgrade);
-        if (upgrade == Upgrade.SPEED) {
-            int upgradeCount = getUpgrades(Upgrade.SPEED);
+    public void recalculateUpgrades(HolderGetter<Upgrade> upgrades, Holder<Upgrade> upgrade, int totalInstalled) {
+        super.recalculateUpgrades(upgrades, upgrade, totalInstalled);
+        if (upgrade.is(UpgradeIds.SPEED)) {
+            int upgradeCount = totalInstalled;
             baseOperations = 4 * (upgradeCount > 0 ? upgradeCount : upgradeCount + 1);
             baselineMaxOperations = (int) Math.pow(2, upgradeCount);
         }
@@ -274,7 +297,7 @@ public class TileEntityLargeChemicalInfuser extends TileEntityRecipeMachine<Chem
     }
 
     @Override
-    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel) {
+    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel, @Nullable Orientation orientation) {
         if (oldLevel > 0) {
             if (newLevel == 0) {
                 numPowering--;
