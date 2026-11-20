@@ -3,7 +3,14 @@ package com.jerry.mekmm.api.recipes.basic;
 import com.jerry.mekmm.api.recipes.MoreMachineRecipeSerializers;
 import com.jerry.mekmm.api.recipes.PlantingRecipe;
 
-import mekanism.api.chemical.ChemicalStack;
+import mekanism.api.chemical.Chemical;
+import mekanism.api.recipes.book.InjectingBookCategory.InjectingBookInfo;
+import mekanism.api.recipes.display.slot.ChanceSlotDisplay;
+import net.minecraft.core.TypedInstance;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.util.context.ContextMap;
 import mekanism.api.recipes.SawmillRecipe.ChanceOutput;
 import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
@@ -33,7 +40,8 @@ public class BasicPlantingRecipe extends PlantingRecipe {
 
     private final boolean perTickUsage;
 
-    public BasicPlantingRecipe(ItemStackIngredient itemInput, ChemicalStackIngredient chemicalInput, ItemStackTemplate mainOutput, ItemStackTemplate secondaryOutput, double secondaryChance, boolean perTickUsage) {
+    public BasicPlantingRecipe(Recipe.CommonInfo commonInfo, InjectingBookInfo bookInfo, ItemStackIngredient itemInput, ChemicalStackIngredient chemicalInput, ItemStackTemplate mainOutput, ItemStackTemplate secondaryOutput, double secondaryChance, boolean perTickUsage) {
+        super(commonInfo, bookInfo);
         this.itemInput = Objects.requireNonNull(itemInput, "Input cannot be null.");
         this.chemicalInput = Objects.requireNonNull(chemicalInput, "Chemical input cannot be null.");
         if (mainOutput == null && secondaryOutput == null) {
@@ -55,11 +63,6 @@ public class BasicPlantingRecipe extends PlantingRecipe {
     }
 
     @Override
-    public boolean test(@NotNull ItemStack itemStack, ChemicalStack chemicalStack) {
-        return this.itemInput.test(itemStack) && this.chemicalInput.test(chemicalStack);
-    }
-
-    @Override
     public boolean perTickUsage() {
         return perTickUsage;
     }
@@ -75,13 +78,13 @@ public class BasicPlantingRecipe extends PlantingRecipe {
     }
 
     @Override
-    public List<ItemStack> getMainOutputDefinition() {
-        return mainOutput == null ? Collections.emptyList() : Collections.singletonList(mainOutput.create());
+    public List<ItemStackTemplate> getMainOutputDefinition() {
+        return mainOutput == null ? Collections.emptyList() : Collections.singletonList(mainOutput);
     }
 
     @Override
-    public List<ItemStack> getSecondaryOutputDefinition() {
-        return secondaryOutput == null ? Collections.emptyList() : Collections.singletonList(secondaryOutput.create());
+    public List<ItemStackTemplate> getSecondaryOutputDefinition() {
+        return secondaryOutput == null ? Collections.emptyList() : Collections.singletonList(secondaryOutput);
     }
 
     @Override
@@ -109,8 +112,24 @@ public class BasicPlantingRecipe extends PlantingRecipe {
 
     @Override
     @Contract(value = "_, _ -> new", pure = true)
-    public ChanceOutput getOutput(ItemStack solid, ChemicalStack chemical) {
+    public ChanceOutput getOutput(TypedInstance<Item> solid, TypedInstance<Chemical> chemical) {
         return new BasicChanceOutput(secondaryChance > 0 ? RANDOM.nextDouble() : 0);
+    }
+
+    @Override
+    public SlotDisplay getOutputDisplay() {
+        SlotDisplay secondaryDisplay = null;
+        if (secondaryOutput != null && secondaryChance > 0) {
+            secondaryDisplay = ChanceSlotDisplay.create(new SlotDisplay.ItemStackSlotDisplay(secondaryOutput), secondaryChance);
+        }
+        if (mainOutput != null && secondaryDisplay != null) {
+            return new SlotDisplay.Composite(List.of(new SlotDisplay.ItemStackSlotDisplay(mainOutput), secondaryDisplay));
+        } else if (mainOutput != null) {
+            return new SlotDisplay.ItemStackSlotDisplay(mainOutput);
+        } else if (secondaryDisplay != null) {
+            return secondaryDisplay;
+        }
+        throw new IllegalStateException("At least one output should always be present");
     }
 
     @Override
@@ -133,8 +152,12 @@ public class BasicPlantingRecipe extends PlantingRecipe {
     public int hashCode() {
         int hash = 31 * itemInput.hashCode() + chemicalInput.hashCode();
         hash = 31 * hash + Double.hashCode(secondaryChance);
-        hash = 31 * hash + itemStackTemplateHash(mainOutput);
-        hash = 31 * hash + mainOutput.count();
+        if (mainOutput != null) {
+            hash = 31 * hash + itemStackTemplateHash(mainOutput);
+        }
+        if (mainOutput != null) {
+            hash = 31 * hash + mainOutput.count();
+        }
         if (secondaryOutput != null) {
             hash = 31 * hash + itemStackTemplateHash(secondaryOutput);
             hash = 31 * hash + secondaryOutput.count();

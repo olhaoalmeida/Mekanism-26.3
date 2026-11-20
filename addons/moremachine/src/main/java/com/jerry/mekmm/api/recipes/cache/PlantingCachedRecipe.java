@@ -117,7 +117,7 @@ public class PlantingCachedRecipe extends CachedRecipe<PlantingRecipe> {
                 itemInputHandler.calculateOperationsCanSupport(tracker, recipeItem);
                 if (!recipeChemical.isEmpty() && tracker.shouldContinueChecking()) {
                     // Calculate the current max based on the chemical input, and the given usage amount
-                    chemicalInputHandler.calculateOperationsCanSupport(tracker, recipeChemical, chemicalUsageMultiplier);
+                    chemicalInputHandler.calculateOperationsCanSupport(tracker, recipeChemical, true, chemicalUsageMultiplier);
                     if (tracker.shouldContinueChecking()) {
                         output = recipe.getOutput(recipeItem, recipeChemical);
                         // Calculate the max based on the space in the output

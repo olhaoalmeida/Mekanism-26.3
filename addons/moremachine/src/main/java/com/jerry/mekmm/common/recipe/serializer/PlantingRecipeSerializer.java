@@ -15,7 +15,9 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
-import com.mojang.datafixers.util.Function6;
+import com.mojang.datafixers.util.Function8;
+import mekanism.api.recipes.book.InjectingBookCategory.InjectingBookInfo;
+import net.minecraft.world.item.crafting.Recipe;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
@@ -30,13 +32,15 @@ public class PlantingRecipeSerializer {
 
     private PlantingRecipeSerializer() {}
 
-    public static RecipeSerializer<@NotNull BasicPlantingRecipe> create(Function6<ItemStackIngredient, ChemicalStackIngredient, ItemStackTemplate, ItemStackTemplate, Double, Boolean, BasicPlantingRecipe> factory) {
+    public static RecipeSerializer<@NotNull BasicPlantingRecipe> create(Function8<Recipe.CommonInfo, InjectingBookInfo, ItemStackIngredient, ChemicalStackIngredient, ItemStackTemplate, ItemStackTemplate, Double, Boolean, BasicPlantingRecipe> factory) {
         Codec<Double> chanceCodec = Codec.DOUBLE.validate(d -> d > 0 && d <= 1 ? DataResult.success(d) : DataResult.error(() -> "Expected secondaryChance to be greater than zero, and less than or equal to one. Found " + d));
         MapCodec<Optional<Double>> secondaryChanceFieldBase = chanceCodec.optionalFieldOf(SerializationConstants.SECONDARY_CHANCE);
         MapCodec<Optional<ItemStackTemplate>> mainOutputFieldBase = ItemStackTemplate.CODEC.optionalFieldOf(SerializationConstants.MAIN_OUTPUT);
         RecordCodecBuilder<BasicPlantingRecipe, Optional<ItemStackTemplate>> secondaryOutputField = ItemStackTemplate.CODEC.optionalFieldOf(SerializationConstants.SECONDARY_OUTPUT).forGetter(BasicPlantingRecipe::getSecondaryOutputRaw);
 
         MapCodec<BasicPlantingRecipe> codec = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                Recipe.CommonInfo.MAP_CODEC.forGetter(PlantingRecipe::commonInfo),
+                InjectingBookInfo.MAP_CODEC.forGetter(PlantingRecipe::bookInfo),
                 ItemStackIngredient.CODEC.fieldOf(SerializationConstants.ITEM_INPUT).forGetter(PlantingRecipe::getItemInput),
                 IngredientCreatorAccess.chemicalStack().codec().fieldOf(SerializationConstants.CHEMICAL_INPUT).forGetter(PlantingRecipe::getChemicalInput),
                 SerializerHelper.oneRequired(secondaryOutputField, mainOutputFieldBase, BasicPlantingRecipe::getMainOutputRaw),
@@ -45,16 +49,18 @@ public class PlantingRecipeSerializer {
                     double secondaryChance = plantingRecipe.getSecondaryChance();
                     return secondaryChance == 0 ? Optional.empty() : Optional.of(secondaryChance);
                 }),
-                Codec.BOOL.fieldOf(SerializationConstants.PER_TICK_USAGE).forGetter(BasicPlantingRecipe::perTickUsage)).apply(instance, (itemInput, chemicalInput, mainOutput, secondaryOutput, secondChance, perTickUsage) -> factory.apply(itemInput, chemicalInput, mainOutput.orElse(null), secondaryOutput.orElse(null), secondChance.orElse(0D), perTickUsage)));
+                Codec.BOOL.fieldOf(SerializationConstants.PER_TICK_USAGE).forGetter(BasicPlantingRecipe::perTickUsage)).apply(instance, (commonInfo, bookInfo, itemInput, chemicalInput, mainOutput, secondaryOutput, secondChance, perTickUsage) -> factory.apply(commonInfo, bookInfo, itemInput, chemicalInput, mainOutput.orElse(null), secondaryOutput.orElse(null), secondChance.orElse(0D), perTickUsage)));
 
         StreamCodec<RegistryFriendlyByteBuf, BasicPlantingRecipe> streamCodec = StreamCodec.composite(
+                Recipe.CommonInfo.STREAM_CODEC, PlantingRecipe::commonInfo,
+                InjectingBookInfo.STREAM_CODEC, PlantingRecipe::bookInfo,
                 ItemStackIngredient.STREAM_CODEC, PlantingRecipe::getItemInput,
                 IngredientCreatorAccess.chemicalStack().streamCodec(), PlantingRecipe::getChemicalInput,
                 ByteBufCodecs.optional(ItemStackTemplate.STREAM_CODEC), BasicPlantingRecipe::getMainOutputRaw,
                 ByteBufCodecs.optional(ItemStackTemplate.STREAM_CODEC), BasicPlantingRecipe::getSecondaryOutputRaw,
                 ByteBufCodecs.DOUBLE, PlantingRecipe::getSecondaryChance,
                 ByteBufCodecs.BOOL, PlantingRecipe::perTickUsage,
-                (itemInput, chemicalInput, mainOutput, secondaryOutput, secondChance, perTickUsage) -> factory.apply(itemInput, chemicalInput, mainOutput.orElse(null), secondaryOutput.orElse(null), secondChance, perTickUsage));
+                (commonInfo, bookInfo, itemInput, chemicalInput, mainOutput, secondaryOutput, secondChance, perTickUsage) -> factory.apply(commonInfo, bookInfo, itemInput, chemicalInput, mainOutput.orElse(null), secondaryOutput.orElse(null), secondChance, perTickUsage));
         return new RecipeSerializer<>(codec, streamCodec);
     }
 }

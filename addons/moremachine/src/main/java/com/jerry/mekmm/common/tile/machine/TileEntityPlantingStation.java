@@ -2,6 +2,17 @@ package com.jerry.mekmm.common.tile.machine;
 
 import com.jerry.mekmm.api.recipes.PlantingRecipe;
 import com.jerry.mekmm.api.recipes.cache.PlantingCachedRecipe;
+import mekanism.api.recipes.book.InjectingBookCategory;
+import mekanism.api.recipes.book.InjectingBookCategory.InjectingBookInfo;
+import mekanism.api.recipes.vanilla_input.SingleItemChemicalRecipeInput;
+import mekanism.common.recipe.lookup.IRecipeLookupHandler.RecipeContainers;
+import mekanism.common.util.UpgradeUtils;
+import mekanism.api.upgrade.UpgradeIds;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.item.crafting.RecipeHolder;
+
 import com.jerry.mekmm.api.recipes.cache.PlantingNoPerTickUsageCacheRecipe;
 import com.jerry.mekmm.client.recipe_viewer.MMRecipeViewerRecipeType;
 import com.jerry.mekmm.common.recipe.MoreMachineRecipeType;
@@ -103,6 +114,7 @@ public class TileEntityPlantingStation extends TileEntityProgressMachine<Plantin
     public IChemicalTank chemicalTank;
 
     private final IOutputHandler<ChanceOutput> outputHandler;
+    private final RecipeContainers recipeContainers;
     private final IInputHandler<Item, @NotNull ItemStack> itemInputHandler;
     private final IInputHandler<Chemical, @NotNull ChemicalStack> chemicalInputHandler;
 
@@ -143,11 +155,12 @@ public class TileEntityPlantingStation extends TileEntityProgressMachine<Plantin
 
         itemInputHandler = InputHelper.getInputHandler(inputSlot, RecipeError.NOT_ENOUGH_INPUT);
         chemicalInputHandler = InputHelper.getConstantInputHandler(chemicalTank);
+        recipeContainers = new RecipeContainers(List.of(inputSlot, chemicalTank), List.of(mainOutputSlot, secondaryOutputSlot));
         outputHandler = OutputHelper.getOutputHandler(mainOutputSlot, RecipeError.NOT_ENOUGH_OUTPUT_SPACE, secondaryOutputSlot, NOT_ENOUGH_SPACE_SECONDARY_OUTPUT_ERROR);
 
         baseTotalUsage = baseTicksRequired;
         if (useStatisticalMechanics()) {
-            chemicalUsageMultiplier = (usedSoFar, operatingTicks) -> StatUtils.inversePoisson(chemicalPerTickMeanMultiplier);
+            chemicalUsageMultiplier = (_, _) -> StatUtils.inversePoisson(chemicalPerTickMeanMultiplier);
         } else {
             chemicalUsageMultiplier = ChemicalUsageMultiplier.constantUse(() -> baseTotalUsage, this::getTicksRequired);
         }
@@ -200,16 +213,31 @@ public class TileEntityPlantingStation extends TileEntityProgressMachine<Plantin
     }
 
     @Override
+    protected boolean hasItemOutput() {
+        return true;
+    }
+
+    @Override
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return recipeContainers;
+    }
+
+    @Override
+    public MachineEnergyContainer<TileEntityPlantingStation> energyContainer() {
+        return energyContainer;
+    }
+
+    @Override
     protected boolean onUpdateServer(net.minecraft.server.level.ServerLevel level) {
         boolean sendUpdatePacket = super.onUpdateServer(level);
         energySlot.fillContainerOrConvert(null);
         chemicalSlot.fillTankOrConvert(null);
-        recipeCacheLookupMonitor.updateAndProcess();
+        recipeCacheLookupMonitor.updateAndProcess(level);
         return sendUpdatePacket;
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, PlantingRecipe, ItemChemical<PlantingRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<SingleItemChemicalRecipeInput, InjectingBookCategory, InjectingBookInfo, PlantingRecipe, ItemChemical<PlantingRecipe>> getRecipeType() {
         return MoreMachineRecipeType.PLANTING_STATION;
     }
 
@@ -219,41 +247,32 @@ public class TileEntityPlantingStation extends TileEntityProgressMachine<Plantin
     }
 
     @Override
-    public @Nullable PlantingRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<PlantingRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(itemInputHandler, chemicalInputHandler);
     }
 
     @Override
-    public @NotNull CachedRecipe<PlantingRecipe> createNewCachedRecipe(@NotNull PlantingRecipe recipe, int cacheIndex) {
+    public @NotNull CachedRecipe<PlantingRecipe> createNewCachedRecipe(@NotNull PlantingRecipe recipe, int cacheIndex, ContextMap recipeContext) {
         CachedRecipe<PlantingRecipe> cachedRecipe;
         if (recipe.perTickUsage()) {
             cachedRecipe = PlantingCachedRecipe.planting(recipe, recheckAllRecipeErrors, itemInputHandler, chemicalInputHandler, chemicalUsageMultiplier,
-                    used -> usedSoFar = Math.toIntExact(used), outputHandler);
+                    used -> usedSoFar = used, outputHandler);
         } else {
             cachedRecipe = PlantingNoPerTickUsageCacheRecipe.planting(recipe, recheckAllRecipeErrors, itemInputHandler, chemicalInputHandler, outputHandler);
         }
-        return cachedRecipe
-                // 设置错误更改
-                .setErrorsChanged(this::onErrorsChanged)
-                .setCanHolderFunction(this::canFunction)
-                .setActive(this::setActive)
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(this::setOperatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+        return setCommonSettings(cachedRecipe);
     }
 
     @Override
-    public void recalculateUpgrades(Upgrade upgrade) {
-        super.recalculateUpgrades(upgrade);
-        if (upgrade == Upgrade.SPEED || upgrade == Upgrade.CHEMICAL) {
+    public void recalculateUpgrades(HolderGetter<Upgrade> upgrades, Holder<Upgrade> upgrade, int totalInstalled) {
+        if (upgrade.is(UpgradeIds.SPEED) || (upgrade.is(UpgradeIds.CHEMICAL) && supportsUpgrade(upgrade))) {
             if (useStatisticalMechanics()) {
-                chemicalPerTickMeanMultiplier = MekanismUtils.getGasPerTickMeanMultiplier(this);
+                chemicalPerTickMeanMultiplier = UpgradeUtils.getGasPerTickMeanMultiplier(upgrades, this);
             } else {
-                baseTotalUsage = Math.toIntExact(MekanismUtils.getBaseUsage(this, baseTicksRequired));
+                baseTotalUsage = UpgradeUtils.getBaseUsage(upgrades, this, baseTicksRequired);
             }
         }
+        super.recalculateUpgrades(upgrades, upgrade, totalInstalled);
     }
 
     @Override
@@ -270,13 +289,13 @@ public class TileEntityPlantingStation extends TileEntityProgressMachine<Plantin
     @Override
     public void loadAdditional(@NotNull ValueInput input) {
         super.loadAdditional(input);
-        usedSoFar = Math.toIntExact(input.getLongOr(SerializationConstants.USED_SO_FAR, usedSoFar));
+        usedSoFar = input.getIntOr(SerializationConstants.USED_SO_FAR, 0);
     }
 
     @Override
     public void saveAdditional(@NotNull ValueOutput output) {
         super.saveAdditional(output);
-        output.putLong(SerializationConstants.USED_SO_FAR, usedSoFar);
+        output.putInt(SerializationConstants.USED_SO_FAR, usedSoFar);
     }
 
     @Override
