@@ -23,8 +23,8 @@ public class MoreMachineRecipeSerializersInternal {
         MoreMachineRecipeSerializers.RECYCLER = MM_RECIPE_SERIALIZERS.register("recycler", () -> RecyclerRecipeSerializer.create(BasicRecyclerRecipe::new));
         MoreMachineRecipeSerializers.PLANTING = MM_RECIPE_SERIALIZERS.register("planting", () -> PlantingRecipeSerializer.create(BasicPlantingRecipe::new));
         MoreMachineRecipeSerializers.STAMPING = MM_RECIPE_SERIALIZERS.register("stamper", () -> MoreMachineRecipeSerializer.stamping(BasicStamperRecipe::new));
-        MoreMachineRecipeSerializers.LATHING = MM_RECIPE_SERIALIZERS.register("lathe", () -> MekanismRecipeSerializer.itemToItem(BasicLatheRecipe::new));
-        MoreMachineRecipeSerializers.ROLLING_MILL = MM_RECIPE_SERIALIZERS.register("rolling_mill", () -> MekanismRecipeSerializer.itemToItem(BasicRollingMillRecipe::new));
+        MoreMachineRecipeSerializers.LATHING = MM_RECIPE_SERIALIZERS.register("lathe", () -> MekanismRecipeSerializer.itemToItem(BasicLatheRecipe::new, CrushingBookInfo.MAP_CODEC, CrushingBookInfo.STREAM_CODEC));
+        MoreMachineRecipeSerializers.ROLLING_MILL = MM_RECIPE_SERIALIZERS.register("rolling_mill", () -> MekanismRecipeSerializer.itemToItem(BasicRollingMillRecipe::new, CrushingBookInfo.MAP_CODEC, CrushingBookInfo.STREAM_CODEC));
         MoreMachineRecipeSerializers.PRESSING = MM_RECIPE_SERIALIZERS.register("pressing", () -> MoreMachineRecipeSerializer.pressing(BasicPresserRecipe::new));
     }
 }

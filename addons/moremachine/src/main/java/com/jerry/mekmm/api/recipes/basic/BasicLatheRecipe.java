@@ -1,6 +1,13 @@
 package com.jerry.mekmm.api.recipes.basic;
 
 import com.jerry.mekmm.Mekmm;
+import java.util.List;
+import mekanism.api.recipes.book.CrushingBookCategory;
+import mekanism.api.recipes.book.CrushingBookCategory.CrushingBookInfo;
+import mekanism.api.recipes.display.recipe.CrushingRecipeDisplay;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import com.jerry.mekmm.api.recipes.MoreMachineRecipeSerializers;
 import com.jerry.mekmm.api.recipes.MoreMachineRecipeTypes;
 
@@ -19,7 +26,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
-public class BasicLatheRecipe extends BasicItemStackToItemStackRecipe {
+public class BasicLatheRecipe extends BasicItemStackToItemStackRecipe<CrushingBookCategory, CrushingBookInfo> {
 
     private static final Holder<Item> CNC_LATHE = DeferredHolder.create(Registries.ITEM, Identifier.fromNamespaceAndPath(Mekmm.MOD_ID, "cnc_lathe"));
 
@@ -27,8 +34,8 @@ public class BasicLatheRecipe extends BasicItemStackToItemStackRecipe {
      * @param input  Input.
      * @param output Output.
      */
-    public BasicLatheRecipe(ItemStackIngredient input, ItemStackTemplate output) {
-        super(input, output, MoreMachineRecipeTypes.TYPE_LATHING.value());
+    public BasicLatheRecipe(Recipe.CommonInfo commonInfo, CrushingBookInfo bookInfo, ItemStackIngredient input, float experience, ItemStackTemplate output) {
+        super(MoreMachineRecipeTypes.TYPE_LATHING.value(), commonInfo, bookInfo, input, experience, output);
     }
 
     @Override
@@ -36,12 +43,8 @@ public class BasicLatheRecipe extends BasicItemStackToItemStackRecipe {
         return MoreMachineRecipeSerializers.LATHING.value();
     }
 
-    public String getGroup() {
-        return "cnc_lathe";
-    }
-
     @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(CNC_LATHE);
+    public List<RecipeDisplay> display() {
+        return List.of(new CrushingRecipeDisplay(getInput().display(), getOutputDisplay(), new SlotDisplay.ItemSlotDisplay(CNC_LATHE), experience()));
     }
 }
