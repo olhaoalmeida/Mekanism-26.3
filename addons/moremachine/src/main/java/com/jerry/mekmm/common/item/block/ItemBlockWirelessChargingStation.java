@@ -1,5 +1,9 @@
 package com.jerry.mekmm.common.item.block;
 
+import net.minecraft.world.level.block.Block;
+
+import net.minecraft.world.item.Item.Properties;
+
 import com.jerry.mekmm.common.registries.MoreMachineDataComponents;
 import com.jerry.mekmm.common.tile.machine.TileEntityWirelessChargingStation;
 
@@ -17,7 +21,7 @@ import net.minecraft.util.Util;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class ItemBlockWirelessChargingStation extends ItemBlockTooltip<BlockTileModel<TileEntityWirelessChargingStation, Machine<TileEntityWirelessChargingStation>>> {
+public class ItemBlockWirelessChargingStation extends ItemBlockTooltip {
 
     public static final AttachedSideConfig SIDE_CONFIG = Util.make(() -> {
         Map<TransmissionType, LightConfigInfo> configInfo = new EnumMap<>(TransmissionType.class);

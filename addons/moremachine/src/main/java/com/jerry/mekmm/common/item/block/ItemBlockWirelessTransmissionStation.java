@@ -1,5 +1,9 @@
 package com.jerry.mekmm.common.item.block;
 
+import net.minecraft.world.level.block.Block;
+
+import net.minecraft.world.item.Item.Properties;
+
 import com.jerry.mekmm.common.registries.MoreMachineDataComponents;
 import com.jerry.mekmm.common.tile.machine.TileEntityWirelessTransmissionStation;
 
@@ -20,7 +24,7 @@ import net.minecraft.util.Util;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class ItemBlockWirelessTransmissionStation extends ItemBlockTooltip<BlockTileModel<TileEntityWirelessTransmissionStation, Machine<TileEntityWirelessTransmissionStation>>> {
+public class ItemBlockWirelessTransmissionStation extends ItemBlockTooltip {
 
     public static final LightConfigInfo HEAT = Util.make(() -> {
         Map<RelativeSide, DataType> sideConfig = new EnumMap<>(RelativeSide.class);

@@ -1,5 +1,9 @@
 package com.jerry.meklm.common.item.block;
 
+import net.minecraft.world.level.block.Block;
+
+import net.minecraft.world.item.Item.Properties;
+
 import com.jerry.meklm.common.tile.prefab.TileEntityLargeChemicalTank;
 
 import mekanism.api.RelativeSide;
@@ -23,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class ItemBlockLargeChemicalTank<TILE extends TileEntityLargeChemicalTank<?>> extends ItemBlockTooltip<BlockTileModel<TILE, Machine<TILE>>> {
+public class ItemBlockLargeChemicalTank<TILE extends TileEntityLargeChemicalTank<?>> extends ItemBlockTooltip {
 
     public static final LightConfigInfo ITEM = Util.make(() -> {
         Map<RelativeSide, DataType> sideConfig = new EnumMap<>(RelativeSide.class);

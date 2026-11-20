@@ -36,7 +36,7 @@ public class LargeGeneratorBlocks {
     public static final BlockDeferredRegister LG_BLOCKS = new BlockDeferredRegister(Mekmm.MOD_ID);
 
     // Generator
-    public static final BlockRegistryObject<@NotNull BlockTileModel<TileEntityLargeHeatGenerator, Generator<TileEntityLargeHeatGenerator>>, @NotNull ItemBlockTooltip<BlockTileModel<TileEntityLargeHeatGenerator, Generator<TileEntityLargeHeatGenerator>>>> LARGE_HEAT_GENERATOR = LG_BLOCKS.registerDetails("large_heat_generator", properties -> new BlockTileModel<>(LargeGeneratorBlockTypes.LARGE_HEAT_GENERATOR, BlockTile.defaultProperties(properties).mapColor(MapColor.METAL)))
+    public static final BlockRegistryObject<@NotNull BlockTileModel<TileEntityLargeHeatGenerator, Generator<TileEntityLargeHeatGenerator>>, @NotNull ItemBlockTooltip> LARGE_HEAT_GENERATOR = LG_BLOCKS.registerDetails("large_heat_generator", properties -> new BlockTileModel<>(LargeGeneratorBlockTypes.LARGE_HEAT_GENERATOR, BlockTile.defaultProperties(properties).mapColor(MapColor.METAL)))
             .forItemHolder(holder -> holder
                     .addAttachmentOnlyContainers(ContainerType.FLUID, () -> FluidTanksBuilder.builder()
                             .addBasic(MoreMachineConfig.generators.largeHeatTankCapacity, fluid -> fluid.is(FluidTags.LAVA))
@@ -48,7 +48,7 @@ public class LargeGeneratorBlocks {
                             .addEnergy()
                             .build()));
 
-    public static final BlockRegistryObject<@NotNull BlockTileModel<TileEntityLargeGasGenerator, Generator<TileEntityLargeGasGenerator>>, @NotNull ItemBlockTooltip<BlockTileModel<TileEntityLargeGasGenerator, Generator<TileEntityLargeGasGenerator>>>> LARGE_GAS_BURNING_GENERATOR = LG_BLOCKS.registerDetails("large_gas_burning_generator", properties -> new BlockTileModel<>(LargeGeneratorBlockTypes.LARGE_GAS_BURNING_GENERATOR, BlockTile.defaultProperties(properties).mapColor(BlockResourceInfo.STEEL.getMapColor())))
+    public static final BlockRegistryObject<@NotNull BlockTileModel<TileEntityLargeGasGenerator, Generator<TileEntityLargeGasGenerator>>, @NotNull ItemBlockTooltip> LARGE_GAS_BURNING_GENERATOR = LG_BLOCKS.registerDetails("large_gas_burning_generator", properties -> new BlockTileModel<>(LargeGeneratorBlockTypes.LARGE_GAS_BURNING_GENERATOR, BlockTile.defaultProperties(properties).mapColor(BlockResourceInfo.STEEL.getMapColor())))
             .forItemHolder(holder -> holder
                     .addAttachmentOnlyContainers(ContainerType.CHEMICAL, () -> ChemicalTanksBuilder.builder()
                             .addBasic(MoreMachineConfig.generators.LGBGTankCapacity, TileEntityLargeGasGenerator.HAS_FUEL)
@@ -65,10 +65,10 @@ public class LargeGeneratorBlocks {
         MoreMachineBounding.LARGE_WIND_GENERATOR.withProxyBlock(LARGE_WIND_GENERATOR_PROXY);
     }
 
-    public static final BlockRegistryObject<@NotNull BlockLargeWindGenerator, @NotNull ItemBlockTooltip<BlockLargeWindGenerator>> LARGE_WIND_GENERATOR = LG_BLOCKS.registerDetails("large_wind_generator", properties -> new BlockLargeWindGenerator(LargeGeneratorBlockTypes.LARGE_WIND_GENERATOR, BlockTile.defaultProperties(properties).mapColor(MapColor.METAL)))
+    public static final BlockRegistryObject<@NotNull BlockLargeWindGenerator, @NotNull ItemBlockTooltip> LARGE_WIND_GENERATOR = LG_BLOCKS.registerDetails("large_wind_generator", properties -> new BlockLargeWindGenerator(LargeGeneratorBlockTypes.LARGE_WIND_GENERATOR, BlockTile.defaultProperties(properties).mapColor(MapColor.METAL)))
             .forItemHolder(holder -> holder.addAttachmentOnlyContainers(ContainerType.ITEM, () -> ItemSlotsBuilder.builder().addEnergy().build()));
 
-    public static final BlockRegistryObject<@NotNull BlockTileModel<TileEntitySolarHeatGenerator, Generator<TileEntitySolarHeatGenerator>>, @NotNull ItemBlockTooltip<BlockTileModel<TileEntitySolarHeatGenerator, Generator<TileEntitySolarHeatGenerator>>>> SOLAR_HEAT_GENERATOR = LG_BLOCKS.registerDetails("solar_heat_generator", properties -> new BlockTileModel<>(LargeGeneratorBlockTypes.SOLAR_HEAT_GENERATOR, BlockTile.defaultProperties(properties).mapColor(MapColor.METAL)))
+    public static final BlockRegistryObject<@NotNull BlockTileModel<TileEntitySolarHeatGenerator, Generator<TileEntitySolarHeatGenerator>>, @NotNull ItemBlockTooltip> SOLAR_HEAT_GENERATOR = LG_BLOCKS.registerDetails("solar_heat_generator", properties -> new BlockTileModel<>(LargeGeneratorBlockTypes.SOLAR_HEAT_GENERATOR, BlockTile.defaultProperties(properties).mapColor(MapColor.METAL)))
             .forItemHolder(holder -> holder
                     .addAttachmentOnlyContainers(ContainerType.CHEMICAL, () -> ChemicalTanksBuilder.builder()
                             .addBasic(TileEntitySolarHeatGenerator.MAX_GAS, chemical -> chemical.getData(IMekanismDataMapTypes.INSTANCE.cooledChemicalCoolant()) != null)

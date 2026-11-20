@@ -1,5 +1,9 @@
 package com.jerry.mekmm.common.item.block.machine;
 
+import net.minecraft.world.level.block.Block;
+
+import net.minecraft.world.item.Item.Properties;
+
 import com.jerry.mekmm.common.attachments.component.MoreMachineAttachedSideConfig;
 import com.jerry.mekmm.common.block.attribute.MoreMachineAttributeFactoryType;
 import com.jerry.mekmm.common.block.prefab.BlockMoreFactoryMachine;
@@ -24,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class ItemBlockMoreMachineFactory extends ItemBlockTooltip<BlockTile<?, ?>> {
+public class ItemBlockMoreMachineFactory extends ItemBlockTooltip {
 
     private static AttachedSideConfig getSideConfig(BlockMoreFactoryMachine.BlockMoreMachineFactory<?> block) {
         return switch (Attribute.getOrThrow(block.builtInRegistryHolder(), MoreMachineAttributeFactoryType.class).getMoreMachineFactoryType()) {

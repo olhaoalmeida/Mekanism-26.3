@@ -1,5 +1,9 @@
 package com.jerry.mekaf.common.item.block.machine;
 
+import net.minecraft.world.level.block.Block;
+
+import net.minecraft.world.item.Item.Properties;
+
 import com.jerry.mekaf.common.attachments.component.AdvancedFactoryAttachedSideConfig;
 import com.jerry.mekaf.common.block.attribute.AttributeAdvancedFactoryType;
 import com.jerry.mekaf.common.block.prefab.BlockAdvancedFactoryMachine.BlockAdvancedFactory;
@@ -24,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class ItemBlockAdvancedFactory extends ItemBlockTooltip<BlockTile<?, ?>> {
+public class ItemBlockAdvancedFactory extends ItemBlockTooltip {
 
     // 这里只是预设，真正控制侧面配置应当在方块实体中处理
     // 预设可以不遵守方块实体中设置的配置，但人为调控后可能无法恢复到预设状态
