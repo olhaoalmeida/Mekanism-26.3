@@ -1,5 +1,8 @@
 package com.jerry.mekmm.api.recipes.basic;
 
+import mekanism.api.recipes.book.CombiningBookCategory.CombiningBookInfo;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import com.jerry.mekmm.api.recipes.MoreMachineRecipeSerializers;
 import com.jerry.mekmm.api.recipes.TripleItemToItemRecipe;
 
@@ -24,7 +27,8 @@ public class BasicPresserRecipe extends TripleItemToItemRecipe {
     protected final ItemStackIngredient third;
     protected final ItemStackTemplate output;
 
-    public BasicPresserRecipe(ItemStackIngredient first, ItemStackIngredient second, ItemStackIngredient third, ItemStackTemplate output) {
+    public BasicPresserRecipe(Recipe.CommonInfo commonInfo, CombiningBookInfo bookInfo, ItemStackIngredient first, ItemStackIngredient second, ItemStackIngredient third, ItemStackTemplate output) {
+        super(commonInfo, bookInfo);
         this.first = Objects.requireNonNull(first, "First input cannot be null.");
         this.second = Objects.requireNonNull(second, "Second input cannot be null.");
         this.third = Objects.requireNonNull(third, "Third input cannot be null.");
@@ -58,8 +62,12 @@ public class BasicPresserRecipe extends TripleItemToItemRecipe {
     }
 
     @Override
-    public List<ItemStack> getOutputDefinition() {
-        return Collections.singletonList(output.create());
+    public List<ItemStackTemplate> getOutputDefinition() {
+        return Collections.singletonList(output);
+    }
+
+    public SlotDisplay getOutputDisplay() {
+        return new SlotDisplay.ItemStackSlotDisplay(output);
     }
 
     public ItemStackTemplate getOutputRaw() {

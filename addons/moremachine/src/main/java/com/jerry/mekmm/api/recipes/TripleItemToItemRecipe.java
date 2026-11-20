@@ -1,5 +1,13 @@
 package com.jerry.mekmm.api.recipes;
 
+import mekanism.api.recipes.book.CombiningBookCategory;
+import mekanism.api.recipes.book.CombiningBookCategory.CombiningBookInfo;
+import mekanism.api.recipes.display.recipe.CombiningRecipeDisplay;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.PlacementInfo;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import com.jerry.mekmm.Mekmm;
 
 import mekanism.api.recipes.MekanismRecipe;
@@ -23,9 +31,13 @@ import org.jspecify.annotations.NullMarked;
 import java.util.List;
 
 @NullMarked
-public abstract class TripleItemToItemRecipe extends MekanismRecipe<RecipeInput> implements TriPredicate<ItemStack, ItemStack, ItemStack> {
+public abstract class TripleItemToItemRecipe extends MekanismRecipe<RecipeInput, CombiningBookCategory, CombiningBookInfo> implements TriPredicate<ItemStack, ItemStack, ItemStack> {
 
     private static final Holder<Item> PRESSER = DeferredHolder.create(Registries.ITEM, Identifier.fromNamespaceAndPath(Mekmm.MOD_ID, "presser"));
+
+    protected TripleItemToItemRecipe(Recipe.CommonInfo commonInfo, CombiningBookInfo bookInfo) {
+        super(commonInfo, bookInfo, 0F);
+    }
 
     public abstract ItemStackIngredient getFirstInput();
 
@@ -57,7 +69,9 @@ public abstract class TripleItemToItemRecipe extends MekanismRecipe<RecipeInput>
     @Contract(value = "_, _, _ -> new", pure = true)
     public abstract ItemStackTemplate getOutput(ItemStack first, ItemStack second, ItemStack third);
 
-    public abstract List<ItemStack> getOutputDefinition();
+    public abstract List<ItemStackTemplate> getOutputDefinition();
+
+    public abstract SlotDisplay getOutputDisplay();
 
     @Override
     public boolean isIncomplete() {
@@ -77,7 +91,12 @@ public abstract class TripleItemToItemRecipe extends MekanismRecipe<RecipeInput>
     }
 
     @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(PRESSER);
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public List<RecipeDisplay> display() {
+        return List.of(new CombiningRecipeDisplay(getFirstInput().display(), getSecondInput().display(), getOutputDisplay(), new SlotDisplay.ItemSlotDisplay(PRESSER), experience()));
     }
 }

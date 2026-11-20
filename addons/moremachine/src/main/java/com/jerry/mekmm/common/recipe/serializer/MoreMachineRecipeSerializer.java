@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
 import com.mojang.datafixers.util.Function3;
+import com.mojang.datafixers.util.Function6;
 import com.mojang.datafixers.util.Function4;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -38,12 +39,16 @@ public class MoreMachineRecipeSerializer {
                         factory::create));
     }
 
-    public static RecipeSerializer<BasicPresserRecipe> pressing(Function4<ItemStackIngredient, ItemStackIngredient, ItemStackIngredient, ItemStackTemplate, BasicPresserRecipe> factory) {
+    public static RecipeSerializer<BasicPresserRecipe> pressing(Function6<Recipe.CommonInfo, CombiningBookInfo, ItemStackIngredient, ItemStackIngredient, ItemStackIngredient, ItemStackTemplate, BasicPresserRecipe> factory) {
         return new RecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
+                Recipe.CommonInfo.MAP_CODEC.forGetter(TripleItemToItemRecipe::commonInfo),
+                CombiningBookInfo.MAP_CODEC.forGetter(TripleItemToItemRecipe::bookInfo),
                 ItemStackIngredient.CODEC.fieldOf("primary_input").forGetter(TripleItemToItemRecipe::getFirstInput),
                 ItemStackIngredient.CODEC.fieldOf("secondary_input").forGetter(TripleItemToItemRecipe::getSecondInput),
                 ItemStackIngredient.CODEC.fieldOf("tertiary_input").forGetter(TripleItemToItemRecipe::getThirdInput),
                 ItemStackTemplate.CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(BasicPresserRecipe::getOutputRaw)).apply(instance, factory)), StreamCodec.composite(
+                        Recipe.CommonInfo.STREAM_CODEC, TripleItemToItemRecipe::commonInfo,
+                        CombiningBookInfo.STREAM_CODEC, TripleItemToItemRecipe::bookInfo,
                         ItemStackIngredient.STREAM_CODEC, BasicPresserRecipe::getFirstInput,
                         ItemStackIngredient.STREAM_CODEC, BasicPresserRecipe::getSecondInput,
                         ItemStackIngredient.STREAM_CODEC, BasicPresserRecipe::getThirdInput,
