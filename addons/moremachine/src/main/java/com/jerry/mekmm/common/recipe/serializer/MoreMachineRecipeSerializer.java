@@ -5,6 +5,8 @@ import com.jerry.mekmm.api.recipes.StamperRecipe;
 import com.jerry.mekmm.api.recipes.TripleItemToItemRecipe;
 import com.jerry.mekmm.api.recipes.basic.BasicPresserRecipe;
 import com.jerry.mekmm.api.recipes.basic.BasicStamperRecipe;
+import mekanism.api.recipes.book.CombiningBookCategory.CombiningBookInfo;
+import net.minecraft.world.item.crafting.Recipe;
 
 import mekanism.api.SerializationConstants;
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
@@ -21,15 +23,19 @@ public class MoreMachineRecipeSerializer {
 
     private MoreMachineRecipeSerializer() {}
 
-    public static RecipeSerializer<BasicStamperRecipe> stamping(Function3<ItemStackIngredient, ItemStackIngredient, ItemStackTemplate, BasicStamperRecipe> factory) {
+    public static RecipeSerializer<BasicStamperRecipe> stamping(StamperRecipe.Factory<BasicStamperRecipe> factory) {
         return new RecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
+                Recipe.CommonInfo.MAP_CODEC.forGetter(StamperRecipe::commonInfo),
+                CombiningBookInfo.MAP_CODEC.forGetter(StamperRecipe::bookInfo),
                 ItemStackIngredient.CODEC.fieldOf(SerializationConstants.INPUT).forGetter(StamperRecipe::getInput),
                 ItemStackIngredient.CODEC.fieldOf(MoreMachineSerializationConstants.MOLD).forGetter(StamperRecipe::getMold),
-                ItemStackTemplate.CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(BasicStamperRecipe::getOutputRaw)).apply(instance, factory)), StreamCodec.composite(
+                ItemStackTemplate.CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(BasicStamperRecipe::getOutputRaw)).apply(instance, factory::create)), StreamCodec.composite(
+                        Recipe.CommonInfo.STREAM_CODEC, StamperRecipe::commonInfo,
+                        CombiningBookInfo.STREAM_CODEC, StamperRecipe::bookInfo,
                         ItemStackIngredient.STREAM_CODEC, BasicStamperRecipe::getInput,
                         ItemStackIngredient.STREAM_CODEC, BasicStamperRecipe::getMold,
                         ItemStackTemplate.STREAM_CODEC, BasicStamperRecipe::getOutputRaw,
-                        factory));
+                        factory::create));
     }
 
     public static RecipeSerializer<BasicPresserRecipe> pressing(Function4<ItemStackIngredient, ItemStackIngredient, ItemStackIngredient, ItemStackTemplate, BasicPresserRecipe> factory) {

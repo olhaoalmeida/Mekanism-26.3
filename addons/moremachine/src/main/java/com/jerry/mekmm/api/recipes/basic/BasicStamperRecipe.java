@@ -18,6 +18,10 @@ import org.jspecify.annotations.NullMarked;
 
 import java.util.Collections;
 import java.util.List;
+import mekanism.api.recipes.book.CombiningBookCategory.CombiningBookInfo;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import java.util.Objects;
 
 @NullMarked
@@ -32,16 +36,12 @@ public class BasicStamperRecipe extends StamperRecipe {
      * @param mold   Mold.
      * @param output Output.
      */
-    public BasicStamperRecipe(ItemStackIngredient input, ItemStackIngredient mold, ItemStackTemplate output) {
+    public BasicStamperRecipe(Recipe.CommonInfo commonInfo, CombiningBookInfo bookInfo, ItemStackIngredient input, ItemStackIngredient mold, ItemStackTemplate output) {
+        super(commonInfo, bookInfo);
         this.input = Objects.requireNonNull(input, "Input cannot be null.");
         this.mold = Objects.requireNonNull(mold, "Mold cannot be null.");
         Objects.requireNonNull(output, "Output cannot be null.");
         this.output = output;
-    }
-
-    @Override
-    public boolean test(ItemStack input, ItemStack extra) {
-        return this.input.test(input) && mold.test(extra);
     }
 
     @Override
@@ -55,14 +55,18 @@ public class BasicStamperRecipe extends StamperRecipe {
     }
 
     @Override
-    @Contract(value = "_, _ -> new", pure = true)
-    public <INPUT extends TypedInstance<Item> & DataComponentHolder> ItemStackTemplate getOutput(@NotNull INPUT input, @NotNull INPUT extra) {
+    public ItemStackTemplate getOutput(TypedInstance<Item> input, TypedInstance<Item> extra) {
         return output;
     }
 
     @Override
-    public List<ItemStack> getOutputDefinition() {
-        return Collections.singletonList(output.create());
+    public List<ItemStackTemplate> getOutputDefinition(ContextMap contextMap) {
+        return Collections.singletonList(output);
+    }
+
+    @Override
+    public SlotDisplay getOutputDisplay() {
+        return new SlotDisplay.ItemStackSlotDisplay(output);
     }
 
     public ItemStackTemplate getOutputRaw() {

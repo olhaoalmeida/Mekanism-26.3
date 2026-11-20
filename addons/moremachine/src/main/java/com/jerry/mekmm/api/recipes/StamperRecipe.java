@@ -2,111 +2,101 @@ package com.jerry.mekmm.api.recipes;
 
 import com.jerry.mekmm.Mekmm;
 
-import mekanism.api.recipes.MekanismRecipe;
+import mekanism.api.recipes.SimpleTwoInputRecipe;
+import mekanism.api.recipes.book.CombiningBookCategory;
+import mekanism.api.recipes.book.CombiningBookCategory.CombiningBookInfo;
+import mekanism.api.recipes.display.recipe.CombiningRecipeDisplay;
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
+import mekanism.api.recipes.vanilla_input.BiItemRecipeInput;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.TypedInstance;
-import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
-import net.minecraft.world.item.crafting.RecipeInput;
+import net.minecraft.world.item.crafting.PlacementInfo;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.BiPredicate;
 
-@NullMarked
-public abstract class StamperRecipe extends MekanismRecipe<RecipeInput> implements BiPredicate<@NotNull ItemStack, @NotNull ItemStack> {
+/**
+ * Input: two ItemStacks (input + mold). Output: ItemStack.
+ */
+public abstract class StamperRecipe extends SimpleTwoInputRecipe<Item, ItemStack, ItemStackIngredient, BiItemRecipeInput, ItemStackTemplate, CombiningBookCategory, CombiningBookInfo> {
 
     private static final Holder<Item> STAMPER = DeferredHolder.create(Registries.ITEM, Identifier.fromNamespaceAndPath(Mekmm.MOD_ID, "stamper"));
 
-    @Override
-    public abstract boolean test(ItemStack input, ItemStack extra);
+    @Nullable
+    private PlacementInfo placementInfo;
 
-    /**
-     * Gets the main input ingredient.
-     */
+    protected StamperRecipe(Recipe.CommonInfo commonInfo, CombiningBookInfo bookInfo) {
+        super(commonInfo, bookInfo, 0F);
+    }
+
     public abstract ItemStackIngredient getInput();
 
-    /**
-     * Gets the secondary input ingredient.
-     */
     public abstract ItemStackIngredient getMold();
 
-    @NotNull
     @Override
-    public ItemStack assemble(RecipeInput input) {
-        if (!isIncomplete() && input.size() == 2) {
-            ItemStack mainInput = input.getItem(0);
-            ItemStack extraInput = input.getItem(1);
-            if (test(mainInput, extraInput)) {
-                return getOutput(mainInput, extraInput).create();
+    public final ItemStackIngredient getInputA() {
+        return getInput();
+    }
+
+    @Override
+    public final ItemStackIngredient getInputB() {
+        return getMold();
+    }
+
+    @Override
+    public PlacementInfo placementInfo() {
+        if (this.placementInfo == null) {
+            this.placementInfo = PlacementInfo.create(List.of(getInput().ingredient().ingredient(), getMold().ingredient().ingredient()));
+        }
+        return this.placementInfo;
+    }
+
+    @Override
+    public ItemStack assemble(BiItemRecipeInput input) {
+        if (!getInputA().hasNoMatchingInstances() && !getInputB().hasNoMatchingInstances()) {
+            ItemStack main = input.main();
+            ItemStack mold = input.secondary();
+            if (test(main, mold)) {
+                return getOutput(main, mold).create();
             }
         }
         return ItemStack.EMPTY;
     }
 
     @Override
-    public boolean matches(RecipeInput input, Level level) {
-        // Don't match incomplete recipes or ones that don't match
-        return !isIncomplete() && input.size() == 2 && test(input.getItem(0), input.getItem(1));
-    }
-
-    public boolean canCraftInDimensions(int width, int height) {
-        return width * height > 1;
-    }
-
-    /**
-     * Gets a new output based on the given inputs.
-     *
-     * @param input Specific input.
-     * @param extra Specific secondary/extra input.
-     *
-     * @return New output.
-     *
-     * @apiNote While Mekanism does not currently make use of the inputs, it is important to support it and pass the
-     *          proper value in case any addons define input based
-     *          outputs where things like NBT may be different.
-     * @implNote The passed in inputs should <strong>NOT</strong> be modified.
-     */
-    @Contract(value = "_, _ -> new", pure = true)
-    public abstract <INPUT extends TypedInstance<Item> & DataComponentHolder> ItemStackTemplate getOutput(@NotNull INPUT input, @NotNull INPUT extra);
-
-    /**
-     * For JEI, gets the output representations to display.
-     *
-     * @return Representation of the output, <strong>MUST NOT</strong> be modified.
-     */
-    public abstract List<ItemStack> getOutputDefinition();
-
-    @Override
-    public boolean isIncomplete() {
-        return getInput().hasNoMatchingInstances() || getMold().hasNoMatchingInstances();
+    public boolean matches(BiItemRecipeInput input, Level level) {
+        return test(input.main(), input.secondary());
     }
 
     @Override
-    public void logMissingTags() {
-        getInput().logMissingTags();
-        getMold().logMissingTags();
-    }
+    public abstract ItemStackTemplate getOutput(TypedInstance<Item> input, TypedInstance<Item> extra);
 
     @Override
-    public final RecipeType<@NotNull StamperRecipe> getType() {
+    public final RecipeType<StamperRecipe> getType() {
         return MoreMachineRecipeTypes.TYPE_STAMPING.value();
     }
 
     @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(STAMPER);
+    public List<RecipeDisplay> display() {
+        return List.of(new CombiningRecipeDisplay(getInput().display(), getMold().display(), getOutputDisplay(), new SlotDisplay.ItemSlotDisplay(STAMPER), experience()));
+    }
+
+    @FunctionalInterface
+    public interface Factory<RECIPE extends StamperRecipe> {
+
+        RECIPE create(Recipe.CommonInfo commonInfo, CombiningBookInfo bookInfo, ItemStackIngredient input, ItemStackIngredient mold, ItemStackTemplate output);
     }
 }

@@ -25,6 +25,9 @@ sourceSets {
         exclude 'com/jerry/mekmm/mixin/client/recipe_viewer/MixinMekanismEmi.java'
         exclude 'com/jerry/mekmm/mixin/client/render/MixinRenderTickHandler.java'
         exclude 'com/jerry/mekmm/client/integration/DistantHorizonsIntegration.java'
+        exclude 'com/jerry/datagen/**'
+        exclude 'com/jerry/mekmm/api/datagen/**'
+        exclude 'com/jerry/mekmm/mixin/PersistingMekanismDatagenCache.java'
     }
 
     main.resources {
@@ -75,7 +78,7 @@ apply from: "$rootDir/gradle/scripts/spotless.gradle"
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
-    options.compilerArgs << '-Xmaxerrs' << '2000'
+    options.compilerArgs << '-Xmaxerrs' << '100000'
     options.compilerArgs << "-Xlint:-removal"
 }
 
