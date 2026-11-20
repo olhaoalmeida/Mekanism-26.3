@@ -160,15 +160,7 @@ public class TileEntityRecycler extends TileEntityProgressMachine<RecyclerRecipe
     @NotNull
     @Override
     public CachedRecipe<RecyclerRecipe> createNewCachedRecipe(RecyclerRecipe recipe, int cacheIndex, ContextMap recipeContext) {
-        return MoreMachineOneInputCachedRecipe.recycler(recipe, recheckAllRecipeErrors, inputHandler, chanceOutputHandler)
-                .setErrorsChanged(this::onErrorsChanged)
-                .setCanHolderFunction(this::canFunction)
-                .setActive(this::setActive)
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(this::setOperatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+        return setCommonSettings(MoreMachineOneInputCachedRecipe.recycler(recipe, recheckAllRecipeErrors, inputHandler, chanceOutputHandler));
     }
 
     @Override
