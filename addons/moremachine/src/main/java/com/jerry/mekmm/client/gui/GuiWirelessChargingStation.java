@@ -32,9 +32,9 @@ import java.util.List;
 
 public class GuiWirelessChargingStation extends GuiConfigurableTile<TileEntityWirelessChargingStation, MekanismTileContainer<TileEntityWirelessChargingStation>> {
 
-    private static final Identifier EQUIPS = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "switch/equips.png");
-    private static final Identifier INVENTORY = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "switch/inventory.png");
-    private static final Identifier CURIOS = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "switch/curios.png");
+    private static final Identifier EQUIPS = mekanism.common.Mekanism.rl("switch/equips");
+    private static final Identifier INVENTORY = mekanism.common.Mekanism.rl("switch/inventory");
+    private static final Identifier CURIOS = mekanism.common.Mekanism.rl("switch/curios");
 
     public GuiWirelessChargingStation(MekanismTileContainer<TileEntityWirelessChargingStation> container, Inventory inv, Component title) {
         super(container, inv, title);

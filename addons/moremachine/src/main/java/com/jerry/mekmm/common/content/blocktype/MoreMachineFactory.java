@@ -11,7 +11,7 @@ import mekanism.api.math.MathUtils;
 import mekanism.common.MekanismLang;
 import mekanism.common.block.attribute.*;
 import mekanism.common.inventory.container.MekanismContainer;
-import mekanism.common.lib.math.Pos3D;
+import net.minecraft.world.phys.Vec3;
 import mekanism.common.registration.impl.ContainerTypeRegistryObject;
 import mekanism.common.registration.impl.TileEntityTypeRegistryObject;
 import mekanism.common.tier.FactoryTier;
@@ -67,7 +67,7 @@ public class MoreMachineFactory<TILE extends TileEntityMoreMachineFactory<?>> ex
             if (type.getBaseMachine().has(AttributeHasBounding.class)) {
                 builder.with(AttributeHasBounding.ABOVE_ONLY);
             }
-            builder.replace(new AttributeParticleFX().addDense(ParticleTypes.SMOKE, 5, rand -> new Pos3D(
+            builder.replace(new AttributeParticleFX().addDense(ParticleTypes.SMOKE, 5, rand -> new Vec3(
                     rand.nextFloat() * 0.7F - 0.3F,
                     rand.nextFloat() * 0.1F + 0.7F,
                     rand.nextFloat() * 0.7F - 0.3F)));

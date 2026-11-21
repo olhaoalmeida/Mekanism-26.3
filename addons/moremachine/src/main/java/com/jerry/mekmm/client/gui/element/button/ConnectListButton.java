@@ -12,7 +12,7 @@ import mekanism.client.gui.element.slot.GuiSlot;
 import mekanism.client.gui.element.slot.SlotType;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.MekanismUtils.ResourceType;
+import mekanism.common.util.mekanism.common.resource.ResourceType;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -33,7 +33,7 @@ import java.util.function.ObjIntConsumer;
 
 public class ConnectListButton extends MekanismButton {
 
-    private static final Identifier TEXTURE = MekanismUtils.getResource(ResourceType.GUI_BUTTON, "lists_holder.png");
+    private static final Identifier TEXTURE = mekanism.common.Mekanism.rl("button/lists_holder");
 
     protected static final int TEXTURE_WIDTH = 131;// 156
     protected static final int TEXTURE_HEIGHT = 58;

@@ -5,7 +5,7 @@ import mekanism.client.gui.element.GuiTexturedElement;
 import mekanism.common.MekanismLang;
 import mekanism.common.registries.MekanismSounds;
 import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.MekanismUtils.ResourceType;
+import mekanism.common.util.mekanism.common.resource.ResourceType;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -18,7 +18,7 @@ import java.util.function.BooleanSupplier;
 
 public class GuiWirelessChargingStationSwitch extends GuiTexturedElement {
 
-    public static final Identifier SWITCH = MekanismUtils.getResource(ResourceType.GUI, "switch/switch.png");
+    public static final Identifier SWITCH = mekanism.common.Mekanism.rl("switch/switch");
     public static final int BUTTON_SIZE_X = 15, BUTTON_SIZE_Y = 8;
 
     private final SwitchType type;

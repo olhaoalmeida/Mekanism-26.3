@@ -258,8 +258,13 @@ public class ItemConnector extends Item implements IRadialModeItem<ConnectorMode
             if (transmissionType == null) {
                 this.icon = Objects.requireNonNull(icon, "Icon should only be null if there is a transmission type present.");
             } else {
-                this.icon = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, transmissionType.getTransmission() + ".png");
+                this.icon = mekanism.common.Mekanism.rl("transmission/" + transmissionType.getTransmission());
             }
+        }
+
+        @Override
+        public int valueCount() {
+            return values().length;
         }
 
         @Override

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 public class MoreMachineGuiSortingTab extends GuiInsetElement<TileEntityMoreMachineFactory<?>> {
 
     public MoreMachineGuiSortingTab(IGuiWrapper gui, TileEntityMoreMachineFactory<?> tile) {
-        super(MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "sorting.png"), gui, tile, -26, 62, 35, 18, true);
+        super(mekanism.common.Mekanism.rl("button/sorting"), gui, tile, -26, 62, 35, 18, true);
         setTooltip(MekanismLang.AUTO_SORT);
     }
 

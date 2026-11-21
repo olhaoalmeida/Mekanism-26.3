@@ -12,7 +12,7 @@ import mekanism.api.math.MathUtils;
 import mekanism.common.MekanismLang;
 import mekanism.common.block.attribute.*;
 import mekanism.common.inventory.container.MekanismContainer;
-import mekanism.common.lib.math.Pos3D;
+import net.minecraft.world.phys.Vec3;
 import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.registration.impl.ContainerTypeRegistryObject;
 import mekanism.common.registration.impl.TileEntityTypeRegistryObject;
@@ -62,7 +62,7 @@ public class AdvancedFactory<TILE extends TileEntityAdvancedFactoryBase<?>> exte
                     () -> AdvancedFactoryContainerTypes.ADVANCED_FACTORY, type.getBaseMachine(), tier));
             // Note, we can't just return the builder here as then it gets all confused about object types, so we just
             // assign the value here, and then return the builder itself as it is the same object
-            builder.withComputerSupport(tier, type.getRegistryNameComponentCapitalized() + "Factory");
+            builder.withComputerSupport(tier, type.getSerializedName() + "Factory");
             builder.withCustomShape(AdvancedFactoryBlockShapes.getShape(type));
             builder.with(switch (type) {
                 case OXIDIZING, DISSOLVING, CRYSTALLIZING, PIGMENT_EXTRACTING, PAINTING -> AttributeSideConfig.ADVANCED_ELECTRIC_MACHINE;
@@ -75,7 +75,7 @@ public class AdvancedFactory<TILE extends TileEntityAdvancedFactoryBase<?>> exte
             if (type.getBaseMachine().has(AttributeHasBounding.class)) {
                 builder.with(AttributeHasBounding.ABOVE_ONLY);
             }
-            builder.replace(new AttributeParticleFX().addDense(ParticleTypes.SMOKE, 5, rand -> new Pos3D(
+            builder.replace(new AttributeParticleFX().addDense(ParticleTypes.SMOKE, 5, rand -> new Vec3(
                     rand.nextFloat() * 0.7F - 0.3F,
                     rand.nextFloat() * 0.1F + 0.7F,
                     rand.nextFloat() * 0.7F - 0.3F)));

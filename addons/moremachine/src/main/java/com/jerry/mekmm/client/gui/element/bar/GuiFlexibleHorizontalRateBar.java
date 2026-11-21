@@ -4,7 +4,7 @@ import mekanism.client.gui.IGuiWrapper;
 import mekanism.client.gui.element.bar.GuiBar;
 import mekanism.client.gui.element.bar.GuiBar.IBarInfoHandler;
 import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.MekanismUtils.ResourceType;
+import mekanism.common.util.mekanism.common.resource.ResourceType;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -12,7 +12,7 @@ import net.minecraft.resources.Identifier;
 
 public class GuiFlexibleHorizontalRateBar extends GuiBar<IBarInfoHandler> {
 
-    private static final Identifier RATE_BAR = MekanismUtils.getResource(ResourceType.GUI_BAR, "horizontal_rate.png");
+    private static final Identifier RATE_BAR = mekanism.common.Mekanism.rl("bar/horizontal_rate");
     // 默认78
     private final int texWidth;
     // 默认8

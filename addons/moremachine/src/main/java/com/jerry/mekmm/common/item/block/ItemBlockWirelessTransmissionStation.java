@@ -28,7 +28,7 @@ public class ItemBlockWirelessTransmissionStation extends ItemBlockTooltip {
 
     public static final LightConfigInfo HEAT = Util.make(() -> {
         Map<RelativeSide, DataType> sideConfig = new EnumMap<>(RelativeSide.class);
-        for (RelativeSide side : EnumUtils.SIDES) {
+        for (RelativeSide side : RelativeSide.VALUES) {
             sideConfig.put(side, DataType.INPUT_OUTPUT);
         }
         return new LightConfigInfo(sideConfig, false);
@@ -58,7 +58,7 @@ public class ItemBlockWirelessTransmissionStation extends ItemBlockTooltip {
     private static LightConfigInfo create(RelativeSide relativeSide) {
         return Util.make(() -> {
             Map<RelativeSide, DataType> sideConfig = new EnumMap<>(RelativeSide.class);
-            for (RelativeSide side : EnumUtils.SIDES) {
+            for (RelativeSide side : RelativeSide.VALUES) {
                 if (side == relativeSide) {
                     sideConfig.put(side, DataType.INPUT);
                 } else {

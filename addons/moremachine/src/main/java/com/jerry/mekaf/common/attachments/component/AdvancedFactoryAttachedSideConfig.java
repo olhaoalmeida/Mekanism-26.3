@@ -16,7 +16,7 @@ public class AdvancedFactoryAttachedSideConfig {
 
     public static final LightConfigInfo ENERGY_ONLY_NO_TOP = Util.make(() -> {
         Map<RelativeSide, DataType> sideConfig = new EnumMap<>(RelativeSide.class);
-        for (RelativeSide side : EnumUtils.SIDES) {
+        for (RelativeSide side : RelativeSide.VALUES) {
             if (side != RelativeSide.TOP) sideConfig.put(side, DataType.ENERGY);
         }
         return new LightConfigInfo(sideConfig, false);
@@ -24,7 +24,7 @@ public class AdvancedFactoryAttachedSideConfig {
 
     public static final LightConfigInfo INPUT_ONLY_NO_TOP = Util.make(() -> {
         Map<RelativeSide, DataType> sideConfig = new EnumMap<>(RelativeSide.class);
-        for (RelativeSide side : EnumUtils.SIDES) {
+        for (RelativeSide side : RelativeSide.VALUES) {
             if (side != RelativeSide.TOP) sideConfig.put(side, DataType.INPUT);
         }
         return new LightConfigInfo(sideConfig, false);
@@ -32,7 +32,7 @@ public class AdvancedFactoryAttachedSideConfig {
 
     public static final LightConfigInfo INPUT_ENERGY_ONLY = Util.make(() -> {
         Map<RelativeSide, DataType> sideConfig = new EnumMap<>(RelativeSide.class);
-        for (RelativeSide side : EnumUtils.SIDES) {
+        for (RelativeSide side : RelativeSide.VALUES) {
             sideConfig.put(side, DataType.INPUT);
         }
         sideConfig.put(RelativeSide.BACK, DataType.ENERGY);
@@ -41,7 +41,7 @@ public class AdvancedFactoryAttachedSideConfig {
 
     public static final LightConfigInfo EXTRA_MACHINE_NO_OUT = Util.make(() -> {
         Map<RelativeSide, DataType> sideConfig = new EnumMap<>(RelativeSide.class);
-        for (RelativeSide side : EnumUtils.SIDES) {
+        for (RelativeSide side : RelativeSide.VALUES) {
             sideConfig.put(side, DataType.INPUT);
         }
         sideConfig.put(RelativeSide.BOTTOM, DataType.EXTRA);
@@ -51,7 +51,7 @@ public class AdvancedFactoryAttachedSideConfig {
 
     public static final LightConfigInfo OUTPUT_ENERGY_ONLY = Util.make(() -> {
         Map<RelativeSide, DataType> sideConfig = new EnumMap<>(RelativeSide.class);
-        for (RelativeSide side : EnumUtils.SIDES) {
+        for (RelativeSide side : RelativeSide.VALUES) {
             sideConfig.put(side, DataType.OUTPUT);
         }
         sideConfig.put(RelativeSide.BACK, DataType.ENERGY);

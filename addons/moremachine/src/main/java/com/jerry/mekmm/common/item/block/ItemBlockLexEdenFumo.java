@@ -4,7 +4,7 @@ import net.minecraft.world.item.Item.Properties;
 
 import com.jerry.mekmm.common.block.BlockLexEdenFumo;
 
-public class ItemBlockLexEdenFumo extends ItemBlockDoll<BlockLexEdenFumo> {
+public class ItemBlockLexEdenFumo extends ItemBlockDoll {
 
     public ItemBlockLexEdenFumo(BlockLexEdenFumo block, Properties properties) {
         super(block, properties);
