@@ -1,5 +1,8 @@
 package com.jerry.mekmm.common.tile.factory;
 
+import mekanism.common.util.UpgradeUtils;
+import mekanism.api.upgrade.UpgradeIds;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.util.context.ContextMap;
 import com.jerry.mekmm.api.recipes.PlantingRecipe;
@@ -130,7 +133,7 @@ public class TileEntityPlantingFactory extends TileEntityMoreMachineFactory<Plan
         configComponent.setupInputConfig(TransmissionType.CHEMICAL, chemicalTank);
         configComponent.addDisabledSides(RelativeSide.TOP);
 
-        chemicalInputHandler = InputHelper.getInputHandler(chemicalTank);
+        chemicalInputHandler = InputHelper.getInputHandler(chemicalTank, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
 
         baseTotalUsage = BASE_TICKS_REQUIRED;
         usedSoFar = new int[tier.processes];
@@ -237,7 +240,7 @@ public class TileEntityPlantingFactory extends TileEntityMoreMachineFactory<Plan
     }
 
     @Override
-    protected @Nullable PlantingRecipe findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot) {
+    protected @Nullable RecipeHolder<PlantingRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot) {
         ItemResource extra = secondaryOutputSlot == null ? ItemResource.EMPTY : secondaryOutputSlot.resource();
         return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, chemicalTank.resource(), new PackedResource(outputSlot.resource(), extra), OUTPUT_CHECK);
     }
@@ -298,15 +301,15 @@ public class TileEntityPlantingFactory extends TileEntityMoreMachineFactory<Plan
     }
 
     @Override
-    public void recalculateUpgrades(Upgrade upgrade) {
-        super.recalculateUpgrades(upgrade);
-        if (upgrade == Upgrade.SPEED || upgrade == Upgrade.CHEMICAL) {
+    public void recalculateUpgrades(HolderGetter<Upgrade> upgrades, Holder<Upgrade> upgrade, int totalInstalled) {
+        if (upgrade.is(UpgradeIds.SPEED) || (upgrade.is(UpgradeIds.CHEMICAL) && supportsUpgrade(upgrade))) {
             if (useStatisticalMechanics()) {
-                chemicalPerTickMeanMultiplier = MekanismUtils.getGasPerTickMeanMultiplier(this);
+                chemicalPerTickMeanMultiplier = UpgradeUtils.getGasPerTickMeanMultiplier(upgrades, this);
             } else {
-                baseTotalUsage = MathUtils.clampToInt(MekanismUtils.getBaseUsage(this, BASE_TICKS_REQUIRED));
+                baseTotalUsage = UpgradeUtils.getBaseUsage(upgrades, this, BASE_TICKS_REQUIRED);
             }
         }
+        super.recalculateUpgrades(upgrades, upgrade, totalInstalled);
     }
 
     @Override

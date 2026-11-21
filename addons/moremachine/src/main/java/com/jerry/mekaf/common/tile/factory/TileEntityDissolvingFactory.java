@@ -115,7 +115,7 @@ public class TileEntityDissolvingFactory extends TileEntityItemToChemicalFactory
                 .setCanTankEject(tank -> tank != chemicalTank);
         usedSoFar = new int[tier.processes];
 
-        chemicalInputHandler = InputHelper.getInputHandler(chemicalTank);
+        chemicalInputHandler = InputHelper.getInputHandler(chemicalTank, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
 
         injectUsageMultiplier = (usedSoFar, operatingTicks) -> StatUtils.inversePoisson(injectUsage);
     }
@@ -163,7 +163,7 @@ public class TileEntityDissolvingFactory extends TileEntityItemToChemicalFactory
     }
 
     @Override
-    protected @Nullable ChemicalDissolutionRecipe findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IChemicalTank outputSlot) {
+    protected @Nullable RecipeHolder<ChemicalDissolutionRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IChemicalTank outputSlot) {
         return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, chemicalTank.resource(), outputSlot.resource(), OUTPUT_CHECK);
     }
 

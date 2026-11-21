@@ -56,7 +56,7 @@ public class TileEntityCrystallizingFactory extends TileEntityChemicalToItemFact
     }
 
     @Override
-    protected @Nullable ChemicalCrystallizerRecipe findRecipe(int process, @NotNull ChemicalResource fallbackInput, @NotNull IInventorySlot outputSlot) {
+    protected @Nullable RecipeHolder<ChemicalCrystallizerRecipe> findRecipe(int process, @NotNull ChemicalResource fallbackInput, @NotNull IInventorySlot outputSlot) {
         return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, outputSlot.resource(), OUTPUT_CHECK);
     }
 

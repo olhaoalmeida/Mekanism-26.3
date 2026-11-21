@@ -7,7 +7,7 @@ import com.jerry.mekmm.common.recipe.MoreMachineRecipeType;
 
 import mekanism.api.inventory.IInventorySlot;
 import mekanism.api.math.MathUtils;
-import mekanism.api.recipes.ItemStackToItemStackRecipe;
+import mekanism.api.recipes.ItemStackToItemStackRecipe<?, ?>;
 import mekanism.api.recipes.cache.CachedRecipe;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.api.recipes.cache.OneInputCachedRecipe;
@@ -33,10 +33,10 @@ import java.util.List;
 import java.util.Set;
 
 // Lathe, Rolling Mill
-public class TileEntityMoreMachineItemStackToItemStackFactory extends TileEntityMoreMachineItemToItemFactory<ItemStackToItemStackRecipe> implements
-                                                              ISingleRecipeLookupHandler.ItemRecipeLookupHandler<ItemStackToItemStackRecipe> {
+public class TileEntityMoreMachineItemStackToItemStackFactory extends TileEntityMoreMachineItemToItemFactory<ItemStackToItemStackRecipe<?, ?>> implements
+                                                              ISingleRecipeLookupHandler.ItemRecipeLookupHandler<ItemStackToItemStackRecipe<?, ?>> {
 
-    private static final TriPredicate<ItemStackToItemStackRecipe, ItemResource, ItemResource> OUTPUT_CHECK = (recipe, input, output) -> output.isEmpty() || output.matches(recipe.getOutput(input));
+    private static final TriPredicate<ItemStackToItemStackRecipe<?, ?>, ItemResource, ItemResource> OUTPUT_CHECK = (recipe, input, output) -> output.isEmpty() || output.matches(recipe.getOutput(input));
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,
             RecipeError.NOT_ENOUGH_INPUT,
@@ -60,33 +60,36 @@ public class TileEntityMoreMachineItemStackToItemStackFactory extends TileEntity
     }
 
     @Override
-    protected int getNeededInput(ItemStackToItemStackRecipe recipe, ItemResource inputStack) {
+    protected int getNeededInput(ItemStackToItemStackRecipe<?, ?> recipe, ItemResource inputStack) {
         return MathUtils.clampToInt(recipe.getInput().getNeededAmount(inputStack));
     }
 
     @Override
-    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<ItemStackToItemStackRecipe> cached, @NotNull ItemResource stack) {
+    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<ItemStackToItemStackRecipe<?, ?>> cached, @NotNull ItemResource stack) {
         return cached != null && cached.getRecipe().getInput().testType(stack);
     }
 
     @Override
-    protected ItemStackToItemStackRecipe findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot,
+    protected RecipeHolder<ItemStackToItemStackRecipe<?, ?>> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot,
                                                     @Nullable IInventorySlot secondaryOutputSlot) {
         return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, outputSlot.resource(), OUTPUT_CHECK);
     }
 
+    @SuppressWarnings("unchecked")
     @NotNull
     @Override
-    public IMekanismRecipeTypeProvider<SingleRecipeInput, ItemStackToItemStackRecipe, InputRecipeCache.SingleItem<ItemStackToItemStackRecipe>> getRecipeType() {
-        return switch (type) {
+    public IMekanismRecipeTypeProvider<?, ?, ?, ItemStackToItemStackRecipe<?, ?>, InputRecipeCache.SingleItem<ItemStackToItemStackRecipe<?, ?>>> getRecipeType() {
+        IMekanismRecipeTypeProvider<?, ?, ?, ?, ?> provider = switch (type) {
             case CNC_LATHING -> MoreMachineRecipeType.LATHING;
             // TODO: Make it so that it throws an error if it is not one of the three types
             default -> MoreMachineRecipeType.ROLLING_MILL;
         };
+        return (IMekanismRecipeTypeProvider<?, ?, ?, ItemStackToItemStackRecipe<?, ?>, InputRecipeCache.SingleItem<ItemStackToItemStackRecipe<?, ?>>>) provider;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public IRecipeViewerRecipeType<ItemStackToItemStackRecipe> recipeViewerType() {
+    public IRecipeViewerRecipeType<ItemStackToItemStackRecipe<?, ?>> recipeViewerType() {
         return switch (type) {
             case CNC_LATHING -> MMRecipeViewerRecipeType.LATHE;
             // TODO: Make it so that it throws an error if it is not one of the three types
@@ -96,13 +99,13 @@ public class TileEntityMoreMachineItemStackToItemStackFactory extends TileEntity
 
     @Nullable
     @Override
-    public ItemStackToItemStackRecipe getRecipe(int cacheIndex) {
+    public RecipeHolder<ItemStackToItemStackRecipe<?, ?>> getRecipe(int cacheIndex) {
         return findFirstRecipe(inputHandlers[cacheIndex]);
     }
 
     @NotNull
     @Override
-    public CachedRecipe<ItemStackToItemStackRecipe> createNewCachedRecipe(@NotNull ItemStackToItemStackRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+    public CachedRecipe<ItemStackToItemStackRecipe<?, ?>> createNewCachedRecipe(@NotNull ItemStackToItemStackRecipe<?, ?> recipe, int cacheIndex, ContextMap recipeContext) {
         return setCommonSettings(new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], outputHandlers[cacheIndex]), cacheIndex);
     }
 

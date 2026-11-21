@@ -106,14 +106,14 @@ public class TileEntityStampingFactory extends TileEntityMoreMachineItemToItemFa
     }
 
     @Override
-    protected StamperRecipe findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot) {
+    protected RecipeHolder<StamperRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot) {
         // TODO: Give it something that is not empty when we don't have a stored secondary stack for getting the output?
         return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, extraSlot.resource(), outputSlot.resource(), OUTPUT_CHECK);
     }
 
     @NotNull
     @Override
-    public IMekanismRecipeTypeProvider<RecipeInput, StamperRecipe, DoubleItem<StamperRecipe>> getRecipeType() {
+    public IMekanismRecipeTypeProvider<?, ?, ?, StamperRecipe, DoubleItem<StamperRecipe>> getRecipeType() {
         return MoreMachineRecipeType.STAMPING;
     }
 
@@ -124,22 +124,14 @@ public class TileEntityStampingFactory extends TileEntityMoreMachineItemToItemFa
 
     @Nullable
     @Override
-    public StamperRecipe getRecipe(int cacheIndex) {
+    public RecipeHolder<StamperRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(inputHandlers[cacheIndex], extraInputHandler);
     }
 
     @NotNull
     @Override
     public CachedRecipe<StamperRecipe> createNewCachedRecipe(@NotNull StamperRecipe recipe, int cacheIndex, ContextMap recipeContext) {
-        return StamperCachedRecipe.createCache(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], extraInputHandler, outputHandlers[cacheIndex])
-                .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
-                .setCanHolderFunction(this::canFunction)
-                .setActive(active -> setActiveState(active, cacheIndex))
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(operatingTicks -> progress[cacheIndex] = operatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+        return setCommonSettings(StamperCachedRecipe.createCache(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], extraInputHandler, outputHandlers[cacheIndex]), cacheIndex);
     }
 
     @Override

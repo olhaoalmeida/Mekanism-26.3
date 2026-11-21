@@ -60,7 +60,7 @@ public class TileEntityItemStackToChemicalStackFactory extends TileEntityItemToC
 
     @Override
     @Nullable
-    protected ItemStackToChemicalRecipe findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IChemicalTank outputSlot) {
+    protected RecipeHolder<ItemStackToChemicalRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IChemicalTank outputSlot) {
         return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, outputSlot.resource(), OUTPUT_CHECK);
     }
 
@@ -81,7 +81,7 @@ public class TileEntityItemStackToChemicalStackFactory extends TileEntityItemToC
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<SingleRecipeInput, ItemStackToChemicalRecipe, SingleItem<ItemStackToChemicalRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, ItemStackToChemicalRecipe, SingleItem<ItemStackToChemicalRecipe>> getRecipeType() {
         return switch (getAdvancedFactoryType()) {
             case OXIDIZING -> MekanismRecipeType.OXIDIZING;
             case PIGMENT_EXTRACTING -> MekanismRecipeType.PIGMENT_EXTRACTING;

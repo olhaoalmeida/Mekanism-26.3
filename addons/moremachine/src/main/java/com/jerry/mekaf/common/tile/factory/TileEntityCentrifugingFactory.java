@@ -69,7 +69,7 @@ public class TileEntityCentrifugingFactory extends TileEntityChemicalToChemicalF
     }
 
     @Override
-    protected @Nullable ChemicalToChemicalRecipe findRecipe(int process, @NotNull ChemicalResource fallbackInput, @NotNull IChemicalTank outputTank) {
+    protected @Nullable RecipeHolder<ChemicalToChemicalRecipe> findRecipe(int process, @NotNull ChemicalResource fallbackInput, @NotNull IChemicalTank outputTank) {
         return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, outputTank.resource(), OUTPUT_CHECK);
     }
 

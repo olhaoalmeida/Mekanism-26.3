@@ -128,7 +128,7 @@ public class TileEntityPaintingFactory extends TileEntityItemToItemAdvancedFacto
     }
 
     @Override
-    protected @Nullable ItemStackChemicalToItemStackRecipe findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot) {
+    protected @Nullable RecipeHolder<ItemStackChemicalToItemStackRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot) {
         return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, chemicalTank.resource(), outputSlot.resource(), OUTPUT_CHECK);
     }
 
@@ -158,7 +158,7 @@ public class TileEntityPaintingFactory extends TileEntityItemToItemAdvancedFacto
 
     @NotNull
     @Override
-    public IMekanismRecipeTypeProvider<SingleItemChemicalRecipeInput, ItemStackChemicalToItemStackRecipe, InputRecipeCache.ItemChemical<ItemStackChemicalToItemStackRecipe>> getRecipeType() {
+    public IMekanismRecipeTypeProvider<?, ?, ?, ItemStackChemicalToItemStackRecipe, InputRecipeCache.ItemChemical<ItemStackChemicalToItemStackRecipe>> getRecipeType() {
         return MekanismRecipeType.PAINTING;
     }
 
@@ -169,7 +169,7 @@ public class TileEntityPaintingFactory extends TileEntityItemToItemAdvancedFacto
 
     @Nullable
     @Override
-    public ItemStackChemicalToItemStackRecipe getRecipe(int cacheIndex) {
+    public RecipeHolder<ItemStackChemicalToItemStackRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(itemInputHandlers[cacheIndex], chemicalInputHandler);
     }
 

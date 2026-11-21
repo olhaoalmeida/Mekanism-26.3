@@ -130,12 +130,12 @@ public class TileEntityPressingFactory extends TileEntityMoreMachineItemToItemFa
     }
 
     @Override
-    protected @Nullable TripleItemToItemRecipe findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot) {
+    protected @Nullable RecipeHolder<TripleItemToItemRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot) {
         return getRecipeType().getInputCache().findFirstRecipe(level, fallbackInput.toStack(), secondarySlot.resource().toStack(secondarySlot.amountAsInt()), tertiarySlot.resource().toStack(tertiarySlot.amountAsInt()));
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<RecipeInput, TripleItemToItemRecipe, MoreMachineInputRecipeCache.TripleItem<TripleItemToItemRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, TripleItemToItemRecipe, MoreMachineInputRecipeCache.TripleItem<TripleItemToItemRecipe>> getRecipeType() {
         return MoreMachineRecipeType.PRESSING;
     }
 
@@ -151,15 +151,7 @@ public class TileEntityPressingFactory extends TileEntityMoreMachineItemToItemFa
 
     @Override
     public @NotNull CachedRecipe<TripleItemToItemRecipe> createNewCachedRecipe(@NotNull TripleItemToItemRecipe recipe, int cacheIndex, ContextMap recipeContext) {
-        return ThreeInputCachedRecipe.tripleItemToItem(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], secondaryInputHandler, tertiaryInputHandler, outputHandlers[cacheIndex])
-                .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
-                .setCanHolderFunction(this::canFunction)
-                .setActive(active -> setActiveState(active, cacheIndex))
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(operatingTicks -> progress[cacheIndex] = operatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+        return setCommonSettings(ThreeInputCachedRecipe.tripleItemToItem(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], secondaryInputHandler, tertiaryInputHandler, outputHandlers[cacheIndex]), cacheIndex);
     }
 
     @Override

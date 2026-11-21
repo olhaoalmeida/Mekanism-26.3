@@ -100,7 +100,7 @@ public class TileEntityRecyclingFactory extends TileEntityMoreMachineFactory<Rec
     }
 
     @Override
-    protected @Nullable RecyclerRecipe findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot chanceOutputSlot, @Nullable IInventorySlot outputSlot) {
+    protected @Nullable RecipeHolder<RecyclerRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot chanceOutputSlot, @Nullable IInventorySlot outputSlot) {
         return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, chanceOutputSlot.resource(), OUTPUT_CHECK);
     }
 
@@ -120,7 +120,7 @@ public class TileEntityRecyclingFactory extends TileEntityMoreMachineFactory<Rec
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<SingleRecipeInput, RecyclerRecipe, SingleItem<RecyclerRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, RecyclerRecipe, SingleItem<RecyclerRecipe>> getRecipeType() {
         return MoreMachineRecipeType.RECYCLING;
     }
 
@@ -136,15 +136,7 @@ public class TileEntityRecyclingFactory extends TileEntityMoreMachineFactory<Rec
 
     @Override
     public @NotNull CachedRecipe<RecyclerRecipe> createNewCachedRecipe(@NotNull RecyclerRecipe recipe, int cacheIndex, ContextMap recipeContext) {
-        return MoreMachineOneInputCachedRecipe.recycler(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], outputHandlers[cacheIndex])
-                .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
-                .setCanHolderFunction(this::canFunction)
-                .setActive(active -> setActiveState(active, cacheIndex))
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(operatingTicks -> progress[cacheIndex] = operatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+        return setCommonSettings(MoreMachineOneInputCachedRecipe.recycler(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], outputHandlers[cacheIndex]), cacheIndex);
     }
 
     @NotNull

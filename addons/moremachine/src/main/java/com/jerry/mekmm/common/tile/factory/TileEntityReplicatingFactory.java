@@ -97,7 +97,7 @@ public class TileEntityReplicatingFactory extends TileEntityMoreMachineItemToIte
 
         ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM);
 
-        chemicalInputHandler = InputHelper.getInputHandler(chemicalTank);
+        chemicalInputHandler = InputHelper.getInputHandler(chemicalTank, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
     }
 
     @Nullable
@@ -126,7 +126,7 @@ public class TileEntityReplicatingFactory extends TileEntityMoreMachineItemToIte
     }
 
     @Override
-    protected @Nullable MMBasicItemStackChemicalToItemStackRecipe findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot) {
+    protected @Nullable RecipeHolder<MMBasicItemStackChemicalToItemStackRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot) {
         MMBasicItemStackChemicalToItemStackRecipe recipe = getRecipe(fallbackInput.toStack(), chemicalTank.resource().toStack(chemicalTank.amountAsInt()));
         return recipe != null && OUTPUT_CHECK.testType(recipe, fallbackInput, chemicalTank.resource(), outputSlot.resource()) ? recipe : null;
     }
@@ -167,15 +167,7 @@ public class TileEntityReplicatingFactory extends TileEntityMoreMachineItemToIte
 
     @Override
     public @NotNull CachedRecipe<MMBasicItemStackChemicalToItemStackRecipe> createNewCachedRecipe(@NotNull MMBasicItemStackChemicalToItemStackRecipe recipe, int cacheIndex, ContextMap recipeContext) {
-        return ReplicatorCachedRecipe.createItemReplicator(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], chemicalInputHandler, outputHandlers[cacheIndex])
-                .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
-                .setCanHolderFunction(this::canFunction)
-                .setActive(active -> setActiveState(active, cacheIndex))
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(operatingTicks -> progress[cacheIndex] = operatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+        return setCommonSettings(ReplicatorCachedRecipe.createItemReplicator(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], chemicalInputHandler, outputHandlers[cacheIndex]), cacheIndex);
     }
 
     @Override

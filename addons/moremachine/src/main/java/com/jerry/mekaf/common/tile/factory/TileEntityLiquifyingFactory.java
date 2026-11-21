@@ -230,7 +230,7 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
     }
 
     @Nullable
-    protected BasicItemStackToFluidOptionalItemRecipe findRecipe(int process, @NotNull ItemStack fallbackInput, IInventorySlot outputSlot, @NotNull IFluidTank inputTank) {
+    protected RecipeHolder<BasicItemStackToFluidOptionalItemRecipe> findRecipe(int process, @NotNull ItemStack fallbackInput, IInventorySlot outputSlot, @NotNull IFluidTank inputTank) {
         return null;
     }
 

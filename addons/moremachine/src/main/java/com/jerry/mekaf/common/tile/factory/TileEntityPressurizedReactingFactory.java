@@ -242,7 +242,7 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<ReactionRecipeInput, PressurizedReactionRecipe, ItemFluidChemical<PressurizedReactionRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, PressurizedReactionRecipe, ItemFluidChemical<PressurizedReactionRecipe>> getRecipeType() {
         return MekanismRecipeType.REACTION;
     }
 
@@ -301,7 +301,7 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
     }
 
     @Nullable
-    protected PressurizedReactionRecipe findRecipe(int process, @NotNull ItemStack fallbackInput, IInventorySlot outputSlot, @NotNull IChemicalTank inputTank) {
+    protected RecipeHolder<PressurizedReactionRecipe> findRecipe(int process, @NotNull ItemStack fallbackInput, IInventorySlot outputSlot, @NotNull IChemicalTank inputTank) {
         return getRecipeType().getInputCache().findFirstRecipe(level, fallbackInput, inputFluidTank.resource().toStack(inputFluidTank.amountAsInt()),
                 inputChemicalTank.resource().toStack(inputChemicalTank.amountAsInt()));
     }
