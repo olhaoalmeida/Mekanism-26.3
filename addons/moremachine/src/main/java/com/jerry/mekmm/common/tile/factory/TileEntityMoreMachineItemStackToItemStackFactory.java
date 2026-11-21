@@ -7,7 +7,7 @@ import com.jerry.mekmm.common.recipe.MoreMachineRecipeType;
 
 import mekanism.api.inventory.IInventorySlot;
 import mekanism.api.math.MathUtils;
-import mekanism.api.recipes.ItemStackToItemStackRecipe<?, ?>;
+import mekanism.api.recipes.ItemStackToItemStackRecipe;
 import mekanism.api.recipes.cache.CachedRecipe;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.api.recipes.cache.OneInputCachedRecipe;
