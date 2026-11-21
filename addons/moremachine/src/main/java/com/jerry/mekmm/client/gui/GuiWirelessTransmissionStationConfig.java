@@ -74,8 +74,8 @@ public class GuiWirelessTransmissionStationConfig extends GuiConnectListHolder<T
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
-        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY);
+    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTicks) {
+        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY, partialTicks);
         renderTitleTextWithOffset(GuiGraphicsExtractor, 14);// Adjust spacing for back button
         drawScreenText(GuiGraphicsExtractor, MoreMachineLang.WTS_ENERGY_RATE.translate(EnergyDisplay.of(tile.getEnergyRate())), 7);
         drawScreenText(GuiGraphicsExtractor, MoreMachineLang.WTS_FLUIDS_RATE.translate(tile.getFluidsRate()), 34);

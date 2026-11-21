@@ -84,9 +84,9 @@ public class GuiWirelessTransmissionStation extends GuiConfigurableTile<TileEnti
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
+    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTicks) {
         renderTitleText(GuiGraphicsExtractor);
         // renderInventoryText(GuiGraphicsExtractor);
-        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY);
+        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY, partialTicks);
     }
 }

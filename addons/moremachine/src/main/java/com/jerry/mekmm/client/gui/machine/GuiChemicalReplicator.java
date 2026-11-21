@@ -44,8 +44,8 @@ public class GuiChemicalReplicator extends GuiConfigurableTile<TileEntityChemica
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
+    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTicks) {
         renderTitleText(GuiGraphicsExtractor);
-        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY);
+        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY, partialTicks);
     }
 }

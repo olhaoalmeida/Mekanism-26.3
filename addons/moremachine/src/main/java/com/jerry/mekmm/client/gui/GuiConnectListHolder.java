@@ -97,8 +97,8 @@ public abstract class GuiConnectListHolder<TILE extends TileEntityMekanism & ITi
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
-        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY);
+    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTicks) {
+        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY, partialTicks);
         renderInventoryText(GuiGraphicsExtractor);
     }
 }

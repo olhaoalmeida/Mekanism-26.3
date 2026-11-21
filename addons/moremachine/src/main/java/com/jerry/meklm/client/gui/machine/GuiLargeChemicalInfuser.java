@@ -54,9 +54,9 @@ public class GuiLargeChemicalInfuser extends GuiMekanismTile<TileEntityLargeChem
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
+    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTicks) {
         renderTitleTextWithOffset(GuiGraphicsExtractor, 1, centerGauge.getRelativeX(), 4, TextAlignment.LEFT);
         renderInventoryText(GuiGraphicsExtractor, centerGauge.getRelativeX());
-        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY);
+        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY, partialTicks);
     }
 }

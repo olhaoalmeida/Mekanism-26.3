@@ -76,12 +76,12 @@ public class GuiLargeAntiprotonicNucleosynthesizer extends GuiConfigurableTile<T
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
+    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTicks) {
         renderTitleText(GuiGraphicsExtractor);
         renderInventoryText(GuiGraphicsExtractor);
         screen.drawScrollingString(GuiGraphicsExtractor, MekanismLang.PROCESS_RATE.translate(TextUtils.getPercent(tile.getProcessRate())), 0,
                 screen.getHeight() - font().lineHeight - 2, TextAlignment.CENTER, screenTextColor(), 2, false);
-        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY);
+        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY, partialTicks);
         // PoseStack pose = GuiGraphicsExtractor.pose();
         // pose.pushPose();
         // pose.translate(0, 0, 100);

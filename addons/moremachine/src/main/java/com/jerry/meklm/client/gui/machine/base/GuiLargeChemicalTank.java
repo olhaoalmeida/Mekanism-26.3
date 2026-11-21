@@ -51,10 +51,10 @@ public class GuiLargeChemicalTank extends GuiMekanismTile<TileEntityLargeChemica
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
+    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTicks) {
         renderTitleText(GuiGraphicsExtractor);
         renderInventoryText(GuiGraphicsExtractor, 85);
-        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY);
+        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY, partialTicks);
     }
 
     @Override

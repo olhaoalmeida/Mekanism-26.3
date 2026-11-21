@@ -1,5 +1,16 @@
 package com.jerry.meklm.common.tile.machine;
 
+import mekanism.api.recipes.book.RotaryBookCategory.RotaryBookInfo;
+import mekanism.api.recipes.book.RotaryBookCategory;
+import mekanism.common.recipe.lookup.monitor.RecipeCacheLookupMonitor;
+import mekanism.common.recipe.lookup.IRecipeLookupHandler.RecipeContainers;
+import mekanism.api.upgrade.Upgrade;
+import mekanism.api.upgrade.UpgradeIds;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.redstone.Orientation;
 import com.jerry.meklm.common.capabilities.holder.chemical.AdjustableChemicalTankHelper;
 import com.jerry.meklm.common.capabilities.holder.fluid.AdjustableFluidTankHelper;
 import com.jerry.meklm.common.registries.LargeMachineBlocks;
@@ -96,7 +107,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
 
-public class TileEntityLargeRotaryCondensentrator extends TileEntityRecipeMachine<RotaryRecipe> implements IHasMode, IBoundingBlock, INotNeedConfig {
+public class TileEntityLargeRotaryCondensentrator extends TileEntityRecipeMachine<RotaryRecipe, RecipeCacheLookupMonitor<RotaryRecipe>> implements IHasMode, IBoundingBlock, INotNeedConfig {
 
     public static final RecipeError NOT_ENOUGH_FLUID_INPUT_ERROR = RecipeError.create();
     public static final RecipeError NOT_ENOUGH_GAS_INPUT_ERROR = RecipeError.create();
@@ -114,6 +125,8 @@ public class TileEntityLargeRotaryCondensentrator extends TileEntityRecipeMachin
 
     public static final int CAPACITY = 10 * FluidType.BUCKET_VOLUME * FluidType.BUCKET_VOLUME;
 
+    private final RecipeContainers fluidToChemicalRecipeContainers;
+    private final RecipeContainers chemicalToFluidRecipeContainers;
     private final IOutputHandler<ChemicalStackTemplate> chemicalOutputHandler;
     private final IOutputHandler<FluidStackTemplate> fluidOutputHandler;
     private final IInputHandler<Fluid, FluidStack> fluidInputHandler;
@@ -197,6 +210,8 @@ public class TileEntityLargeRotaryCondensentrator extends TileEntityRecipeMachin
         fluidInputHandler = InputHelper.getInputHandler(fluidTank, NOT_ENOUGH_FLUID_INPUT_ERROR);
         chemicalOutputHandler = OutputHelper.getOutputHandler(chemicalTank, NOT_ENOUGH_SPACE_GAS_OUTPUT_ERROR);
         fluidOutputHandler = OutputHelper.getOutputHandler(fluidTank, NOT_ENOUGH_SPACE_FLUID_OUTPUT_ERROR);
+        fluidToChemicalRecipeContainers = new RecipeContainers(fluidTank, chemicalTank);
+        chemicalToFluidRecipeContainers = new RecipeContainers(chemicalTank, fluidTank);
     }
 
     @NotNull
@@ -262,7 +277,12 @@ public class TileEntityLargeRotaryCondensentrator extends TileEntityRecipeMachin
             gasInputSlot.fillTankFromSlot(gasOutputSlot, null);
             fluidInputSlot.drainTankIntoSlot(fluidOutputSlot, null);
         }
-        clientEnergyUsed = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
+        long prevEnergy = energyContainer.getAmountAsLong();
+        if (recipeCacheLookupMonitor.updateAndProcess(level)) {
+            clientEnergyUsed = Math.max(0, prevEnergy - energyContainer.getAmountAsLong());
+        } else {
+            clientEnergyUsed = 0;
+        }
         handleEject();
         return sendUpdatePacket;
     }
@@ -351,13 +371,13 @@ public class TileEntityLargeRotaryCondensentrator extends TileEntityRecipeMachin
 
     @NotNull
     @Override
-    public IMekanismRecipeTypeProvider<RotaryRecipeInput, RotaryRecipe, RotaryInputRecipeCache> getRecipeType() {
+    public IMekanismRecipeTypeProvider<RotaryRecipeInput, RotaryBookCategory, RotaryBookInfo, RotaryRecipe, RotaryInputRecipeCache> getRecipeType() {
         return MekanismRecipeType.ROTARY;
     }
 
     @Nullable
     @Override
-    public RotaryRecipe getRecipe(int cacheIndex) {
+    public RecipeHolder<RotaryRecipe> getRecipe(int cacheIndex) {
         RotaryInputRecipeCache inputCache = getRecipeType().getInputCache();
         return mode ? inputCache.findFirstRecipe(level, fluidInputHandler.getInput()) : inputCache.findFirstRecipe(level, chemicalInputHandler.getInput());
     }
@@ -366,25 +386,30 @@ public class TileEntityLargeRotaryCondensentrator extends TileEntityRecipeMachin
         return energyContainer;
     }
 
-    @NotNull
     @Override
-    public CachedRecipe<RotaryRecipe> createNewCachedRecipe(@NotNull RotaryRecipe recipe, int cacheIndex) {
-        return new RotaryCachedRecipe(recipe, recheckAllRecipeErrors, fluidInputHandler, chemicalInputHandler, chemicalOutputHandler, fluidOutputHandler, this::getMode)
-                .setErrorsChanged(this::onErrorsChanged)
-                .setCanHolderFunction(this::canFunction)
-                .setActive(this::setActive)
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setBaselineMaxOperations(() -> baseOperations * baselineMaxOperations)
-                .setOnFinish(this::markForSave);
+    protected boolean hasItemOutput() {
+        return false;
     }
 
     @Override
-    public void recalculateUpgrades(Upgrade upgrade) {
-        super.recalculateUpgrades(upgrade);
-        if (upgrade == Upgrade.SPEED) {
-            int upgradeCount = getUpgrades(Upgrade.SPEED);
-            baseOperations = 4 * (upgradeCount > 0 ? upgradeCount : upgradeCount + 1);
-            baselineMaxOperations = (int) Math.pow(2, upgradeCount);
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return mode ? fluidToChemicalRecipeContainers : chemicalToFluidRecipeContainers;
+    }
+
+    @NotNull
+    @Override
+    public CachedRecipe<RotaryRecipe> createNewCachedRecipe(@NotNull RotaryRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(new RotaryCachedRecipe(recipe, recheckAllRecipeErrors, fluidInputHandler, chemicalInputHandler, chemicalOutputHandler, fluidOutputHandler, this::getMode))
+                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
+                .setBaselineMaxOperations(() -> baseOperations * baselineMaxOperations);
+    }
+
+    @Override
+    public void recalculateUpgrades(HolderGetter<Upgrade> upgrades, Holder<Upgrade> upgrade, int totalInstalled) {
+        super.recalculateUpgrades(upgrades, upgrade, totalInstalled);
+        if (upgrade.is(UpgradeIds.SPEED)) {
+            baseOperations = 4 * (totalInstalled > 0 ? totalInstalled : totalInstalled + 1);
+            baselineMaxOperations = (int) Math.pow(2, totalInstalled);
         }
     }
 
@@ -401,7 +426,7 @@ public class TileEntityLargeRotaryCondensentrator extends TileEntityRecipeMachin
     }
 
     @Override
-    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel) {
+    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel, @Nullable Orientation orientation) {
         if (oldLevel > 0) {
             if (newLevel == 0) {
                 numPowering--;

@@ -54,8 +54,8 @@ public class GuiLargeElectrolyticSeparator extends GuiMekanismTile<TileEntityLar
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
-        renderTitleTextWithOffset(GuiGraphicsExtractor, fluidGauge.getRelativeRight());
-        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY);
+    protected void drawForegroundText(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        renderTitleTextWithOffset(guiGraphics, fluidGauge.getRelativeRight());
+        super.drawForegroundText(guiGraphics, mouseX, mouseY, partialTicks);
     }
 }

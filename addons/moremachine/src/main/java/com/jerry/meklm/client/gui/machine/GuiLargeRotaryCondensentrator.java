@@ -88,10 +88,10 @@ public class GuiLargeRotaryCondensentrator extends GuiMekanismTile<TileEntityLar
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
+    protected void drawForegroundText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTicks) {
         renderTitleText(GuiGraphicsExtractor);
         ILangEntry modeLang = tile.getMode() ? MekanismLang.DECONDENSENTRATING : MekanismLang.CONDENSENTRATING;
         drawScrollingString(GuiGraphicsExtractor, modeLang.translate(), 4, imageHeight - 92, TextAlignment.LEFT, titleTextColor(), energyBar.getRelativeX() - 4, 2, false);
-        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY);
+        super.drawForegroundText(GuiGraphicsExtractor, mouseX, mouseY, partialTicks);
     }
 }
