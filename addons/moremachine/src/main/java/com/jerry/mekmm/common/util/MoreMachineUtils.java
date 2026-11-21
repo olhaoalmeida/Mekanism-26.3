@@ -86,4 +86,11 @@ public class MoreMachineUtils {
         }
         return false;
     }
+
+    /** Wraps a dynamically built (non-datapack) recipe into a holder with a synthetic, stable key. */
+    public static <R extends net.minecraft.world.item.crafting.Recipe<?>> net.minecraft.world.item.crafting.RecipeHolder<R> syntheticHolder(R recipe) {
+        return new net.minecraft.world.item.crafting.RecipeHolder<>(
+                net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, Mekmm.rl("dynamic/" + recipe.getClass().getSimpleName().toLowerCase())),
+                recipe);
+    }
 }

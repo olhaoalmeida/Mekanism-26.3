@@ -254,7 +254,7 @@ public class TileEntityReplicator extends TileEntityProgressMachine<MMBasicItemS
 
     @Override
     public @Nullable AdvancedMachineUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new AdvancedMachineUpgradeData(provider, redstone, getControlType(), getEnergyContainer(), getOperatingTicks(), 0, chemicalTank, chemicalSlot, energySlot,
+        return new AdvancedMachineUpgradeData(provider, redstone, getControlType(), energyContainer, recipeCacheLookupMonitor, 0, chemicalTank, chemicalSlot, energySlot,
                 inputSlot, outputSlot, getComponents(), problemPath());
     }
 
