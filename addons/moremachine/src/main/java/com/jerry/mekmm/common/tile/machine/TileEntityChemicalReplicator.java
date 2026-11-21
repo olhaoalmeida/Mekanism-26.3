@@ -1,5 +1,10 @@
 package com.jerry.mekmm.common.tile.machine;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
+import mekanism.common.recipe.lookup.IRecipeLookupHandler.RecipeContainers;
+import com.jerry.mekmm.common.util.MoreMachineUtils;
+import java.util.List;
 import com.jerry.mekmm.api.datamaps.ChemicalReplicatorRecipe;
 import com.jerry.mekmm.api.datamaps.IMoreMachineDataMapTypes;
 import com.jerry.mekmm.api.recipes.basic.MMBasicChemicalChemicalToChemicalRecipe;
@@ -131,7 +136,7 @@ public class TileEntityChemicalReplicator extends TileEntityProgressMachine<MMBa
 
         firstInputHandler = InputHelper.getInputHandler(inputTank, RecipeError.NOT_ENOUGH_INPUT);
         outputHandler = OutputHelper.getOutputHandler(outputTank, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
-        secondaryInputHandler = InputHelper.getConstantInputHandler(uuTank);
+        secondaryInputHandler = InputHelper.getInputHandler(uuTank);
     }
 
     @NotNull
@@ -177,37 +182,46 @@ public class TileEntityChemicalReplicator extends TileEntityProgressMachine<MMBa
         return resource.is(MoreMachineChemicals.UU_MATTER);
     }
 
+
+    @Override
+    protected boolean hasItemOutput() {
+        return false;
+    }
+
+    @Override
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return new RecipeContainers(List.of(inputTank, uuTank), List.of(outputTank));
+    }
+
+    @Override
+    protected MachineEnergyContainer<TileEntityChemicalReplicator> energyContainer() {
+        return energyContainer;
+    }
+
     @Override
     protected boolean onUpdateServer(net.minecraft.server.level.ServerLevel level) {
         boolean sendUpdatePacket = super.onUpdateServer(level);
         energySlot.fillContainerOrConvert(null);
         uuSlot.fillTankOrConvert(null);
         inputSlot.fillTankOrConvert(null);
-        recipeCacheLookupMonitor.updateAndProcess();
+        recipeCacheLookupMonitor.updateAndProcess(level);
         return sendUpdatePacket;
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, MMBasicChemicalChemicalToChemicalRecipe, ?> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, MMBasicChemicalChemicalToChemicalRecipe, ?> getRecipeType() {
         return null;
     }
 
     @Override
-    public @Nullable MMBasicChemicalChemicalToChemicalRecipe getRecipe(int cacheIndex) {
-        return getRecipe(firstInputHandler.getInput(), secondaryInputHandler.getInput());
+    public @Nullable RecipeHolder<MMBasicChemicalChemicalToChemicalRecipe> getRecipe(int cacheIndex) {
+        MMBasicChemicalChemicalToChemicalRecipe r = getRecipe(firstInputHandler.getInput(), secondaryInputHandler.getInput());
+        return r == null ? null : MoreMachineUtils.syntheticHolder(r);
     }
 
     @Override
-    public @NotNull CachedRecipe<MMBasicChemicalChemicalToChemicalRecipe> createNewCachedRecipe(@NotNull MMBasicChemicalChemicalToChemicalRecipe recipe, int cacheIndex) {
-        return ReplicatorCachedRecipe.createChemicalReplicator(recipe, recheckAllRecipeErrors, firstInputHandler, secondaryInputHandler, outputHandler)
-                .setErrorsChanged(this::onErrorsChanged)
-                .setCanHolderFunction(this::canFunction)
-                .setActive(this::setActive)
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(this::setOperatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+    public @NotNull CachedRecipe<MMBasicChemicalChemicalToChemicalRecipe> createNewCachedRecipe(@NotNull MMBasicChemicalChemicalToChemicalRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(ReplicatorCachedRecipe.createChemicalReplicator(recipe, recheckAllRecipeErrors, firstInputHandler, secondaryInputHandler, outputHandler));
     }
 
     @Override

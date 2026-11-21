@@ -28,12 +28,12 @@ public class FluidReplicatorIRecipeSingle extends BasicFluidChemicalToFluidRecip
     }
 
     @Override
-    public RecipeSerializer<@NotNull FluidChemicalToFluidRecipe> getSerializer() {
+    public RecipeSerializer<FluidReplicatorIRecipeSingle> getSerializer() {
         return null;
     }
 
     @Override
-    public RecipeType<@NotNull FluidChemicalToFluidRecipe> getType() {
+    public RecipeType<FluidReplicatorIRecipeSingle> getType() {
         return null;
     }
 

@@ -1,5 +1,10 @@
 package com.jerry.mekmm.common.tile.machine;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
+import mekanism.common.recipe.lookup.IRecipeLookupHandler.RecipeContainers;
+import com.jerry.mekmm.common.util.MoreMachineUtils;
+import java.util.List;
 import com.jerry.mekmm.api.datamaps.IMoreMachineDataMapTypes;
 import com.jerry.mekmm.api.datamaps.ItemReplicatorRecipe;
 import com.jerry.mekmm.api.recipes.basic.MMBasicItemStackChemicalToItemStackRecipe;
@@ -116,7 +121,7 @@ public class TileEntityReplicator extends TileEntityProgressMachine<MMBasicItemS
 
         ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM);
 
-        chemicalInputHandler = InputHelper.getConstantInputHandler(chemicalTank);
+        chemicalInputHandler = InputHelper.getInputHandler(chemicalTank);
         itemInputHandler = InputHelper.getInputHandler(inputSlot, RecipeError.NOT_ENOUGH_INPUT);
         outputHandler = OutputHelper.getOutputHandler(outputSlot, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
     }
@@ -162,36 +167,45 @@ public class TileEntityReplicator extends TileEntityProgressMachine<MMBasicItemS
         return !resource.isEmpty() && IMoreMachineDataMapTypes.INSTANCE.getItemReplicatorRecipe(resource.typeHolder()) != null;
     }
 
+
+    @Override
+    protected boolean hasItemOutput() {
+        return true;
+    }
+
+    @Override
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return new RecipeContainers(List.of(inputSlot, chemicalSlot), List.of(outputSlot));
+    }
+
+    @Override
+    protected MachineEnergyContainer<TileEntityReplicator> energyContainer() {
+        return energyContainer;
+    }
+
     @Override
     protected boolean onUpdateServer(net.minecraft.server.level.ServerLevel level) {
         boolean sendUpdatePacket = super.onUpdateServer(level);
         energySlot.fillContainerOrConvert(null);
         chemicalSlot.fillTankOrConvert(null);
-        recipeCacheLookupMonitor.updateAndProcess();
+        recipeCacheLookupMonitor.updateAndProcess(level);
         return sendUpdatePacket;
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, MMBasicItemStackChemicalToItemStackRecipe, ?> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, MMBasicItemStackChemicalToItemStackRecipe, ?> getRecipeType() {
         return null;
     }
 
     @Override
-    public @Nullable MMBasicItemStackChemicalToItemStackRecipe getRecipe(int cacheIndex) {
-        return getRecipe(itemInputHandler.getInput(), chemicalInputHandler.getInput());
+    public @Nullable RecipeHolder<MMBasicItemStackChemicalToItemStackRecipe> getRecipe(int cacheIndex) {
+        MMBasicItemStackChemicalToItemStackRecipe r = getRecipe(itemInputHandler.getInput(), chemicalInputHandler.getInput());
+        return r == null ? null : MoreMachineUtils.syntheticHolder(r);
     }
 
     @Override
-    public @NotNull CachedRecipe<MMBasicItemStackChemicalToItemStackRecipe> createNewCachedRecipe(@NotNull MMBasicItemStackChemicalToItemStackRecipe recipe, int cacheIndex) {
-        return ReplicatorCachedRecipe.createItemReplicator(recipe, recheckAllRecipeErrors, itemInputHandler, chemicalInputHandler, outputHandler)
-                .setErrorsChanged(this::onErrorsChanged)
-                .setCanHolderFunction(this::canFunction)
-                .setActive(this::setActive)
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(this::setOperatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+    public @NotNull CachedRecipe<MMBasicItemStackChemicalToItemStackRecipe> createNewCachedRecipe(@NotNull MMBasicItemStackChemicalToItemStackRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(ReplicatorCachedRecipe.createItemReplicator(recipe, recheckAllRecipeErrors, itemInputHandler, chemicalInputHandler, outputHandler));
     }
 
     @Override

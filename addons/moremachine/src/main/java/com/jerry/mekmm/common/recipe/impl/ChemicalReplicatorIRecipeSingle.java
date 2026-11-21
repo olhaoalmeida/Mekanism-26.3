@@ -31,12 +31,12 @@ public class ChemicalReplicatorIRecipeSingle extends MMBasicChemicalChemicalToCh
     }
 
     @Override
-    public RecipeSerializer<@NotNull ChemicalChemicalToChemicalRecipe> getSerializer() {
+    public RecipeSerializer<ChemicalReplicatorIRecipeSingle> getSerializer() {
         return null;
     }
 
     @Override
-    public RecipeType<@NotNull ChemicalChemicalToChemicalRecipe> getType() {
+    public RecipeType<ChemicalReplicatorIRecipeSingle> getType() {
         return null;
     }
 

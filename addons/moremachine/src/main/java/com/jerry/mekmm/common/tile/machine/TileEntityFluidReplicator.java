@@ -1,5 +1,10 @@
 package com.jerry.mekmm.common.tile.machine;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
+import mekanism.common.recipe.lookup.IRecipeLookupHandler.RecipeContainers;
+import com.jerry.mekmm.common.util.MoreMachineUtils;
+import java.util.List;
 import com.jerry.mekmm.api.datamaps.FluidReplicatorRecipe;
 import com.jerry.mekmm.api.datamaps.IMoreMachineDataMapTypes;
 import com.jerry.mekmm.api.recipes.basic.BasicFluidChemicalToFluidRecipe;
@@ -146,7 +151,7 @@ public class TileEntityFluidReplicator extends TileEntityProgressMachine<BasicFl
 
         fluidInputHandler = InputHelper.getInputHandler(inputTank, RecipeError.NOT_ENOUGH_INPUT);
         fluidOutputHandler = OutputHelper.getOutputHandler(outputTank, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
-        chemicalInputHandler = InputHelper.getConstantInputHandler(uuTank);
+        chemicalInputHandler = InputHelper.getInputHandler(uuTank);
     }
 
     @Override
@@ -201,6 +206,22 @@ public class TileEntityFluidReplicator extends TileEntityProgressMachine<BasicFl
         return resource.is(MoreMachineChemicals.UU_MATTER);
     }
 
+
+    @Override
+    protected boolean hasItemOutput() {
+        return false;
+    }
+
+    @Override
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return new RecipeContainers(List.of(inputTank, uuTank), List.of(outputTank));
+    }
+
+    @Override
+    protected MachineEnergyContainer<TileEntityFluidReplicator> energyContainer() {
+        return energyContainer;
+    }
+
     @Override
     protected boolean onUpdateServer(net.minecraft.server.level.ServerLevel level) {
         boolean sendUpdatePacket = super.onUpdateServer(level);
@@ -209,31 +230,24 @@ public class TileEntityFluidReplicator extends TileEntityProgressMachine<BasicFl
         uuSlot.fillTankOrConvert(null);
         inputTankOutputSlot.drainTankIntoSlot(fluidOutputSlot, null);
         outputTankOutputSlot.drainTankIntoSlot(fluidOutputSlot, null);
-        recipeCacheLookupMonitor.updateAndProcess();
+        recipeCacheLookupMonitor.updateAndProcess(level);
         return sendUpdatePacket;
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, BasicFluidChemicalToFluidRecipe, ?> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, BasicFluidChemicalToFluidRecipe, ?> getRecipeType() {
         return null;
     }
 
     @Override
-    public @Nullable BasicFluidChemicalToFluidRecipe getRecipe(int cacheIndex) {
-        return getRecipe(fluidInputHandler.getInput(), chemicalInputHandler.getInput());
+    public @Nullable RecipeHolder<BasicFluidChemicalToFluidRecipe> getRecipe(int cacheIndex) {
+        BasicFluidChemicalToFluidRecipe r = getRecipe(fluidInputHandler.getInput(), chemicalInputHandler.getInput());
+        return r == null ? null : MoreMachineUtils.syntheticHolder(r);
     }
 
     @Override
-    public @NotNull CachedRecipe<BasicFluidChemicalToFluidRecipe> createNewCachedRecipe(@NotNull BasicFluidChemicalToFluidRecipe recipe, int cacheIndex) {
-        return ReplicatorCachedRecipe.createFluidReplicator(recipe, recheckAllRecipeErrors, fluidInputHandler, chemicalInputHandler, fluidOutputHandler)
-                .setErrorsChanged(this::onErrorsChanged)
-                .setCanHolderFunction(this::canFunction)
-                .setActive(this::setActive)
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(this::setOperatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+    public @NotNull CachedRecipe<BasicFluidChemicalToFluidRecipe> createNewCachedRecipe(@NotNull BasicFluidChemicalToFluidRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(ReplicatorCachedRecipe.createFluidReplicator(recipe, recheckAllRecipeErrors, fluidInputHandler, chemicalInputHandler, fluidOutputHandler));
     }
 
     @Override
