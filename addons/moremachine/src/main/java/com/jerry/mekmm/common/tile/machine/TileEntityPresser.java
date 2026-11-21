@@ -1,5 +1,10 @@
 package com.jerry.mekmm.common.tile.machine;
 
+import mekanism.api.recipes.book.CombiningBookCategory;
+import mekanism.api.recipes.book.CombiningBookCategory.CombiningBookInfo;
+import mekanism.common.recipe.lookup.IRecipeLookupHandler.RecipeContainers;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekmm.api.recipes.TripleItemToItemRecipe;
 import com.jerry.mekmm.api.recipes.cache.ThreeInputCachedRecipe;
 import com.jerry.mekmm.client.recipe_viewer.MMRecipeViewerRecipeType;
@@ -140,15 +145,30 @@ public class TileEntityPresser extends TileEntityProgressMachine<TripleItemToIte
     }
 
     @Override
+    protected boolean hasItemOutput() {
+        return true;
+    }
+
+    @Override
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return new RecipeContainers(List.of(primaryItemInputSlot, secondaryItemInputSlot, tertiaryItemInputSlot), List.of(outputSlot));
+    }
+
+    @Override
+    public MachineEnergyContainer<TileEntityPresser> energyContainer() {
+        return energyContainer;
+    }
+
+    @Override
     protected boolean onUpdateServer(net.minecraft.server.level.ServerLevel level) {
         boolean sendUpdatePacket = super.onUpdateServer(level);
         energySlot.fillContainerOrConvert(null);
-        recipeCacheLookupMonitor.updateAndProcess();
+        recipeCacheLookupMonitor.updateAndProcess(level);
         return sendUpdatePacket;
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<RecipeInput, TripleItemToItemRecipe, MoreMachineInputRecipeCache.TripleItem<TripleItemToItemRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<RecipeInput, CombiningBookCategory, CombiningBookInfo, TripleItemToItemRecipe, MoreMachineInputRecipeCache.TripleItem<TripleItemToItemRecipe>> getRecipeType() {
         return MoreMachineRecipeType.PRESSING;
     }
 
@@ -158,21 +178,13 @@ public class TileEntityPresser extends TileEntityProgressMachine<TripleItemToIte
     }
 
     @Override
-    public @Nullable TripleItemToItemRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<TripleItemToItemRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(primaryInputHandler, secondaryInputHandler, tertiaryInputHandler);
     }
 
     @Override
-    public @NotNull CachedRecipe<TripleItemToItemRecipe> createNewCachedRecipe(@NotNull TripleItemToItemRecipe recipe, int cacheIndex) {
-        return ThreeInputCachedRecipe.tripleItemToItem(recipe, recheckAllRecipeErrors, primaryInputHandler, secondaryInputHandler, tertiaryInputHandler, outputHandler)
-                .setErrorsChanged(this::onErrorsChanged)
-                .setCanHolderFunction(this::canFunction)
-                .setActive(this::setActive)
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(this::setOperatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+    public @NotNull CachedRecipe<TripleItemToItemRecipe> createNewCachedRecipe(@NotNull TripleItemToItemRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(ThreeInputCachedRecipe.tripleItemToItem(recipe, recheckAllRecipeErrors, primaryInputHandler, secondaryInputHandler, tertiaryInputHandler, outputHandler));
     }
 
     @Override

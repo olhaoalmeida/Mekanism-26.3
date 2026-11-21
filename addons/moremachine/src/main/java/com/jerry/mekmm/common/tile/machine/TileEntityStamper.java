@@ -1,5 +1,8 @@
 package com.jerry.mekmm.common.tile.machine;
 
+import mekanism.common.recipe.lookup.IRecipeLookupHandler.RecipeContainers;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekmm.api.recipes.StamperRecipe;
 import com.jerry.mekmm.api.recipes.cache.StamperCachedRecipe;
 import com.jerry.mekmm.client.recipe_viewer.MMRecipeViewerRecipeType;
@@ -118,15 +121,30 @@ public class TileEntityStamper extends TileEntityProgressMachine<StamperRecipe> 
     }
 
     @Override
+    protected boolean hasItemOutput() {
+        return true;
+    }
+
+    @Override
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return new RecipeContainers(List.of(itemInputSlot, moldInputSlot), List.of(outputSlot));
+    }
+
+    @Override
+    public MachineEnergyContainer<TileEntityStamper> energyContainer() {
+        return energyContainer;
+    }
+
+    @Override
     protected boolean onUpdateServer(net.minecraft.server.level.ServerLevel level) {
         boolean sendUpdatePacket = super.onUpdateServer(level);
         energySlot.fillContainerOrConvert(null);
-        recipeCacheLookupMonitor.updateAndProcess();
+        recipeCacheLookupMonitor.updateAndProcess(level);
         return sendUpdatePacket;
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, StamperRecipe, DoubleItem<StamperRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, StamperRecipe, DoubleItem<StamperRecipe>> getRecipeType() {
         return MoreMachineRecipeType.STAMPING;
     }
 
@@ -143,16 +161,8 @@ public class TileEntityStamper extends TileEntityProgressMachine<StamperRecipe> 
 
     @NotNull
     @Override
-    public CachedRecipe<StamperRecipe> createNewCachedRecipe(@NotNull StamperRecipe recipe, int cacheIndex) {
-        return StamperCachedRecipe.createCache(recipe, recheckAllRecipeErrors, itemInputHandler, moldInputHandler, outputHandler)
-                .setErrorsChanged(this::onErrorsChanged)
-                .setCanHolderFunction(this::canFunction)
-                .setActive(this::setActive)
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(this::setOperatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+    public CachedRecipe<StamperRecipe> createNewCachedRecipe(@NotNull StamperRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(StamperCachedRecipe.createCache(recipe, recheckAllRecipeErrors, itemInputHandler, moldInputHandler, outputHandler));
     }
 
     @NotNull

@@ -25,7 +25,7 @@ public class TileEntityLathe extends TileEntityElectricMachine {
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, ItemStackToItemStackRecipe, SingleItem<ItemStackToItemStackRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, ItemStackToItemStackRecipe, SingleItem<ItemStackToItemStackRecipe>> getRecipeType() {
         return MoreMachineRecipeType.LATHING;
     }
 

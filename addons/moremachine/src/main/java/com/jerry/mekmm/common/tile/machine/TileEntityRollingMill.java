@@ -25,7 +25,7 @@ public class TileEntityRollingMill extends TileEntityElectricMachine {
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, ItemStackToItemStackRecipe, SingleItem<ItemStackToItemStackRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, ItemStackToItemStackRecipe, SingleItem<ItemStackToItemStackRecipe>> getRecipeType() {
         return MoreMachineRecipeType.ROLLING_MILL;
     }
 
