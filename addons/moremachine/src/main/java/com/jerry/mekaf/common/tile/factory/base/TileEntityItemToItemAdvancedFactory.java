@@ -1,5 +1,10 @@
 package com.jerry.mekaf.common.tile.factory.base;
 
+import mekanism.api.upgrade.UpgradeIds;
+import mekanism.api.upgrade.Upgrade;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+import mekanism.common.Mekanism;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.inventory.slot.AdvancedFactoryInputInventorySlot;
@@ -101,7 +106,7 @@ public abstract class TileEntityItemToItemAdvancedFactory<RECIPE extends Mekanis
 
     @Nullable
     protected RECIPE getRecipeForInput(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot, boolean updateCache) {
-        if (!CommonWorldTickHandler.flushTagAndRecipeCaches) {
+        if (!Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
             // If our recipe caches are valid, grab our cached recipe and see if it is still valid
             CachedRecipe<RECIPE> cached = getCachedRecipe(process);
             if (isCachedRecipeValid(cached, fallbackInput)) {
@@ -111,20 +116,20 @@ public abstract class TileEntityItemToItemAdvancedFactory<RECIPE extends Mekanis
         }
         // If there is no cached item input, or it doesn't match our fallback then it is an out of date cache, so we
         // ignore the fact that we have a cache
-        RECIPE foundRecipe = findRecipe(process, fallbackInput, outputSlot);
+        RecipeHolder<RECIPE> foundRecipe = findRecipe(process, fallbackInput, outputSlot);
         if (foundRecipe == null) {
             // We could not find any valid recipe for the given item that matches the items in the current output slots
             return null;
         }
         if (updateCache) {
             // If we want to update the cache, then create a new cache with the recipe we found and update the cache
-            recipeCacheLookupMonitors[process].updateCachedRecipe(foundRecipe);
+            recipeCacheLookupMonitors[process].updateCachedRecipe(foundRecipe, SlotDisplayContext.fromLevel(level));
         }
-        return foundRecipe;
+        return foundRecipe.value();
     }
 
     @Nullable
-    protected abstract RECIPE findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot);
+    protected abstract RecipeHolder<RECIPE> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot);
 
     public abstract boolean isItemValidForSlot(@NotNull ItemResource stack);
 
@@ -188,7 +193,7 @@ public abstract class TileEntityItemToItemAdvancedFactory<RECIPE extends Mekanis
                 IIRecipeProcessInfo<ItemResource, RECIPE> recipeProcessInfo = processes.computeIfAbsent(inputStack, IIRecipeProcessInfo::new);
                 recipeProcessInfo.processes.add(processInfo);
                 recipeProcessInfo.totalCount += inputSlot.amountAsLong();
-                if (recipeProcessInfo.lazyMinPerSlot == null && !CommonWorldTickHandler.flushTagAndRecipeCaches) {
+                if (recipeProcessInfo.lazyMinPerSlot == null && !Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
                     // If we don't have a lazily initialized min per slot calculation set for it yet
                     // and our cache is not invalid/out of date due to a reload
                     CachedRecipe<RECIPE> cachedRecipe = getCachedRecipe(processInfo.process());

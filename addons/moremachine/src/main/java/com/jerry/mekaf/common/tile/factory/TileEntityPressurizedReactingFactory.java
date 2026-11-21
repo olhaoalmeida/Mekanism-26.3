@@ -1,5 +1,10 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import java.util.Optional;
+import mekanism.api.upgrade.UpgradeIds;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+import mekanism.common.Mekanism;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.inventory.slot.AdvancedFactoryInputInventorySlot;
@@ -149,7 +154,7 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
         }
 
         ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM, TransmissionType.CHEMICAL)
-                .setCanTankEject(tank -> tank != inputChemicalTank);
+                .setCanChemicalTankEject((_, tank) -> tank != inputChemicalTank);
 
         fluidInputHandler = InputHelper.getInputHandler(inputFluidTank, NOT_ENOUGH_FLUID_INPUT_ERROR);
         chemicalInputHandler = InputHelper.getInputHandler(inputChemicalTank, NOT_ENOUGH_CHEMICAL_INPUT_ERROR);
@@ -202,8 +207,8 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
     }
 
     @Override
-    public void onCachedRecipeChanged(@Nullable CachedRecipe<PressurizedReactionRecipe> cachedRecipe, int cacheIndex) {
-        super.onCachedRecipeChanged(cachedRecipe, cacheIndex);
+    public void onCachedRecipeChanged(@Nullable CachedRecipe<PressurizedReactionRecipe> cachedRecipe, int cacheIndex, ContextMap recipeContext) {
+        super.onCachedRecipeChanged(cachedRecipe, cacheIndex, recipeContext);
         int recipeDuration;
         if (cachedRecipe == null) {
             recipeDuration = BASE_DURATION;
@@ -215,11 +220,16 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
         }
         boolean update = getTicksRequired() != recipeDuration;
         setTicksRequired(recipeDuration);
+        HolderGetter<Upgrade> upgrades = getUpgradeLookup(recipeContext);
         if (update) {
-            recalculateUpgrades(Upgrade.SPEED);
+            Optional<Holder.Reference<Upgrade>> upgrade = upgrades.get(UpgradeIds.SPEED);
+            if (upgrade.isPresent()) {
+                recalculateUpgrades(upgrades, upgrade.get(), getUpgrades(upgrade.get()));
+                return;
+            }
         }
         // Ensure we take our recipe's energy per tick into account
-        energyContainer.updateEnergyPerTick();
+        energyContainer.updateEnergy(upgrades);
     }
 
     @Override
@@ -241,14 +251,16 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
         return true;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, PressurizedReactionRecipe, ItemFluidChemical<PressurizedReactionRecipe>> getRecipeType() {
-        return MekanismRecipeType.REACTION;
+        return (IMekanismRecipeTypeProvider) MekanismRecipeType.REACTION;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public @Nullable IRecipeViewerRecipeType<PressurizedReactionRecipe> recipeViewerType() {
-        return RecipeViewerRecipeType.REACTION;
+        return (IRecipeViewerRecipeType) RecipeViewerRecipeType.REACTION;
     }
 
     @Override
@@ -278,7 +290,7 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
 
     @Nullable
     protected PressurizedReactionRecipe getRecipeForInput(int process, @NotNull ItemStack fallbackInput, @NotNull IInventorySlot outputSlot, @NotNull IChemicalTank outputTank, boolean updateCache) {
-        if (!CommonWorldTickHandler.flushTagAndRecipeCaches) {
+        if (!Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
             // If our recipe caches are valid, grab our cached recipe and see if it is still valid
             CachedRecipe<PressurizedReactionRecipe> cached = getCachedRecipe(process);
             if (isCachedRecipeValid(cached, fallbackInput)) {
@@ -295,9 +307,9 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
         }
         if (updateCache) {
             // If we want to update the cache, then create a new cache with the recipe we found and update the cache
-            recipeCacheLookupMonitors[process].updateCachedRecipe(foundRecipe);
+            recipeCacheLookupMonitors[process].updateCachedRecipe(foundRecipe, SlotDisplayContext.fromLevel(level));
         }
-        return foundRecipe;
+        return foundRecipe.value();
     }
 
     @Nullable
@@ -404,7 +416,7 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
                 PRCRecipeProcessInfo recipeProcessInfo = processes.computeIfAbsent(inputStack, i -> new PRCRecipeProcessInfo());
                 recipeProcessInfo.processes.add(processInfo);
                 recipeProcessInfo.totalCount += inputSlot.amountAsLong();
-                if (recipeProcessInfo.lazyMinPerSlot == null && !CommonWorldTickHandler.flushTagAndRecipeCaches) {
+                if (recipeProcessInfo.lazyMinPerSlot == null && !Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
                     // If we don't have a lazily initialized min per slot calculation set for it yet
                     // and our cache is not invalid/out of date due to a reload
                     CachedRecipe<PressurizedReactionRecipe> cachedRecipe = getCachedRecipe(processInfo.process());

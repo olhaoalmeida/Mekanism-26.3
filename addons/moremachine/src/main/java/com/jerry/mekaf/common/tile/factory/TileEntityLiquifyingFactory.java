@@ -1,5 +1,10 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import mekanism.api.upgrade.UpgradeIds;
+import mekanism.api.upgrade.Upgrade;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+import mekanism.common.Mekanism;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.inventory.slot.AdvancedFactoryInputInventorySlot;
@@ -88,7 +93,7 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
                             docPlaceholder = "output tank")
     public IFluidTank fluidTank;
 
-    protected IOutputHandler<ItemStackToFluidOptionalItemRecipe.@NotNull FluidOptionalItemOutput>[] liquifiesOutputHandler;
+    protected IOutputHandler<ItemStackToFluidOptionalItemRecipe<?, ?>.@NotNull FluidOptionalItemOutput>[] liquifiesOutputHandler;
 
     protected final List<IInventorySlot> inputItemSlots;
     protected final List<IInventorySlot> outputItemSlots;
@@ -158,9 +163,10 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
         return null;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public IRecipeViewerRecipeType<BasicItemStackToFluidOptionalItemRecipe> recipeViewerType() {
-        return RecipeViewerRecipeType.NUTRITIONAL_LIQUIFICATION;
+        return (IRecipeViewerRecipeType) RecipeViewerRecipeType.NUTRITIONAL_LIQUIFICATION;
     }
 
     @Override
@@ -207,7 +213,7 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
 
     @Nullable
     protected BasicItemStackToFluidOptionalItemRecipe getRecipeForInput(int process, @NotNull ItemStack fallbackInput, @NotNull IInventorySlot outputSlot, @NotNull IFluidTank outputTank, boolean updateCache) {
-        if (!CommonWorldTickHandler.flushTagAndRecipeCaches) {
+        if (!Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
             // If our recipe caches are valid, grab our cached recipe and see if it is still valid
             CachedRecipe<BasicItemStackToFluidOptionalItemRecipe> cached = getCachedRecipe(process);
             if (isCachedRecipeValid(cached, fallbackInput)) {
@@ -224,9 +230,9 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
         }
         if (updateCache) {
             // If we want to update the cache, then create a new cache with the recipe we found and update the cache
-            recipeCacheLookupMonitors[process].updateCachedRecipe(foundRecipe);
+            recipeCacheLookupMonitors[process].updateCachedRecipe(foundRecipe, SlotDisplayContext.fromLevel(level));
         }
-        return foundRecipe;
+        return foundRecipe.value();
     }
 
     @Nullable
@@ -301,7 +307,7 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
                 NLRecipeProcessInfo recipeProcessInfo = processes.computeIfAbsent(inputStack, i -> new NLRecipeProcessInfo());
                 recipeProcessInfo.processes.add(processInfo);
                 recipeProcessInfo.totalCount += inputSlot.amountAsLong();
-                if (recipeProcessInfo.lazyMinPerSlot == null && !CommonWorldTickHandler.flushTagAndRecipeCaches) {
+                if (recipeProcessInfo.lazyMinPerSlot == null && !Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
                     // If we don't have a lazily initialized min per slot calculation set for it yet
                     // and our cache is not invalid/out of date due to a reload
                     CachedRecipe<BasicItemStackToFluidOptionalItemRecipe> cachedRecipe = getCachedRecipe(processInfo.process());

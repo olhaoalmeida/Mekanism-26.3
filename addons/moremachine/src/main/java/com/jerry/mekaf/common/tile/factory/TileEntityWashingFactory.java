@@ -1,5 +1,8 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import mekanism.api.upgrade.UpgradeIds;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.tile.factory.base.TileEntityChemicalToChemicalFactory;
@@ -62,9 +65,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class TileEntityWashingFactory extends TileEntityChemicalToChemicalFactory<FluidChemicalToChemicalRecipe> implements IHasDumpButton, FluidChemicalRecipeLookupHandler<FluidChemicalToChemicalRecipe> {
+public class TileEntityWashingFactory extends TileEntityChemicalToChemicalFactory<FluidChemicalToChemicalRecipe<?, ?>> implements IHasDumpButton, FluidChemicalRecipeLookupHandler<FluidChemicalToChemicalRecipe<?, ?>> {
 
-    protected static final DoubleInputRecipeCache.CheckRecipeType<Fluid, FluidResource, Chemical, ChemicalResource, FluidChemicalToChemicalRecipe, ChemicalResource> OUTPUT_CHECK = (recipe, fluidInput, chemicalInput, output) -> output.isEmpty() || output.is(recipe.getOutput(fluidInput, chemicalInput).typeHolder());
+    protected static final DoubleInputRecipeCache.CheckRecipeType<Fluid, FluidResource, Chemical, ChemicalResource, FluidChemicalToChemicalRecipe<?, ?>, ChemicalResource> OUTPUT_CHECK = (recipe, fluidInput, chemicalInput, output) -> output.isEmpty() || output.is(recipe.getOutput(fluidInput, chemicalInput).typeHolder());
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,
             RecipeError.NOT_ENOUGH_ENERGY_REDUCED_RATE,
@@ -101,7 +104,7 @@ public class TileEntityWashingFactory extends TileEntityChemicalToChemicalFactor
         configComponent.setupInputConfig(TransmissionType.FLUID, fluidTank);
 
         ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM, TransmissionType.CHEMICAL)
-                .setCanTankEject(tank -> !inputChemicalTanks.contains(tank));
+                .setCanChemicalTankEject((_, tank) -> !inputChemicalTanks.contains(tank));
 
         fluidInputHandler = InputHelper.getInputHandler(fluidTank, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
     }
@@ -144,16 +147,16 @@ public class TileEntityWashingFactory extends TileEntityChemicalToChemicalFactor
     }
 
     @Override
-    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<FluidChemicalToChemicalRecipe> cached, @NotNull ChemicalResource stack) {
+    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<FluidChemicalToChemicalRecipe<?, ?>> cached, @NotNull ChemicalResource stack) {
         if (cached != null) {
-            FluidChemicalToChemicalRecipe cachedRecipe = cached.getRecipe();
+            FluidChemicalToChemicalRecipe<?, ?> cachedRecipe = cached.getRecipe();
             return cachedRecipe.getChemicalInput().testType(stack) && (fluidTank.isEmpty() || cachedRecipe.getFluidInput().testType(fluidTank.resource()));
         }
         return false;
     }
 
     @Override
-    protected @Nullable RecipeHolder<FluidChemicalToChemicalRecipe> findRecipe(int process, @NotNull ChemicalResource fallbackInput, @NotNull IChemicalTank outputTank) {
+    protected @Nullable RecipeHolder<FluidChemicalToChemicalRecipe<?, ?>> findRecipe(int process, @NotNull ChemicalResource fallbackInput, @NotNull IChemicalTank outputTank) {
         return getRecipeType().getInputCache().findTypeBasedRecipe(level, fluidTank.resource(), fallbackInput, outputTank.resource(), OUTPUT_CHECK);
     }
 
@@ -168,27 +171,29 @@ public class TileEntityWashingFactory extends TileEntityChemicalToChemicalFactor
     }
 
     @Override
-    protected int getNeededInput(FluidChemicalToChemicalRecipe recipe, ChemicalResource inputStack) {
+    protected int getNeededInput(FluidChemicalToChemicalRecipe<?, ?> recipe, ChemicalResource inputStack) {
         return MathUtils.clampToInt(recipe.getChemicalInput().getNeededAmount(inputStack));
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, FluidChemicalToChemicalRecipe, InputRecipeCache.FluidChemical<FluidChemicalToChemicalRecipe>> getRecipeType() {
-        return MekanismRecipeType.WASHING;
+    public @NotNull IMekanismRecipeTypeProvider<?, FluidChemicalToChemicalRecipe<?, ?>, InputRecipeCache.FluidChemical<FluidChemicalToChemicalRecipe<?, ?>>> getRecipeType() {
+        return (IMekanismRecipeTypeProvider) MekanismRecipeType.WASHING;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public @Nullable IRecipeViewerRecipeType<FluidChemicalToChemicalRecipe<?, ?>> recipeViewerType() {
+        return (IRecipeViewerRecipeType) RecipeViewerRecipeType.WASHING;
     }
 
     @Override
-    public @Nullable IRecipeViewerRecipeType<FluidChemicalToChemicalRecipe> recipeViewerType() {
-        return RecipeViewerRecipeType.WASHING;
-    }
-
-    @Override
-    public @Nullable RecipeHolder<FluidChemicalToChemicalRecipe> getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<FluidChemicalToChemicalRecipe<?, ?>> getRecipe(int cacheIndex) {
         return findFirstRecipe(fluidInputHandler, chemicalInputHandlers[cacheIndex]);
     }
 
     @Override
-    public @NotNull CachedRecipe<FluidChemicalToChemicalRecipe> createNewCachedRecipe(@NotNull FluidChemicalToChemicalRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+    public @NotNull CachedRecipe<FluidChemicalToChemicalRecipe<?, ?>> createNewCachedRecipe(@NotNull FluidChemicalToChemicalRecipe<?, ?> recipe, int cacheIndex, ContextMap recipeContext) {
         return setCommonSettings(new TwoInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], fluidInputHandler, chemicalInputHandlers[cacheIndex], chemicalOutputHandlers[cacheIndex]), cacheIndex);
     }
 

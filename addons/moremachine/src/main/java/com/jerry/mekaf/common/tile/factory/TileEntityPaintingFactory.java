@@ -1,5 +1,9 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import mekanism.api.upgrade.UpgradeIds;
+import mekanism.api.upgrade.Upgrade;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.tile.factory.base.TileEntityItemToItemAdvancedFactory;
@@ -61,10 +65,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public class TileEntityPaintingFactory extends TileEntityItemToItemAdvancedFactory<ItemStackChemicalToItemStackRecipe> implements ConstantUsageRecipeLookupHandler,
-                                       ItemChemicalRecipeLookupHandler<ItemStackChemicalToItemStackRecipe>, IHasDumpButton {
+public class TileEntityPaintingFactory extends TileEntityItemToItemAdvancedFactory<ItemStackChemicalToItemStackRecipe<?, ?>> implements ConstantUsageRecipeLookupHandler,
+                                       ItemChemicalRecipeLookupHandler<ItemStackChemicalToItemStackRecipe<?, ?>>, IHasDumpButton {
 
-    private static final CheckRecipeType<Item, ItemResource, Chemical, ChemicalResource, ItemStackChemicalToItemStackRecipe, ItemResource> OUTPUT_CHECK = (recipe, input, extra, output) -> output.isEmpty() || output.matches(recipe.getOutput(input, extra));
+    private static final CheckRecipeType<Item, ItemResource, Chemical, ChemicalResource, ItemStackChemicalToItemStackRecipe<?, ?>, ItemResource> OUTPUT_CHECK = (recipe, input, extra, output) -> output.isEmpty() || output.matches(recipe.getOutput(input, extra));
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,
             RecipeError.NOT_ENOUGH_INPUT,
@@ -119,16 +123,16 @@ public class TileEntityPaintingFactory extends TileEntityItemToItemAdvancedFacto
     }
 
     @Override
-    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<ItemStackChemicalToItemStackRecipe> cached, @NotNull ItemResource stack) {
+    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<ItemStackChemicalToItemStackRecipe<?, ?>> cached, @NotNull ItemResource stack) {
         if (cached != null) {
-            ItemStackChemicalToItemStackRecipe cachedRecipe = cached.getRecipe();
+            ItemStackChemicalToItemStackRecipe<?, ?> cachedRecipe = cached.getRecipe();
             return cachedRecipe.getItemInput().testType(stack) && (chemicalTank.isEmpty() || cachedRecipe.getChemicalInput().testType(chemicalTank.resource()));
         }
         return false;
     }
 
     @Override
-    protected @Nullable RecipeHolder<ItemStackChemicalToItemStackRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot) {
+    protected @Nullable RecipeHolder<ItemStackChemicalToItemStackRecipe<?, ?>> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot) {
         return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, chemicalTank.resource(), outputSlot.resource(), OUTPUT_CHECK);
     }
 
@@ -143,7 +147,7 @@ public class TileEntityPaintingFactory extends TileEntityItemToItemAdvancedFacto
     }
 
     @Override
-    protected int getNeededInput(ItemStackChemicalToItemStackRecipe recipe, ItemResource inputStack) {
+    protected int getNeededInput(ItemStackChemicalToItemStackRecipe<?, ?> recipe, ItemResource inputStack) {
         return MathUtils.clampToInt(recipe.getItemInput().getNeededAmount(inputStack));
     }
 
@@ -157,25 +161,27 @@ public class TileEntityPaintingFactory extends TileEntityItemToItemAdvancedFacto
     }
 
     @NotNull
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public IMekanismRecipeTypeProvider<?, ?, ?, ItemStackChemicalToItemStackRecipe, InputRecipeCache.ItemChemical<ItemStackChemicalToItemStackRecipe>> getRecipeType() {
-        return MekanismRecipeType.PAINTING;
+    public IMekanismRecipeTypeProvider<?, ?, ?, ItemStackChemicalToItemStackRecipe<?, ?>, InputRecipeCache.ItemChemical<ItemStackChemicalToItemStackRecipe<?, ?>>> getRecipeType() {
+        return (IMekanismRecipeTypeProvider) MekanismRecipeType.PAINTING;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public IRecipeViewerRecipeType<ItemStackChemicalToItemStackRecipe> recipeViewerType() {
-        return RecipeViewerRecipeType.PAINTING;
+    public IRecipeViewerRecipeType<ItemStackChemicalToItemStackRecipe<?, ?>> recipeViewerType() {
+        return (IRecipeViewerRecipeType) RecipeViewerRecipeType.PAINTING;
     }
 
     @Nullable
     @Override
-    public RecipeHolder<ItemStackChemicalToItemStackRecipe> getRecipe(int cacheIndex) {
+    public RecipeHolder<ItemStackChemicalToItemStackRecipe<?, ?>> getRecipe(int cacheIndex) {
         return findFirstRecipe(itemInputHandlers[cacheIndex], chemicalInputHandler);
     }
 
     @Override
-    public @NotNull CachedRecipe<ItemStackChemicalToItemStackRecipe> createNewCachedRecipe(@NotNull ItemStackChemicalToItemStackRecipe recipe, int cacheIndex, ContextMap recipeContext) {
-        CachedRecipe<ItemStackChemicalToItemStackRecipe> cachedRecipe;
+    public @NotNull CachedRecipe<ItemStackChemicalToItemStackRecipe<?, ?>> createNewCachedRecipe(@NotNull ItemStackChemicalToItemStackRecipe<?, ?> recipe, int cacheIndex, ContextMap recipeContext) {
+        CachedRecipe<ItemStackChemicalToItemStackRecipe<?, ?>> cachedRecipe;
         if (recipe.perTickUsage()) {
             cachedRecipe = ItemStackConstantChemicalToObjectCachedRecipe.create(recipe, recheckAllRecipeErrors[cacheIndex], itemInputHandlers[cacheIndex], chemicalInputHandler,
                     chemicalUsageMultiplier, used -> usedSoFar[cacheIndex] = used, itemOutputHandlers[cacheIndex]);

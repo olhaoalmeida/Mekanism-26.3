@@ -1,5 +1,9 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import mekanism.api.upgrade.UpgradeIds;
+import mekanism.api.upgrade.Upgrade;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.tile.factory.base.TileEntityItemToChemicalFactory;
@@ -36,9 +40,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class TileEntityItemStackToChemicalStackFactory extends TileEntityItemToChemicalFactory<ItemStackToChemicalRecipe> implements ItemRecipeLookupHandler<ItemStackToChemicalRecipe> {
+public class TileEntityItemStackToChemicalStackFactory extends TileEntityItemToChemicalFactory<ItemStackToChemicalRecipe<?, ?>> implements ItemRecipeLookupHandler<ItemStackToChemicalRecipe<?, ?>> {
 
-    private static final TriPredicate<ItemStackToChemicalRecipe, ItemResource, ChemicalResource> OUTPUT_CHECK = (recipe, input, output) -> output.isEmpty() || output.is(recipe.getOutput(input).typeHolder());
+    private static final TriPredicate<ItemStackToChemicalRecipe<?, ?>, ItemResource, ChemicalResource> OUTPUT_CHECK = (recipe, input, output) -> output.isEmpty() || output.is(recipe.getOutput(input).typeHolder());
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,
             RecipeError.NOT_ENOUGH_INPUT,
@@ -54,18 +58,18 @@ public class TileEntityItemStackToChemicalStackFactory extends TileEntityItemToC
 
     @Override
     @Contract("null, _ -> false")
-    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<ItemStackToChemicalRecipe> cached, @NotNull ItemResource stack) {
+    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<ItemStackToChemicalRecipe<?, ?>> cached, @NotNull ItemResource stack) {
         return cached != null && cached.getRecipe().getInput().testType(stack);
     }
 
     @Override
     @Nullable
-    protected RecipeHolder<ItemStackToChemicalRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IChemicalTank outputSlot) {
+    protected RecipeHolder<ItemStackToChemicalRecipe<?, ?>> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IChemicalTank outputSlot) {
         return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, outputSlot.resource(), OUTPUT_CHECK);
     }
 
     @Override
-    protected int getNeededInput(ItemStackToChemicalRecipe recipe, ItemResource inputStack) {
+    protected int getNeededInput(ItemStackToChemicalRecipe<?, ?> recipe, ItemResource inputStack) {
         return MathUtils.clampToInt(recipe.getInput().getNeededAmount(inputStack));
     }
 
@@ -81,7 +85,7 @@ public class TileEntityItemStackToChemicalStackFactory extends TileEntityItemToC
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, ItemStackToChemicalRecipe, SingleItem<ItemStackToChemicalRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, ItemStackToChemicalRecipe<?, ?>, SingleItem<ItemStackToChemicalRecipe<?, ?>>> getRecipeType() {
         return switch (getAdvancedFactoryType()) {
             case OXIDIZING -> MekanismRecipeType.OXIDIZING;
             case PIGMENT_EXTRACTING -> MekanismRecipeType.PIGMENT_EXTRACTING;
@@ -90,7 +94,7 @@ public class TileEntityItemStackToChemicalStackFactory extends TileEntityItemToC
     }
 
     @Override
-    public IRecipeViewerRecipeType<ItemStackToChemicalRecipe> recipeViewerType() {
+    public IRecipeViewerRecipeType<ItemStackToChemicalRecipe<?, ?>> recipeViewerType() {
         return switch (getAdvancedFactoryType()) {
             case OXIDIZING -> RecipeViewerRecipeType.OXIDIZING;
             case PIGMENT_EXTRACTING -> RecipeViewerRecipeType.PIGMENT_EXTRACTING;
@@ -99,12 +103,12 @@ public class TileEntityItemStackToChemicalStackFactory extends TileEntityItemToC
     }
 
     @Override
-    public @Nullable RecipeHolder<ItemStackToChemicalRecipe> getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<ItemStackToChemicalRecipe<?, ?>> getRecipe(int cacheIndex) {
         return findFirstRecipe(itemInputHandlers[cacheIndex]);
     }
 
     @Override
-    public @NotNull CachedRecipe<ItemStackToChemicalRecipe> createNewCachedRecipe(@NotNull ItemStackToChemicalRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+    public @NotNull CachedRecipe<ItemStackToChemicalRecipe<?, ?>> createNewCachedRecipe(@NotNull ItemStackToChemicalRecipe<?, ?> recipe, int cacheIndex, ContextMap recipeContext) {
         return setCommonSettings(new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], itemInputHandlers[cacheIndex], chemicalOutputHandlers[cacheIndex]), cacheIndex);
     }
 

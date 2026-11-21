@@ -1,5 +1,8 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import mekanism.api.upgrade.UpgradeIds;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.tile.factory.base.TileEntityChemicalToChemicalFactory;
@@ -41,9 +44,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class TileEntityCentrifugingFactory extends TileEntityChemicalToChemicalFactory<ChemicalToChemicalRecipe> implements IBoundingBlock, ChemicalRecipeLookupHandler<ChemicalToChemicalRecipe> {
+public class TileEntityCentrifugingFactory extends TileEntityChemicalToChemicalFactory<ChemicalToChemicalRecipe<?, ?>> implements IBoundingBlock, ChemicalRecipeLookupHandler<ChemicalToChemicalRecipe<?, ?>> {
 
-    protected static final TriPredicate<ChemicalToChemicalRecipe, ChemicalResource, ChemicalResource> OUTPUT_CHECK = (recipe, input, output) -> output.isEmpty() || output.is(recipe.getOutput(input).typeHolder());
+    protected static final TriPredicate<ChemicalToChemicalRecipe<?, ?>, ChemicalResource, ChemicalResource> OUTPUT_CHECK = (recipe, input, output) -> output.isEmpty() || output.is(recipe.getOutput(input).typeHolder());
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,
             RecipeError.NOT_ENOUGH_ENERGY_REDUCED_RATE,
@@ -57,19 +60,19 @@ public class TileEntityCentrifugingFactory extends TileEntityChemicalToChemicalF
         configComponent.addDisabledSides(RelativeSide.TOP);
 
         ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM, TransmissionType.CHEMICAL)
-                .setCanTankEject(tank -> !inputChemicalTanks.contains(tank));
+                .setCanChemicalTankEject((_, tank) -> !inputChemicalTanks.contains(tank));
     }
 
     @Override
     protected void addSlots(MekContainerHelper<IInventorySlot> builder, IContentsListener listener, IContentsListener updateSortingListener) {}
 
     @Override
-    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<ChemicalToChemicalRecipe> cached, @NotNull ChemicalResource stack) {
+    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<ChemicalToChemicalRecipe<?, ?>> cached, @NotNull ChemicalResource stack) {
         return cached != null && cached.getRecipe().getInput().testType(stack);
     }
 
     @Override
-    protected @Nullable RecipeHolder<ChemicalToChemicalRecipe> findRecipe(int process, @NotNull ChemicalResource fallbackInput, @NotNull IChemicalTank outputTank) {
+    protected @Nullable RecipeHolder<ChemicalToChemicalRecipe<?, ?>> findRecipe(int process, @NotNull ChemicalResource fallbackInput, @NotNull IChemicalTank outputTank) {
         return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, outputTank.resource(), OUTPUT_CHECK);
     }
 
@@ -84,27 +87,29 @@ public class TileEntityCentrifugingFactory extends TileEntityChemicalToChemicalF
     }
 
     @Override
-    protected int getNeededInput(ChemicalToChemicalRecipe recipe, ChemicalResource inputStack) {
+    protected int getNeededInput(ChemicalToChemicalRecipe<?, ?> recipe, ChemicalResource inputStack) {
         return MathUtils.clampToInt(recipe.getInput().getNeededAmount(inputStack));
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, ChemicalToChemicalRecipe, SingleChemical<ChemicalToChemicalRecipe>> getRecipeType() {
-        return MekanismRecipeType.CENTRIFUGING;
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, ChemicalToChemicalRecipe<?, ?>, SingleChemical<ChemicalToChemicalRecipe<?, ?>>> getRecipeType() {
+        return (IMekanismRecipeTypeProvider) MekanismRecipeType.CENTRIFUGING;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public @Nullable IRecipeViewerRecipeType<ChemicalToChemicalRecipe<?, ?>> recipeViewerType() {
+        return (IRecipeViewerRecipeType) RecipeViewerRecipeType.CENTRIFUGING;
     }
 
     @Override
-    public @Nullable IRecipeViewerRecipeType<ChemicalToChemicalRecipe> recipeViewerType() {
-        return RecipeViewerRecipeType.CENTRIFUGING;
-    }
-
-    @Override
-    public @Nullable RecipeHolder<ChemicalToChemicalRecipe> getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<ChemicalToChemicalRecipe<?, ?>> getRecipe(int cacheIndex) {
         return findFirstRecipe(chemicalInputHandlers[cacheIndex]);
     }
 
     @Override
-    public @NotNull CachedRecipe<ChemicalToChemicalRecipe> createNewCachedRecipe(@NotNull ChemicalToChemicalRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+    public @NotNull CachedRecipe<ChemicalToChemicalRecipe<?, ?>> createNewCachedRecipe(@NotNull ChemicalToChemicalRecipe<?, ?> recipe, int cacheIndex, ContextMap recipeContext) {
         return setCommonSettings(new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], chemicalInputHandlers[cacheIndex], chemicalOutputHandlers[cacheIndex]), cacheIndex);
     }
 

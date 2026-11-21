@@ -132,7 +132,7 @@ public class TileEntityChemicalReplicator extends TileEntityProgressMachine<MMBa
         configComponent.setupInputConfig(TransmissionType.ENERGY, energyContainer);
 
         ejectorComponent.setOutputData(configComponent, TransmissionType.CHEMICAL, TransmissionType.ITEM)
-                .setCanTankEject(tank -> tank == outputTank);
+                .setCanChemicalTankEject((_, tank) -> tank == outputTank);
 
         firstInputHandler = InputHelper.getInputHandler(inputTank, RecipeError.NOT_ENOUGH_INPUT);
         outputHandler = OutputHelper.getOutputHandler(outputTank, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);

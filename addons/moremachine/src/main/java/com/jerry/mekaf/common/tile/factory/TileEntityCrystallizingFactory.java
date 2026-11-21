@@ -1,5 +1,9 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import mekanism.api.upgrade.UpgradeIds;
+import mekanism.api.upgrade.Upgrade;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.tile.factory.base.TileEntityChemicalToItemFactory;
@@ -75,14 +79,16 @@ public class TileEntityCrystallizingFactory extends TileEntityChemicalToItemFact
         return MathUtils.clampToInt(recipe.getInput().getNeededAmount(inputStack));
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public @NotNull IMekanismRecipeTypeProvider<?, ChemicalCrystallizerRecipe, InputRecipeCache.SingleChemical<ChemicalCrystallizerRecipe>> getRecipeType() {
-        return MekanismRecipeType.CRYSTALLIZING;
+        return (IMekanismRecipeTypeProvider) MekanismRecipeType.CRYSTALLIZING;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public @Nullable IRecipeViewerRecipeType<ChemicalCrystallizerRecipe> recipeViewerType() {
-        return RecipeViewerRecipeType.CRYSTALLIZING;
+        return (IRecipeViewerRecipeType) RecipeViewerRecipeType.CRYSTALLIZING;
     }
 
     @Override

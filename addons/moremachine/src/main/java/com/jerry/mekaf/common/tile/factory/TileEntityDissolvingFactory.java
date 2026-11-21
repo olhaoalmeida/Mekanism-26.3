@@ -1,5 +1,9 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import mekanism.common.util.UpgradeUtils;
+import mekanism.api.upgrade.UpgradeIds;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.tile.factory.base.TileEntityItemToChemicalFactory;
@@ -112,7 +116,7 @@ public class TileEntityDissolvingFactory extends TileEntityItemToChemicalFactory
 
         ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM, TransmissionType.CHEMICAL)
                 // 有多个储罐时可以使用该方法指定某个罐是否可以弹出
-                .setCanTankEject(tank -> tank != chemicalTank);
+                .setCanChemicalTankEject((_, tank) -> tank != chemicalTank);
         usedSoFar = new int[tier.processes];
 
         chemicalInputHandler = InputHelper.getInputHandler(chemicalTank, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
@@ -182,14 +186,16 @@ public class TileEntityDissolvingFactory extends TileEntityItemToChemicalFactory
         return containsRecipeA(stack);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public @NotNull IMekanismRecipeTypeProvider<?, ChemicalDissolutionRecipe, InputRecipeCache.ItemChemical<ChemicalDissolutionRecipe>> getRecipeType() {
-        return MekanismRecipeType.DISSOLUTION;
+        return (IMekanismRecipeTypeProvider) MekanismRecipeType.DISSOLUTION;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public @Nullable IRecipeViewerRecipeType<ChemicalDissolutionRecipe> recipeViewerType() {
-        return RecipeViewerRecipeType.DISSOLUTION;
+        return (IRecipeViewerRecipeType) RecipeViewerRecipeType.DISSOLUTION;
     }
 
     @Override
@@ -218,10 +224,10 @@ public class TileEntityDissolvingFactory extends TileEntityItemToChemicalFactory
     }
 
     @Override
-    public void recalculateUpgrades(Upgrade upgrade) {
-        super.recalculateUpgrades(upgrade);
-        if (upgrade == Upgrade.CHEMICAL || upgrade == Upgrade.SPEED) {
-            injectUsage = MekanismUtils.getGasPerTickMeanMultiplier(this);
+    public void recalculateUpgrades(HolderGetter<Upgrade> upgrades, Holder<Upgrade> upgrade, int totalInstalled) {
+        super.recalculateUpgrades(upgrades, upgrade, totalInstalled);
+        if (upgrade.is(UpgradeIds.CHEMICAL) || upgrade.is(UpgradeIds.SPEED)) {
+            injectUsage = UpgradeUtils.getGasPerTickMeanMultiplier(upgrades, this);
         }
     }
 

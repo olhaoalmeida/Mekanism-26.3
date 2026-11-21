@@ -1,5 +1,6 @@
 package com.jerry.mekaf.common.tile.factory.base;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
 import mekanism.api.upgrade.UpgradeIds;
 import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;

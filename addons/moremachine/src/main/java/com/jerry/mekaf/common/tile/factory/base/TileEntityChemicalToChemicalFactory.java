@@ -1,5 +1,9 @@
 package com.jerry.mekaf.common.tile.factory.base;
 
+import mekanism.api.upgrade.UpgradeIds;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+import mekanism.common.Mekanism;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.upgrade.ChemicalToChemicalUpgradeData;
@@ -102,7 +106,7 @@ public abstract class TileEntityChemicalToChemicalFactory<RECIPE extends Mekanis
             outputTank[i] = BasicChemicalTank.output(MAX_CHEMICAL * tier.processes, updateSortingAndUnpause);
             inputTank[i] = BasicChemicalTank.create(MAX_CHEMICAL * tier.processes,
                     // 这个type似乎没什么用，就不增加isValidInputChemical的参数了
-                    MekContainerHelper.radioactiveInputTankPredicate(() -> outputTank[index]), (stack, _) -> isValidInputChemical(stack),
+                    MekContainerHelper.radioactiveInputTankPredicate(() -> outputTank[index]), this::getLevel, (stack, _) -> isValidInputChemical(stack),
                     stack -> isChemicalValidForTank(stack) && inputProducesOutput(index, stack, outputTank[index], false),
                     ChemicalAttributeValidator.ALWAYS_ALLOW, recipeCacheLookupMonitors[index]);
             builder.addContainer(inputTank[i]);
@@ -132,7 +136,7 @@ public abstract class TileEntityChemicalToChemicalFactory<RECIPE extends Mekanis
 
     @Nullable
     protected RECIPE getRecipeForInput(int process, @NotNull ChemicalResource fallbackInput, @NotNull IChemicalTank outputTank, boolean updateCache) {
-        if (!CommonWorldTickHandler.flushTagAndRecipeCaches) {
+        if (!Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
             // If our recipe caches are valid, grab our cached recipe and see if it is still valid
             CachedRecipe<RECIPE> cached = getCachedRecipe(process);
             if (isCachedRecipeValid(cached, fallbackInput)) {
@@ -142,20 +146,20 @@ public abstract class TileEntityChemicalToChemicalFactory<RECIPE extends Mekanis
         }
         // If there is no cached item input, or it doesn't match our fallback then it is an out of date cache, so we
         // ignore the fact that we have a cache
-        RECIPE foundRecipe = findRecipe(process, fallbackInput, outputTank);
+        RecipeHolder<RECIPE> foundRecipe = findRecipe(process, fallbackInput, outputTank);
         if (foundRecipe == null) {
             // We could not find any valid recipe for the given item that matches the items in the current output slots
             return null;
         }
         if (updateCache) {
             // If we want to update the cache, then create a new cache with the recipe we found and update the cache
-            recipeCacheLookupMonitors[process].updateCachedRecipe(foundRecipe);
+            recipeCacheLookupMonitors[process].updateCachedRecipe(foundRecipe, SlotDisplayContext.fromLevel(level));
         }
-        return foundRecipe;
+        return foundRecipe.value();
     }
 
     @Nullable
-    protected abstract RECIPE findRecipe(int process, @NotNull ChemicalResource fallbackInput, @NotNull IChemicalTank outputTank);
+    protected abstract RecipeHolder<RECIPE> findRecipe(int process, @NotNull ChemicalResource fallbackInput, @NotNull IChemicalTank outputTank);
 
     public abstract boolean isChemicalValidForTank(@NotNull ChemicalResource stack);
 
@@ -167,10 +171,10 @@ public abstract class TileEntityChemicalToChemicalFactory<RECIPE extends Mekanis
     protected abstract int getNeededInput(RECIPE recipe, ChemicalResource inputStack);
 
     @Override
-    public void recalculateUpgrades(Upgrade upgrade) {
-        super.recalculateUpgrades(upgrade);
-        if (upgrade == Upgrade.SPEED) {
-            baselineMaxOperations = (int) Math.pow(2, getUpgrades(Upgrade.SPEED));
+    public void recalculateUpgrades(HolderGetter<Upgrade> upgrades, Holder<Upgrade> upgrade, int totalInstalled) {
+        super.recalculateUpgrades(upgrades, upgrade, totalInstalled);
+        if (upgrade.is(UpgradeIds.SPEED)) {
+            baselineMaxOperations = (int) Math.pow(2, totalInstalled);
         }
     }
 
@@ -239,7 +243,7 @@ public abstract class TileEntityChemicalToChemicalFactory<RECIPE extends Mekanis
                 CCRecipeProcessInfo<ChemicalResource, RECIPE> recipeProcessInfo = processes.computeIfAbsent(inputStack, CCRecipeProcessInfo::new);
                 recipeProcessInfo.processes.add(processInfo);
                 recipeProcessInfo.totalAmount += inputTank.amountAsLong();
-                if (recipeProcessInfo.lazyMinPerTank == null && !CommonWorldTickHandler.flushTagAndRecipeCaches) {
+                if (recipeProcessInfo.lazyMinPerTank == null && !Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
                     // If we don't have a lazily initialized min per slot calculation set for it yet
                     // and our cache is not invalid/out of date due to a reload
                     CachedRecipe<RECIPE> cachedRecipe = getCachedRecipe(processInfo.process());
