@@ -17,7 +17,9 @@ import mekanism.api.fluid.IFluidTank;
 import mekanism.api.inventory.IInventorySlot;
 import mekanism.api.math.MathUtils;
 import mekanism.api.recipes.ItemStackToFluidOptionalItemRecipe;
-import mekanism.api.recipes.basic.BasicItemStackToFluidOptionalItemRecipe;
+import mekanism.api.recipes.ItemStackToFluidOptionalItemRecipe;
+import mekanism.api.recipes.book.LiquificationBookCategory;
+import mekanism.api.recipes.book.LiquificationBookCategory.LiquificationBookInfo;
 import mekanism.api.recipes.cache.CachedRecipe;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.api.recipes.cache.OneInputCachedRecipe;
@@ -40,7 +42,8 @@ import mekanism.common.inventory.slot.OutputInventorySlot;
 import mekanism.common.inventory.warning.WarningTracker.WarningType;
 import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.recipe.IMekanismRecipeTypeProvider;
-import mekanism.common.recipe.impl.NutritionalLiquifierIRecipe;
+import mekanism.common.tile.machine.TileEntityNutritionalLiquifier;
+import mekanism.common.recipe.MekanismRecipeType;
 import mekanism.common.recipe.lookup.ISingleRecipeLookupHandler.ItemRecipeLookupHandler;
 import mekanism.common.recipe.lookup.cache.InputRecipeCache.SingleItem;
 import mekanism.common.recipe.lookup.monitor.FactoryRecipeCacheLookupMonitor;
@@ -70,7 +73,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.ToIntBiFunction;
 
-public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<BasicItemStackToFluidOptionalItemRecipe> implements ItemRecipeLookupHandler<BasicItemStackToFluidOptionalItemRecipe> {
+public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>> implements ItemRecipeLookupHandler<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>> {
 
     public static final RecipeError NOT_ENOUGH_SPACE_ITEM_OUTPUT_ERROR = RecipeError.create();
     // 单个槽位报错，例如输入槽和输出槽
@@ -93,7 +96,7 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
                             docPlaceholder = "output tank")
     public IFluidTank fluidTank;
 
-    protected IOutputHandler<ItemStackToFluidOptionalItemRecipe<?, ?>.@NotNull FluidOptionalItemOutput>[] liquifiesOutputHandler;
+    protected IOutputHandler<ItemStackToFluidOptionalItemRecipe.@NotNull FluidOptionalItemOutput>[] liquifiesOutputHandler;
 
     protected final List<IInventorySlot> inputItemSlots;
     protected final List<IInventorySlot> outputItemSlots;
@@ -130,7 +133,7 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
         liquifiesOutputHandler = new IOutputHandler[tier.processes];
         processInfoSlots = new NLProcessInfo[tier.processes];
         for (int i = 0; i < tier.processes; i++) {
-            FactoryRecipeCacheLookupMonitor<BasicItemStackToFluidOptionalItemRecipe> lookupMonitor = recipeCacheLookupMonitors[i];
+            FactoryRecipeCacheLookupMonitor<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>> lookupMonitor = recipeCacheLookupMonitors[i];
             IContentsListener updateSortingAndUnpause = () -> {
                 updateSortingListener.onContentsChanged();
                 lookupMonitor.unpause();
@@ -159,40 +162,29 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, BasicItemStackToFluidOptionalItemRecipe, SingleItem<BasicItemStackToFluidOptionalItemRecipe>> getRecipeType() {
-        return null;
+    public @NotNull IMekanismRecipeTypeProvider<net.minecraft.world.item.crafting.SingleRecipeInput, LiquificationBookCategory, LiquificationBookInfo, ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>, SingleItem<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>>> getRecipeType() {
+        return MekanismRecipeType.LIQUIFICATION;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public IRecipeViewerRecipeType<BasicItemStackToFluidOptionalItemRecipe> recipeViewerType() {
+    public IRecipeViewerRecipeType<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>> recipeViewerType() {
         return (IRecipeViewerRecipeType) RecipeViewerRecipeType.NUTRITIONAL_LIQUIFICATION;
     }
 
     @Override
-    public @Nullable RecipeHolder<BasicItemStackToFluidOptionalItemRecipe> getRecipe(int cacheIndex) {
-        return getRecipe(itemInputHandlers[cacheIndex].getInput());
+    public @Nullable RecipeHolder<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>> getRecipe(int cacheIndex) {
+        return TileEntityNutritionalLiquifier.createDynamicRecipe(itemInputHandlers[cacheIndex].getInput());
     }
 
     @Nullable
-    public static BasicItemStackToFluidOptionalItemRecipe getRecipe(ItemStack stack) {
-        if (stack.isEmpty()) {
-            return null;
-        }
-        FoodProperties food = stack.get(DataComponents.FOOD);
-        if (food == null || food.nutrition() <= 0) {
-            // If the food provides no healing don't allow consuming it as it won't provide any paste
-            return null;
-        }
-        UseRemainder remainder = stack.get(DataComponents.USE_REMAINDER);
-        return new NutritionalLiquifierIRecipe(
-                IngredientCreatorAccess.item().from(stack, 1),
-                MekanismFluids.NUTRITIONAL_PASTE.asTemplate(food.nutrition() * 50),
-                remainder == null ? null : remainder.convertInto());
+    public static ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo> getRecipe(ItemStack stack) {
+        RecipeHolder<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>> holder = TileEntityNutritionalLiquifier.createDynamicRecipe(stack);
+        return holder == null ? null : holder.value();
     }
 
     @Override
-    public @NotNull CachedRecipe<BasicItemStackToFluidOptionalItemRecipe> createNewCachedRecipe(@NotNull BasicItemStackToFluidOptionalItemRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+    public @NotNull CachedRecipe<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>> createNewCachedRecipe(@NotNull ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo> recipe, int cacheIndex, ContextMap recipeContext) {
         return setCommonSettings(new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], itemInputHandlers[cacheIndex], liquifiesOutputHandler[cacheIndex]), cacheIndex);
     }
 
@@ -201,21 +193,21 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
     }
 
     @Contract("null, _ -> false")
-    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<BasicItemStackToFluidOptionalItemRecipe> cached, @NotNull ItemStack stack) {
+    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>> cached, @NotNull ItemStack stack) {
         // 不能使用cached.getRecipe().getInput().testType(stack)，会导致卡合成
         return cached != null && isValidInputStatic(stack);
     }
 
     @Contract("null, _ -> false")
-    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<BasicItemStackToFluidOptionalItemRecipe> cached, @NotNull ItemResource stack) {
+    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>> cached, @NotNull ItemResource stack) {
         return cached != null && isValidInputStatic(stack.toStack());
     }
 
     @Nullable
-    protected BasicItemStackToFluidOptionalItemRecipe getRecipeForInput(int process, @NotNull ItemStack fallbackInput, @NotNull IInventorySlot outputSlot, @NotNull IFluidTank outputTank, boolean updateCache) {
+    protected ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo> getRecipeForInput(int process, @NotNull ItemStack fallbackInput, @NotNull IInventorySlot outputSlot, @NotNull IFluidTank outputTank, boolean updateCache) {
         if (!Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
             // If our recipe caches are valid, grab our cached recipe and see if it is still valid
-            CachedRecipe<BasicItemStackToFluidOptionalItemRecipe> cached = getCachedRecipe(process);
+            CachedRecipe<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>> cached = getCachedRecipe(process);
             if (isCachedRecipeValid(cached, fallbackInput)) {
                 // Our input matches the recipe we have cached for this slot
                 return cached.getRecipe();
@@ -223,24 +215,24 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
         }
         // If there is no cached item input, or it doesn't match our fallback then it is an out of date cache, so we
         // ignore the fact that we have a cache
-        BasicItemStackToFluidOptionalItemRecipe foundRecipe = findRecipe(process, fallbackInput, outputSlot, outputTank);
+        RecipeHolder<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>> foundRecipe = findRecipe(process, fallbackInput, outputSlot, outputTank);
         if (foundRecipe == null) {
             // We could not find any valid recipe for the given item that matches the items in the current output slots
             return null;
         }
         if (updateCache) {
             // If we want to update the cache, then create a new cache with the recipe we found and update the cache
-            recipeCacheLookupMonitors[process].updateCachedRecipe(foundRecipe, SlotDisplayContext.fromLevel(level));
+            recipeCacheLookupMonitors[process].updateCachedRecipe(foundRecipe, net.minecraft.world.item.crafting.display.SlotDisplayContext.fromLevel(level));
         }
         return foundRecipe.value();
     }
 
     @Nullable
-    protected RecipeHolder<BasicItemStackToFluidOptionalItemRecipe> findRecipe(int process, @NotNull ItemStack fallbackInput, IInventorySlot outputSlot, @NotNull IFluidTank inputTank) {
-        return null;
+    protected RecipeHolder<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>> findRecipe(int process, @NotNull ItemStack fallbackInput, IInventorySlot outputSlot, @NotNull IFluidTank inputTank) {
+        return TileEntityNutritionalLiquifier.createDynamicRecipe(fallbackInput);
     }
 
-    protected int getNeededInput(BasicItemStackToFluidOptionalItemRecipe recipe, ItemStack inputStack) {
+    protected int getNeededInput(ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo> recipe, ItemStack inputStack) {
         return MathUtils.clampToInt(recipe.getInput().getNeededAmount(inputStack));
     }
 
@@ -310,7 +302,7 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
                 if (recipeProcessInfo.lazyMinPerSlot == null && !Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
                     // If we don't have a lazily initialized min per slot calculation set for it yet
                     // and our cache is not invalid/out of date due to a reload
-                    CachedRecipe<BasicItemStackToFluidOptionalItemRecipe> cachedRecipe = getCachedRecipe(processInfo.process());
+                    CachedRecipe<ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo>> cachedRecipe = getCachedRecipe(processInfo.process());
                     if (isCachedRecipeValid(cachedRecipe, inputStack)) {
                         recipeProcessInfo.item = inputStack;
                         recipeProcessInfo.recipe = cachedRecipe.getRecipe();
@@ -486,7 +478,7 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
         @Nullable
         private ToIntBiFunction<NLRecipeProcessInfo, TileEntityLiquifyingFactory> lazyMinPerSlot;
         private ItemResource item;
-        private BasicItemStackToFluidOptionalItemRecipe recipe;
+        private ItemStackToFluidOptionalItemRecipe<LiquificationBookCategory, LiquificationBookInfo> recipe;
         private long minPerSlot = 1;
         private long totalCount;
 

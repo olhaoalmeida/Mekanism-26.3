@@ -12,7 +12,7 @@ import mekanism.client.gui.element.slot.GuiSlot;
 import mekanism.client.gui.element.slot.SlotType;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.mekanism.common.resource.ResourceType;
+import mekanism.common.resource.ResourceType;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;

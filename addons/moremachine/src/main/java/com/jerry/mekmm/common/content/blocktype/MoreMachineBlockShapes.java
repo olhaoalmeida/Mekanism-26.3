@@ -377,7 +377,7 @@ public class MoreMachineBlockShapes {
         ));
     }
 
-    public static VoxelShape[] getShape(MoreMachineFactoryType type) {
+    public static Map<Direction, VoxelShape> getShape(MoreMachineFactoryType type) {
         return switch (type) {
             case RECYCLING -> RECYCLING_FACTORY;
             case PLANTING_STATION -> PLANTING_FACTORY;

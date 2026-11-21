@@ -78,7 +78,7 @@ public class LargeMachineBlockShapes {
         LARGE_PIGMENT_MIXER = Shapes.rotateHorizontal(threeHighLargeMachine);
     }
 
-    public static VoxelShape[] getLargeChemicalTank(ILargeChemicalTankTier tier) {
+    public static Map<Direction, VoxelShape> getLargeChemicalTank(ILargeChemicalTankTier tier) {
         return tier instanceof MidChemicalTankTier ? MID_CHEMICAL_TANK : MAX_CHEMICAL_TANK;
     }
 

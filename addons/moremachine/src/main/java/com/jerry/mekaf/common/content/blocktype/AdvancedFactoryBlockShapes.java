@@ -216,7 +216,7 @@ public class AdvancedFactoryBlockShapes {
                 box(15, 4, 4, 16, 8, 12)));
     }
 
-    public static VoxelShape[] getShape(AdvancedFactoryType type) {
+    public static Map<Direction, VoxelShape> getShape(AdvancedFactoryType type) {
         return switch (type) {
             case OXIDIZING -> OXIDIZING_FACTORY;
             case DISSOLVING -> DISSOLVING_FACTORY;
