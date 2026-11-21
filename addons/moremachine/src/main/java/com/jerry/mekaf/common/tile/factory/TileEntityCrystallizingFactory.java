@@ -1,5 +1,7 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.tile.factory.base.TileEntityChemicalToItemFactory;
 import com.jerry.mekaf.common.upgrade.ChemicalToItemUpgradeData;
 
@@ -84,26 +86,18 @@ public class TileEntityCrystallizingFactory extends TileEntityChemicalToItemFact
     }
 
     @Override
-    public @Nullable ChemicalCrystallizerRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<ChemicalCrystallizerRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(chemicalInputHandlers[cacheIndex]);
     }
 
     @Override
-    public @NotNull CachedRecipe<ChemicalCrystallizerRecipe> createNewCachedRecipe(@NotNull ChemicalCrystallizerRecipe recipe, int cacheIndex) {
-        return new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], chemicalInputHandlers[cacheIndex], itemOutputHandlers[cacheIndex])
-                .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
-                .setCanHolderFunction(this::canFunction)
-                .setActive(active -> setActiveState(active, cacheIndex))
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(operatingTicks -> progress[cacheIndex] = operatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+    public @NotNull CachedRecipe<ChemicalCrystallizerRecipe> createNewCachedRecipe(@NotNull ChemicalCrystallizerRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], chemicalInputHandlers[cacheIndex], itemOutputHandlers[cacheIndex]), cacheIndex);
     }
 
     @Override
     public @Nullable ChemicalToItemUpgradeData getUpgradeData(HolderLookup.Provider provider) {
         return new ChemicalToItemUpgradeData(provider, redstone, getControlType(), energyContainer,
-                progress, energySlot, inputChemicalTanks, outputItemSlots, isSorting(), getComponents(), problemPath());
+                recipeCacheLookupMonitors, energySlot, inputChemicalTanks, outputItemSlots, isSorting(), getComponents(), problemPath());
     }
 }

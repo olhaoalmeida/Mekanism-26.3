@@ -1,5 +1,6 @@
 package com.jerry.mekaf.common.upgrade;
 
+import mekanism.common.recipe.lookup.monitor.ProgressRecipeCacheLookupMonitor;
 import mekanism.api.chemical.IChemicalTank;
 import mekanism.api.energy.IEnergyContainer;
 import mekanism.api.inventory.IInventorySlot;
@@ -21,7 +22,7 @@ public class ItemToChemicalUpgradeData implements IUpgradeData {
     public final boolean redstone;
     public final IRedstoneControl.RedstoneControl controlType;
     public final IEnergyContainer energyContainer;
-    public final int[] progress;
+    public final ProgressRecipeCacheLookupMonitor<?>[] cacheLookupMonitors;
     public final boolean sorting;
     public final EnergyInventorySlot energySlot;
     public final List<IInventorySlot> inputSlots;
@@ -29,19 +30,19 @@ public class ItemToChemicalUpgradeData implements IUpgradeData {
     public final CompoundTag components;
 
     public ItemToChemicalUpgradeData(HolderLookup.Provider provider, boolean redstone, IRedstoneControl.RedstoneControl controlType,
-                                     IEnergyContainer energyContainer, int operatingTicks, EnergyInventorySlot energySlot,
+                                     IEnergyContainer energyContainer, ProgressRecipeCacheLookupMonitor<?> cacheLookupMonitor, EnergyInventorySlot energySlot,
                                      InputInventorySlot inputSlot, IChemicalTank outputTank, List<ITileComponent> components, PathElement problemPath) {
-        this(provider, redstone, controlType, energyContainer, new int[] { operatingTicks }, energySlot, Collections.singletonList(inputSlot),
+        this(provider, redstone, controlType, energyContainer, new ProgressRecipeCacheLookupMonitor<?>[] { cacheLookupMonitor }, energySlot, Collections.singletonList(inputSlot),
                 Collections.singletonList(outputTank), false, components, problemPath);
     }
 
     public ItemToChemicalUpgradeData(HolderLookup.Provider provider, boolean redstone, IRedstoneControl.RedstoneControl controlType,
-                                     IEnergyContainer energyContainer, int[] progress, EnergyInventorySlot energySlot,
+                                     IEnergyContainer energyContainer, ProgressRecipeCacheLookupMonitor<?>[] cacheLookupMonitors, EnergyInventorySlot energySlot,
                                      List<IInventorySlot> inputSlots, List<IChemicalTank> outputTanks, boolean sorting, List<ITileComponent> components, PathElement problemPath) {
         this.redstone = redstone;
         this.controlType = controlType;
         this.energyContainer = energyContainer;
-        this.progress = progress;
+        this.cacheLookupMonitors = cacheLookupMonitors;
         this.energySlot = energySlot;
         this.inputSlots = inputSlots;
         this.outputTanks = outputTanks;

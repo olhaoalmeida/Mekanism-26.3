@@ -1,5 +1,7 @@
 package com.jerry.mekmm.common.tile.factory;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekmm.api.recipes.RecyclerRecipe;
 import com.jerry.mekmm.api.recipes.RecyclerRecipe.ChanceOutput;
 import com.jerry.mekmm.api.recipes.cache.MoreMachineOneInputCachedRecipe;
@@ -128,12 +130,12 @@ public class TileEntityRecyclingFactory extends TileEntityMoreMachineFactory<Rec
     }
 
     @Override
-    public @Nullable RecyclerRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<RecyclerRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(inputHandlers[cacheIndex]);
     }
 
     @Override
-    public @NotNull CachedRecipe<RecyclerRecipe> createNewCachedRecipe(@NotNull RecyclerRecipe recipe, int cacheIndex) {
+    public @NotNull CachedRecipe<RecyclerRecipe> createNewCachedRecipe(@NotNull RecyclerRecipe recipe, int cacheIndex, ContextMap recipeContext) {
         return MoreMachineOneInputCachedRecipe.recycler(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], outputHandlers[cacheIndex])
                 .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
                 .setCanHolderFunction(this::canFunction)

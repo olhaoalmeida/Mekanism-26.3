@@ -1,5 +1,7 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.tile.factory.base.TileEntityItemToItemAdvancedFactory;
 
 import mekanism.api.IContentsListener;
@@ -172,7 +174,7 @@ public class TileEntityPaintingFactory extends TileEntityItemToItemAdvancedFacto
     }
 
     @Override
-    public @NotNull CachedRecipe<ItemStackChemicalToItemStackRecipe> createNewCachedRecipe(@NotNull ItemStackChemicalToItemStackRecipe recipe, int cacheIndex) {
+    public @NotNull CachedRecipe<ItemStackChemicalToItemStackRecipe> createNewCachedRecipe(@NotNull ItemStackChemicalToItemStackRecipe recipe, int cacheIndex, ContextMap recipeContext) {
         CachedRecipe<ItemStackChemicalToItemStackRecipe> cachedRecipe;
         if (recipe.perTickUsage()) {
             cachedRecipe = ItemStackConstantChemicalToObjectCachedRecipe.create(recipe, recheckAllRecipeErrors[cacheIndex], itemInputHandlers[cacheIndex], chemicalInputHandler,
@@ -231,7 +233,7 @@ public class TileEntityPaintingFactory extends TileEntityItemToItemAdvancedFacto
     @NotNull
     @Override
     public AdvancedMachineUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new AdvancedMachineUpgradeData(provider, redstone, getControlType(), energyContainer, progress, usedSoFar, chemicalTank, chemicalInputSlot, energySlot,
+        return new AdvancedMachineUpgradeData(provider, redstone, getControlType(), energyContainer, recipeCacheLookupMonitors, usedSoFar, chemicalTank, chemicalInputSlot, energySlot,
                 inputItemSlots, outputItemSlots, isSorting(), getComponents(), problemPath());
     }
 

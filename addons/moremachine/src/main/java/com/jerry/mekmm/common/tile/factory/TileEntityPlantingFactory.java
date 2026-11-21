@@ -1,5 +1,7 @@
 package com.jerry.mekmm.common.tile.factory;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekmm.api.recipes.PlantingRecipe;
 import com.jerry.mekmm.api.recipes.cache.PlantingCachedRecipe;
 import com.jerry.mekmm.api.recipes.cache.PlantingNoPerTickUsageCacheRecipe;
@@ -128,7 +130,7 @@ public class TileEntityPlantingFactory extends TileEntityMoreMachineFactory<Plan
         configComponent.setupInputConfig(TransmissionType.CHEMICAL, chemicalTank);
         configComponent.addDisabledSides(RelativeSide.TOP);
 
-        chemicalInputHandler = InputHelper.getConstantInputHandler(chemicalTank);
+        chemicalInputHandler = InputHelper.getInputHandler(chemicalTank);
 
         baseTotalUsage = BASE_TICKS_REQUIRED;
         usedSoFar = new int[tier.processes];
@@ -190,7 +192,7 @@ public class TileEntityPlantingFactory extends TileEntityMoreMachineFactory<Plan
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, PlantingRecipe, ItemChemical<PlantingRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, PlantingRecipe, ItemChemical<PlantingRecipe>> getRecipeType() {
         return MoreMachineRecipeType.PLANTING_STATION;
     }
 
@@ -200,12 +202,12 @@ public class TileEntityPlantingFactory extends TileEntityMoreMachineFactory<Plan
     }
 
     @Override
-    public @Nullable PlantingRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<PlantingRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(inputHandlers[cacheIndex], chemicalInputHandler);
     }
 
     @Override
-    public @NotNull CachedRecipe<PlantingRecipe> createNewCachedRecipe(@NotNull PlantingRecipe recipe, int cacheIndex) {
+    public @NotNull CachedRecipe<PlantingRecipe> createNewCachedRecipe(@NotNull PlantingRecipe recipe, int cacheIndex, ContextMap recipeContext) {
         CachedRecipe<PlantingRecipe> cachedRecipe;
         if (recipe.perTickUsage()) {
             cachedRecipe = PlantingCachedRecipe.planting(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], chemicalInputHandler,

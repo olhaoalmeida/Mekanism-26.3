@@ -1,5 +1,7 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.inventory.slot.AdvancedFactoryInputInventorySlot;
 import com.jerry.mekaf.common.tile.factory.base.TileEntityAdvancedFactoryBase;
 import com.jerry.mekaf.common.upgrade.NutritionLiquifyingUpgradeData;
@@ -152,7 +154,7 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, BasicItemStackToFluidOptionalItemRecipe, SingleItem<BasicItemStackToFluidOptionalItemRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, BasicItemStackToFluidOptionalItemRecipe, SingleItem<BasicItemStackToFluidOptionalItemRecipe>> getRecipeType() {
         return null;
     }
 
@@ -162,7 +164,7 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
     }
 
     @Override
-    public @Nullable BasicItemStackToFluidOptionalItemRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<BasicItemStackToFluidOptionalItemRecipe> getRecipe(int cacheIndex) {
         return getRecipe(itemInputHandlers[cacheIndex].getInput());
     }
 
@@ -184,16 +186,8 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
     }
 
     @Override
-    public @NotNull CachedRecipe<BasicItemStackToFluidOptionalItemRecipe> createNewCachedRecipe(@NotNull BasicItemStackToFluidOptionalItemRecipe recipe, int cacheIndex) {
-        return new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], itemInputHandlers[cacheIndex], liquifiesOutputHandler[cacheIndex])
-                .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
-                .setCanHolderFunction(this::canFunction)
-                .setActive(active -> setActiveState(active, cacheIndex))
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(operatingTicks -> progress[cacheIndex] = operatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+    public @NotNull CachedRecipe<BasicItemStackToFluidOptionalItemRecipe> createNewCachedRecipe(@NotNull BasicItemStackToFluidOptionalItemRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], itemInputHandlers[cacheIndex], liquifiesOutputHandler[cacheIndex]), cacheIndex);
     }
 
     public boolean inputProducesOutput(int process, @NotNull ItemStack fallbackInput, @NotNull IInventorySlot outputSlot, @NotNull IFluidTank outputTank, boolean updateCache) {
@@ -256,7 +250,9 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
             energyContainer.copyContents(data.energyContainer, transaction);
             sorting = data.sorting;
             energySlot.copyContents(data.energySlot, transaction);
-            System.arraycopy(data.progress, 0, progress, 0, data.progress.length);
+            for (int i = 0; i < data.cacheLookupMonitors.length; i++) {
+                recipeCacheLookupMonitors[i].inheritSavedOperatingTicks(data.cacheLookupMonitors[i].getSavedOperatingTicks(i));
+            }
             for (int i = 0; i < data.inputSlots.size(); i++) {
                 inputItemSlots.get(i).copyContents(data.inputSlots.get(i), transaction);
             }
@@ -272,7 +268,7 @@ public class TileEntityLiquifyingFactory extends TileEntityAdvancedFactoryBase<B
 
     @Override
     public @Nullable NutritionLiquifyingUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new NutritionLiquifyingUpgradeData(provider, redstone, getControlType(), getEnergyContainer(), progress,
+        return new NutritionLiquifyingUpgradeData(provider, redstone, getControlType(), getEnergyContainer(), recipeCacheLookupMonitors,
                 energySlot, inputItemSlots, outputItemSlots, fluidTank, isSorting(), getComponents(), problemPath());
     }
 

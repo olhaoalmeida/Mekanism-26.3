@@ -1,5 +1,7 @@
 package com.jerry.mekmm.common.tile.factory;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekmm.client.recipe_viewer.MMRecipeViewerRecipeType;
 import com.jerry.mekmm.common.recipe.MoreMachineRecipeType;
 
@@ -100,16 +102,8 @@ public class TileEntityMoreMachineItemStackToItemStackFactory extends TileEntity
 
     @NotNull
     @Override
-    public CachedRecipe<ItemStackToItemStackRecipe> createNewCachedRecipe(@NotNull ItemStackToItemStackRecipe recipe, int cacheIndex) {
-        return new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], outputHandlers[cacheIndex])
-                .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
-                .setCanHolderFunction(this::canFunction)
-                .setActive(active -> setActiveState(active, cacheIndex))
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(operatingTicks -> progress[cacheIndex] = operatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+    public CachedRecipe<ItemStackToItemStackRecipe> createNewCachedRecipe(@NotNull ItemStackToItemStackRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], outputHandlers[cacheIndex]), cacheIndex);
     }
 
     @NotNull

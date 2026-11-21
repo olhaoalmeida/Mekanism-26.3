@@ -1,5 +1,7 @@
 package com.jerry.mekmm.common.tile.factory;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekmm.api.datamaps.IMoreMachineDataMapTypes;
 import com.jerry.mekmm.api.datamaps.ItemReplicatorRecipe;
 import com.jerry.mekmm.api.recipes.basic.MMBasicItemStackChemicalToItemStackRecipe;
@@ -95,7 +97,7 @@ public class TileEntityReplicatingFactory extends TileEntityMoreMachineItemToIte
 
         ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM);
 
-        chemicalInputHandler = InputHelper.getConstantInputHandler(chemicalTank);
+        chemicalInputHandler = InputHelper.getInputHandler(chemicalTank);
     }
 
     @Nullable
@@ -154,17 +156,17 @@ public class TileEntityReplicatingFactory extends TileEntityMoreMachineItemToIte
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, MMBasicItemStackChemicalToItemStackRecipe, ItemChemical<MMBasicItemStackChemicalToItemStackRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, MMBasicItemStackChemicalToItemStackRecipe, ItemChemical<MMBasicItemStackChemicalToItemStackRecipe>> getRecipeType() {
         return null;
     }
 
     @Override
-    public @Nullable MMBasicItemStackChemicalToItemStackRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<MMBasicItemStackChemicalToItemStackRecipe> getRecipe(int cacheIndex) {
         return getRecipe(inputHandlers[cacheIndex].getInput(), chemicalInputHandler.getInput());
     }
 
     @Override
-    public @NotNull CachedRecipe<MMBasicItemStackChemicalToItemStackRecipe> createNewCachedRecipe(@NotNull MMBasicItemStackChemicalToItemStackRecipe recipe, int cacheIndex) {
+    public @NotNull CachedRecipe<MMBasicItemStackChemicalToItemStackRecipe> createNewCachedRecipe(@NotNull MMBasicItemStackChemicalToItemStackRecipe recipe, int cacheIndex, ContextMap recipeContext) {
         return ReplicatorCachedRecipe.createItemReplicator(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], chemicalInputHandler, outputHandlers[cacheIndex])
                 .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
                 .setCanHolderFunction(this::canFunction)

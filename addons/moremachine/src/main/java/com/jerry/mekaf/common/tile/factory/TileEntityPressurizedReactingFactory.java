@@ -1,5 +1,7 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.inventory.slot.AdvancedFactoryInputInventorySlot;
 import com.jerry.mekaf.common.tile.factory.base.TileEntityAdvancedFactoryBase;
 import com.jerry.mekaf.common.upgrade.PRCUpgradeData;
@@ -250,21 +252,13 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
     }
 
     @Override
-    public @Nullable PressurizedReactionRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<PressurizedReactionRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(itemInputHandlers[cacheIndex], fluidInputHandler, chemicalInputHandler);
     }
 
     @Override
-    public @NotNull CachedRecipe<PressurizedReactionRecipe> createNewCachedRecipe(@NotNull PressurizedReactionRecipe recipe, int cacheIndex) {
-        return new PressurizedReactionCachedRecipe(recipe, recheckAllRecipeErrors[cacheIndex], itemInputHandlers[cacheIndex], fluidInputHandler, chemicalInputHandler, reactionOutputHandlers[cacheIndex])
-                .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
-                .setCanHolderFunction(this::canFunction)
-                .setActive(active -> setActiveState(active, cacheIndex))
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(operatingTicks -> progress[cacheIndex] = operatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+    public @NotNull CachedRecipe<PressurizedReactionRecipe> createNewCachedRecipe(@NotNull PressurizedReactionRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(new PressurizedReactionCachedRecipe(recipe, recheckAllRecipeErrors[cacheIndex], itemInputHandlers[cacheIndex], fluidInputHandler, chemicalInputHandler, reactionOutputHandlers[cacheIndex]), cacheIndex);
     }
 
     public boolean inputProducesOutput(int process, @NotNull ItemStack fallbackInput, @NotNull IInventorySlot outputSlot, @NotNull IChemicalTank outputTank, boolean updateCache) {
@@ -344,7 +338,9 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
             energyContainer.copyContents(data.energyContainer, transaction);
             sorting = data.sorting;
             energySlot.copyContents(data.energySlot, transaction);
-            System.arraycopy(data.progress, 0, progress, 0, data.progress.length);
+            for (int i = 0; i < data.cacheLookupMonitors.length; i++) {
+                recipeCacheLookupMonitors[i].inheritSavedOperatingTicks(data.cacheLookupMonitors[i].getSavedOperatingTicks(i));
+            }
             for (int i = 0; i < data.inputSlots.size(); i++) {
                 inputItemSlots.get(i).copyContents(data.inputSlots.get(i), transaction);
             }
@@ -362,7 +358,7 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
 
     @Override
     public @Nullable PRCUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new PRCUpgradeData(provider, redstone, getControlType(), getEnergyContainer(), progress, energySlot,
+        return new PRCUpgradeData(provider, redstone, getControlType(), getEnergyContainer(), recipeCacheLookupMonitors, energySlot,
                 inputChemicalTank, inputFluidTank, inputItemSlots, outputItemSlots, outputChemicalTank, isSorting(), getComponents(), problemPath());
     }
 

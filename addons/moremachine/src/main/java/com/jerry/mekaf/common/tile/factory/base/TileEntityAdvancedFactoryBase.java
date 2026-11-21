@@ -1,5 +1,19 @@
 package com.jerry.mekaf.common.tile.factory.base;
 
+import mekanism.api.upgrade.UpgradeIds;
+import it.unimi.dsi.fastutil.objects.Reference2IntMap;
+import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
+import mekanism.common.recipe.lookup.monitor.RecipeCacheLookupMonitor;
+import mekanism.common.recipe.lookup.IRecipeLookupHandler.RecipeContainers;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+import net.minecraft.util.context.ContextMap;
+import mekanism.common.inventory.container.sync.SyncableBoolean;
 import com.jerry.mekaf.common.block.attribute.AttributeAdvancedFactoryType;
 import com.jerry.mekaf.common.capabilities.energy.AdvancedFactoryEnergyContainer;
 import com.jerry.mekaf.common.content.blocktype.AdvancedFactoryType;
@@ -99,10 +113,6 @@ public abstract class TileEntityAdvancedFactoryBase<RECIPE extends MekanismRecip
      */
     public FactoryTier tier;
     /**
-     * An int[] used to track all current operations' progress.
-     */
-    public final int[] progress;
-    /**
      * How many ticks it takes, with upgrades, to run an operation
      */
     private int ticksRequired = BASE_TICKS_REQUIRED;
@@ -134,8 +144,6 @@ public abstract class TileEntityAdvancedFactoryBase<RECIPE extends MekanismRecip
         type = Attribute.getOrThrow(blockProvider, AttributeAdvancedFactoryType.class).getAdvancedFactoryType();
 
         configComponent.setupInputConfig(TransmissionType.ENERGY, energyContainer);
-
-        progress = new int[tier.processes];
         activeStates = new boolean[tier.processes];
         recheckAllRecipeErrors = new BooleanSupplier[tier.processes];
         for (int i = 0; i < recheckAllRecipeErrors.length; i++) {
@@ -256,6 +264,69 @@ public abstract class TileEntityAdvancedFactoryBase<RECIPE extends MekanismRecip
         return 0;
     }
 
+    @Nullable
+    private Holder<Upgrade> xpContainmentUpgrade;
+    private boolean clientHasContainmentUpgrade;
+
+    @Override
+    public boolean hasXpContainment() {
+        if (level != null && level.isClientSide()) {
+            return clientHasContainmentUpgrade;
+        }
+        return xpContainmentUpgrade == null || getUpgrades(xpContainmentUpgrade) > 0;
+    }
+
+    @Override
+    public void popExperience(ServerPlayer player) {
+        RecipeCacheLookupMonitor.awardUsedRecipesAndPopExperience(player, getAllRecipesUsed(false), hasXpContainment(), recipeCacheLookupMonitors);
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        xpContainmentUpgrade = upgradesRegistry == null ? null : upgradesRegistry.get(UpgradeIds.XP_CONTAINMENT).orElse(null);
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (this.level instanceof ServerLevel serverLevel) {
+            popExperience(serverLevel, Vec3.atCenterOf(pos));
+        }
+    }
+
+    @Override
+    public void popExperience(ServerLevel level, Vec3 position) {
+        RecipeCacheLookupMonitor.popExperience(level, position, getAllRecipesUsed(true), hasXpContainment());
+    }
+
+    private Reference2IntMap<ResourceKey<Recipe<?>>> getAllRecipesUsed(boolean clearUsed) {
+        Reference2IntOpenHashMap<ResourceKey<Recipe<?>>> recipesUsed = new Reference2IntOpenHashMap<>();
+        for (FactoryRecipeCacheLookupMonitor<RECIPE> m : recipeCacheLookupMonitors) {
+            for (Reference2IntMap.Entry<ResourceKey<Recipe<?>>> entry : m.getRecipesUsed().reference2IntEntrySet()) {
+                recipesUsed.put(entry.getKey(), entry.getIntValue());
+            }
+            if (clearUsed) {
+                m.getRecipesUsed().clear();
+            }
+        }
+        return recipesUsed;
+    }
+
+    protected final CachedRecipe<RECIPE> setCommonSettings(CachedRecipe<RECIPE> recipe, int cacheIndex) {
+        return recipe.setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
+                .setCanHolderFunction(this::canFunction)
+                .setActive(active -> setActiveState(active, cacheIndex))
+                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
+                .setRequiredTicks(this::getTicksRequired)
+                .setBaselineMaxOperations(this::getOperationsPerTick);
+    }
+
+    @Override
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return new RecipeContainers(List.of(), List.of());
+    }
+
     @Override
     protected boolean onUpdateServer(ServerLevel level) {
         boolean sendUpdatePacket = super.onUpdateServer(level);
@@ -274,7 +345,7 @@ public abstract class TileEntityAdvancedFactoryBase<RECIPE extends MekanismRecip
             // being required), we want to make sure we are able to fill those slots
             // with other items.
             sortInventoryOrTank();
-        } else if (!sortingNeeded && CommonWorldTickHandler.flushTagAndRecipeCaches) {
+        } else if (!sortingNeeded && Mekanism.worldTickHandler.flushTagAndRecipeCaches) {
             // Otherwise, if sorting isn't currently needed and the recipe cache is invalid
             // Mark sorting as being needed again for the next check as recipes may
             // have changed so our current sort may be incorrect
@@ -284,9 +355,10 @@ public abstract class TileEntityAdvancedFactoryBase<RECIPE extends MekanismRecip
         // Copy this so that if it changes we still have the original amount. Don't bother making it a constant though
         // as this way
         // we can then use minusEqual instead of subtract to remove an extra copy call
+        ContextMap recipeContext = SlotDisplayContext.fromLevel(level);
         long prev = energyContainer.getAmountAsLong();
         for (int i = 0; i < recipeCacheLookupMonitors.length; i++) {
-            if (!recipeCacheLookupMonitors[i].updateAndProcess()) {
+            if (!recipeCacheLookupMonitors[i].updateAndProcess(recipeContext)) {
                 // If we don't have a recipe in that slot make sure that our active state for that position is false
                 activeStates[i] = false;
             }
@@ -331,13 +403,9 @@ public abstract class TileEntityAdvancedFactoryBase<RECIPE extends MekanismRecip
     protected void handleSecondaryFuel() {}
 
     public int getProgress(int cacheIndex) {
-        return progress[cacheIndex];
+        return recipeCacheLookupMonitors[cacheIndex].getSavedOperatingTicks(cacheIndex);
     }
 
-    @Override
-    public int getSavedOperatingTicks(int cacheIndex) {
-        return getProgress(cacheIndex);
-    }
 
     public double getScaledProgress(int i, int process) {
         return (double) getProgress(process) * i / ticksRequired;
@@ -374,22 +442,17 @@ public abstract class TileEntityAdvancedFactoryBase<RECIPE extends MekanismRecip
     @Override
     public void loadAdditional(@NotNull ValueInput input) {
         super.loadAdditional(input);
-        Optional<int[]> optionalProgress = input.getIntArray(SerializationConstants.PROGRESS);
-        if (optionalProgress.isPresent()) {
-            int[] savedProgress = optionalProgress.get();
-            if (tier.processes != savedProgress.length) {
-                Arrays.fill(progress, 0);
-            }
-            for (int i = 0; i < tier.processes && i < savedProgress.length; i++) {
-                progress[i] = savedProgress[i];
-            }
+        for (int i = 0; i < recipeCacheLookupMonitors.length; i++) {
+            recipeCacheLookupMonitors[i].loadAdditional(input.childOrEmpty(SerializationConstants.CACHE + i));
         }
     }
 
     @Override
     public void saveAdditional(@NotNull ValueOutput output) {
         super.saveAdditional(output);
-        output.putIntArray(SerializationConstants.PROGRESS, Arrays.copyOf(progress, progress.length));
+        for (int i = 0; i < recipeCacheLookupMonitors.length; i++) {
+            recipeCacheLookupMonitors[i].saveAdditional(output.child(SerializationConstants.CACHE + i));
+        }
     }
 
     @Override
@@ -417,19 +480,18 @@ public abstract class TileEntityAdvancedFactoryBase<RECIPE extends MekanismRecip
     }
 
     @Override
-    public void recalculateUpgrades(Upgrade upgrade) {
-        super.recalculateUpgrades(upgrade);
-        if (upgrade == Upgrade.SPEED) {
-            ticksRequired = MekanismUtils.getTicks(this, BASE_TICKS_REQUIRED);
-            operationsPerTick = MekanismUtils.getOperationsPerTick(this, BASE_TICKS_REQUIRED, 1);
+    public void recalculateUpgrades(HolderGetter<Upgrade> upgrades, Holder<Upgrade> upgrade, int totalInstalled) {
+        if (upgrade.is(UpgradeIds.SPEED)) {
+            ticksRequired = UpgradeUtils.getTicks(BASE_TICKS_REQUIRED, upgrade, totalInstalled);
+            operationsPerTick = UpgradeUtils.getOperationsPerTick(BASE_TICKS_REQUIRED, 1, upgrade, totalInstalled);
+        } else if (upgrade.is(UpgradeIds.XP_CONTAINMENT) && level instanceof ServerLevel serverLevel) {
+            for (FactoryRecipeCacheLookupMonitor<RECIPE> recipeCacheLookupMonitor : recipeCacheLookupMonitors) {
+                recipeCacheLookupMonitor.xpContainmentChanged(serverLevel, Vec3.atCenterOf(worldPosition), totalInstalled > 0);
+            }
         }
+        super.recalculateUpgrades(upgrades, upgrade, totalInstalled);
     }
 
-    @NotNull
-    @Override
-    public List<Component> getInfo(@NotNull Upgrade upgrade) {
-        return UpgradeUtils.getMultScaledInfo(this, upgrade);
-    }
 
     @Override
     public boolean isConfigurationDataCompatible(Block blockType) {
@@ -440,7 +502,10 @@ public abstract class TileEntityAdvancedFactoryBase<RECIPE extends MekanismRecip
     @Override
     public void addContainerTrackers(MekanismContainer container) {
         super.addContainerTrackers(container);
-        container.trackArray(progress);
+        for (FactoryRecipeCacheLookupMonitor<RECIPE> m : recipeCacheLookupMonitors) {
+            container.track(m.operatingTicksAsSyncable());
+        }
+        container.track(SyncableBoolean.create(this::hasXpContainment, v -> clientHasContainmentUpgrade = v));
         errorTracker.track(container);
         container.track(SyncableLong.create(this::getLastUsage, v -> lastUsage = v));
         container.track(SyncableBoolean.create(this::isSorting, v -> sorting = v));
@@ -458,8 +523,8 @@ public abstract class TileEntityAdvancedFactoryBase<RECIPE extends MekanismRecip
 
     // Methods relating to IComputerTile
     protected void validateValidProcess(int process) throws ComputerException {
-        if (process < 0 || process >= progress.length) {
-            throw new ComputerException("Process: '%d' is out of bounds, as this factory only has '%d' processes (zero indexed).", process, progress.length);
+        if (process < 0 || process >= recipeCacheLookupMonitors.length) {
+            throw new ComputerException("Process: '%d' is out of bounds, as this factory only has '%d' processes (zero indexed).", process, recipeCacheLookupMonitors.length);
         }
     }
 

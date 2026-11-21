@@ -1,5 +1,14 @@
 package com.jerry.mekmm.common.tile.factory;
 
+import it.unimi.dsi.fastutil.objects.Reference2IntMap;
+import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
+import mekanism.common.recipe.lookup.monitor.RecipeCacheLookupMonitor;
+import mekanism.common.recipe.lookup.IRecipeLookupHandler.RecipeContainers;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.Level;
+import mekanism.common.inventory.container.sync.SyncableBoolean;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -99,10 +108,6 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
      */
     public FactoryTier tier;
     /**
-     * An int[] used to track all current operations' progress.
-     */
-    public final int[] progress;
-    /**
      * How many ticks it takes, with upgrades, to run an operation
      */
     private int ticksRequired = BASE_TICKS_REQUIRED;
@@ -148,8 +153,6 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
         configComponent.setupInputConfig(TransmissionType.ENERGY, energyContainer);
 
         ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM);
-
-        progress = new int[tier.processes];
         activeStates = new boolean[tier.processes];
         recheckAllRecipeErrors = new BooleanSupplier[tier.processes];
         for (int i = 0; i < recheckAllRecipeErrors.length; i++) {
@@ -234,6 +237,64 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
 
     public MoreMachineFactoryType getMMFactoryType() {
         return type;
+    }
+
+    @Nullable
+    private Holder<Upgrade> xpContainmentUpgrade;
+    private boolean clientHasContainmentUpgrade;
+
+    @Override
+    public boolean hasXpContainment() {
+        if (level != null && level.isClientSide()) {
+            return clientHasContainmentUpgrade;
+        }
+        return xpContainmentUpgrade == null || getUpgrades(xpContainmentUpgrade) > 0;
+    }
+
+    @Override
+    public void popExperience(ServerPlayer player) {
+        RecipeCacheLookupMonitor.awardUsedRecipesAndPopExperience(player, getAllRecipesUsed(false), hasXpContainment(), recipeCacheLookupMonitors);
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        xpContainmentUpgrade = upgradesRegistry == null ? null : upgradesRegistry.get(UpgradeIds.XP_CONTAINMENT).orElse(null);
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (this.level instanceof ServerLevel serverLevel) {
+            popExperience(serverLevel, Vec3.atCenterOf(pos));
+        }
+    }
+
+    @Override
+    public void popExperience(ServerLevel level, Vec3 position) {
+        RecipeCacheLookupMonitor.popExperience(level, position, getAllRecipesUsed(true), hasXpContainment());
+    }
+
+    private Reference2IntMap<ResourceKey<Recipe<?>>> getAllRecipesUsed(boolean clearUsed) {
+        Reference2IntOpenHashMap<ResourceKey<Recipe<?>>> recipesUsed = new Reference2IntOpenHashMap<>();
+        for (FactoryRecipeCacheLookupMonitor<RECIPE> m : recipeCacheLookupMonitors) {
+            for (Reference2IntMap.Entry<ResourceKey<Recipe<?>>> entry : m.getRecipesUsed().reference2IntEntrySet()) {
+                recipesUsed.put(entry.getKey(), entry.getIntValue());
+            }
+            if (clearUsed) {
+                m.getRecipesUsed().clear();
+            }
+        }
+        return recipesUsed;
+    }
+
+    protected final CachedRecipe<RECIPE> setCommonSettings(CachedRecipe<RECIPE> recipe, int cacheIndex) {
+        return recipe.setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
+                .setCanHolderFunction(this::canFunction)
+                .setActive(active -> setActiveState(active, cacheIndex))
+                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
+                .setRequiredTicks(this::getTicksRequired)
+                .setBaselineMaxOperations(this::getOperationsPerTick);
     }
 
     @Override
@@ -376,13 +437,9 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
     public abstract boolean isValidInputItem(@NotNull ItemResource stack);
 
     public int getProgress(int cacheIndex) {
-        return progress[cacheIndex];
+        return recipeCacheLookupMonitors[cacheIndex].getSavedOperatingTicks(cacheIndex);
     }
 
-    @Override
-    public int getSavedOperatingTicks(int cacheIndex) {
-        return getProgress(cacheIndex);
-    }
 
     public double getScaledProgress(int i, int process) {
         return (double) getProgress(process) * i / ticksRequired;
@@ -411,22 +468,17 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
     @Override
     public void loadAdditional(@NotNull ValueInput input) {
         super.loadAdditional(input);
-        Optional<int[]> optionalProgress = input.getIntArray(SerializationConstants.PROGRESS);
-        if (optionalProgress.isPresent()) {
-            int[] savedProgress = optionalProgress.get();
-            if (tier.processes != savedProgress.length) {
-                Arrays.fill(progress, 0);
-            }
-            for (int i = 0; i < tier.processes && i < savedProgress.length; i++) {
-                progress[i] = savedProgress[i];
-            }
+        for (int i = 0; i < recipeCacheLookupMonitors.length; i++) {
+            recipeCacheLookupMonitors[i].loadAdditional(input.childOrEmpty(SerializationConstants.CACHE + i));
         }
     }
 
     @Override
     public void saveAdditional(@NotNull ValueOutput output) {
         super.saveAdditional(output);
-        output.putIntArray(SerializationConstants.PROGRESS, Arrays.copyOf(progress, progress.length));
+        for (int i = 0; i < recipeCacheLookupMonitors.length; i++) {
+            recipeCacheLookupMonitors[i].saveAdditional(output.child(SerializationConstants.CACHE + i));
+        }
     }
 
     @Override
@@ -466,11 +518,6 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
         super.recalculateUpgrades(upgrades, upgrade, totalInstalled);
     }
 
-    @NotNull
-    @Override
-    public List<Component> getInfo(@NotNull Upgrade upgrade) {
-        return UpgradeUtils.getMultScaledInfo(this, upgrade);
-    }
 
     @Override
     public boolean isConfigurationDataCompatible(Block blockType) {
@@ -485,7 +532,10 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
     @Override
     public void addContainerTrackers(MekanismContainer container) {
         super.addContainerTrackers(container);
-        container.trackArray(progress);
+        for (FactoryRecipeCacheLookupMonitor<RECIPE> m : recipeCacheLookupMonitors) {
+            container.track(m.operatingTicksAsSyncable());
+        }
+        container.track(SyncableBoolean.create(this::hasXpContainment, v -> clientHasContainmentUpgrade = v));
         errorTracker.track(container);
         container.track(SyncableLong.create(this::getLastUsage, v -> lastUsage = v));
         container.track(SyncableBoolean.create(this::isSorting, v -> sorting = v));
@@ -523,8 +573,8 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
 
     // Methods relating to IComputerTile
     protected void validateValidProcess(int process) throws ComputerException {
-        if (process < 0 || process >= progress.length) {
-            throw new ComputerException("Process: '%d' is out of bounds, as this factory only has '%d' processes (zero indexed).", process, progress.length);
+        if (process < 0 || process >= recipeCacheLookupMonitors.length) {
+            throw new ComputerException("Process: '%d' is out of bounds, as this factory only has '%d' processes (zero indexed).", process, recipeCacheLookupMonitors.length);
         }
     }
 

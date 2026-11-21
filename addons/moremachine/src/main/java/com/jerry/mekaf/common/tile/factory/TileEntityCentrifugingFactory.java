@@ -1,5 +1,7 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.tile.factory.base.TileEntityChemicalToChemicalFactory;
 import com.jerry.mekaf.common.upgrade.ChemicalToChemicalUpgradeData;
 
@@ -87,7 +89,7 @@ public class TileEntityCentrifugingFactory extends TileEntityChemicalToChemicalF
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, ChemicalToChemicalRecipe, SingleChemical<ChemicalToChemicalRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, ChemicalToChemicalRecipe, SingleChemical<ChemicalToChemicalRecipe>> getRecipeType() {
         return MekanismRecipeType.CENTRIFUGING;
     }
 
@@ -97,32 +99,18 @@ public class TileEntityCentrifugingFactory extends TileEntityChemicalToChemicalF
     }
 
     @Override
-    public @Nullable ChemicalToChemicalRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<ChemicalToChemicalRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(chemicalInputHandlers[cacheIndex]);
     }
 
     @Override
-    public @NotNull CachedRecipe<ChemicalToChemicalRecipe> createNewCachedRecipe(@NotNull ChemicalToChemicalRecipe recipe, int cacheIndex) {
-        return new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], chemicalInputHandlers[cacheIndex], chemicalOutputHandlers[cacheIndex])
-                .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
-                .setCanHolderFunction(this::canFunction)
-                // 一定要更改这里，不然会导致能量显示错误
-                .setActive(active -> setActiveState(active, cacheIndex))
-                .setOnFinish(this::markForSave)
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setBaselineMaxOperations(() -> baselineMaxOperations);
-    }
-
-    // 更改加速升级的显示的，默认是10x，气体工厂是256x，当然只有速度升级需要更改
-    @NotNull
-    @Override
-    public List<Component> getInfo(@NotNull Upgrade upgrade) {
-        return upgrade == Upgrade.SPEED ? UpgradeUtils.getExpScaledInfo(this, upgrade) : super.getInfo(upgrade);
+    public @NotNull CachedRecipe<ChemicalToChemicalRecipe> createNewCachedRecipe(@NotNull ChemicalToChemicalRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(new OneInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], chemicalInputHandlers[cacheIndex], chemicalOutputHandlers[cacheIndex]), cacheIndex);
     }
 
     @Override
     public @Nullable ChemicalToChemicalUpgradeData getUpgradeData(HolderLookup.Provider provider) {
         return new ChemicalToChemicalUpgradeData(provider, redstone, getControlType(), energyContainer,
-                progress, energySlot, inputChemicalTanks, outputChemicalTanks, isSorting(), getComponents(), problemPath());
+                recipeCacheLookupMonitors, energySlot, inputChemicalTanks, outputChemicalTanks, isSorting(), getComponents(), problemPath());
     }
 }

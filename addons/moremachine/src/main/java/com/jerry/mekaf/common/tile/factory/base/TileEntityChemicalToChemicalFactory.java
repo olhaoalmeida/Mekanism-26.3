@@ -1,5 +1,7 @@
 package com.jerry.mekaf.common.tile.factory.base;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.upgrade.ChemicalToChemicalUpgradeData;
 
 import mekanism.api.IContentsListener;
@@ -180,7 +182,9 @@ public abstract class TileEntityChemicalToChemicalFactory<RECIPE extends Mekanis
             energyContainer.copyContents(data.energyContainer, transaction);
             sorting = data.sorting;
             energySlot.copyContents(data.energySlot, transaction);
-            System.arraycopy(data.progress, 0, progress, 0, data.progress.length);
+            for (int i = 0; i < data.cacheLookupMonitors.length; i++) {
+                recipeCacheLookupMonitors[i].inheritSavedOperatingTicks(data.cacheLookupMonitors[i].getSavedOperatingTicks(i));
+            }
             for (int i = 0; i < data.inputTanks.size(); i++) {
                 // Copy the stack using NBT so that if it is not actually valid due to a reload we don't crash
                 inputChemicalTanks.get(i).copyContents(data.inputTanks.get(i), transaction);

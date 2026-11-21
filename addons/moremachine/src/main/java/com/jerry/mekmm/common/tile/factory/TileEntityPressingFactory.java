@@ -1,5 +1,7 @@
 package com.jerry.mekmm.common.tile.factory;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekmm.api.recipes.TripleItemToItemRecipe;
 import com.jerry.mekmm.api.recipes.cache.ThreeInputCachedRecipe;
 import com.jerry.mekmm.client.recipe_viewer.MMRecipeViewerRecipeType;
@@ -143,12 +145,12 @@ public class TileEntityPressingFactory extends TileEntityMoreMachineItemToItemFa
     }
 
     @Override
-    public @Nullable TripleItemToItemRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<TripleItemToItemRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(inputHandlers[cacheIndex], secondaryInputHandler, tertiaryInputHandler);
     }
 
     @Override
-    public @NotNull CachedRecipe<TripleItemToItemRecipe> createNewCachedRecipe(@NotNull TripleItemToItemRecipe recipe, int cacheIndex) {
+    public @NotNull CachedRecipe<TripleItemToItemRecipe> createNewCachedRecipe(@NotNull TripleItemToItemRecipe recipe, int cacheIndex, ContextMap recipeContext) {
         return ThreeInputCachedRecipe.tripleItemToItem(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], secondaryInputHandler, tertiaryInputHandler, outputHandlers[cacheIndex])
                 .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
                 .setCanHolderFunction(this::canFunction)

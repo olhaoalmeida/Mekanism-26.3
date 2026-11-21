@@ -1,5 +1,7 @@
 package com.jerry.mekmm.common.tile.factory;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekmm.api.recipes.StamperRecipe;
 import com.jerry.mekmm.api.recipes.cache.StamperCachedRecipe;
 import com.jerry.mekmm.client.recipe_viewer.MMRecipeViewerRecipeType;
@@ -128,7 +130,7 @@ public class TileEntityStampingFactory extends TileEntityMoreMachineItemToItemFa
 
     @NotNull
     @Override
-    public CachedRecipe<StamperRecipe> createNewCachedRecipe(@NotNull StamperRecipe recipe, int cacheIndex) {
+    public CachedRecipe<StamperRecipe> createNewCachedRecipe(@NotNull StamperRecipe recipe, int cacheIndex, ContextMap recipeContext) {
         return StamperCachedRecipe.createCache(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], extraInputHandler, outputHandlers[cacheIndex])
                 .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
                 .setCanHolderFunction(this::canFunction)

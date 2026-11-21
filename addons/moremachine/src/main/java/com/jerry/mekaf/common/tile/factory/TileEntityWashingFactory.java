@@ -1,5 +1,7 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.tile.factory.base.TileEntityChemicalToChemicalFactory;
 import com.jerry.mekaf.common.upgrade.FluidChemicalToChemicalUpgradeData;
 
@@ -181,26 +183,13 @@ public class TileEntityWashingFactory extends TileEntityChemicalToChemicalFactor
     }
 
     @Override
-    public @Nullable FluidChemicalToChemicalRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<FluidChemicalToChemicalRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(fluidInputHandler, chemicalInputHandlers[cacheIndex]);
     }
 
     @Override
-    public @NotNull CachedRecipe<FluidChemicalToChemicalRecipe> createNewCachedRecipe(@NotNull FluidChemicalToChemicalRecipe recipe, int cacheIndex) {
-        return new TwoInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], fluidInputHandler, chemicalInputHandlers[cacheIndex], chemicalOutputHandlers[cacheIndex])
-                .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
-                .setCanHolderFunction(this::canFunction)
-                .setActive(active -> setActiveState(active, cacheIndex))
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setBaselineMaxOperations(() -> baselineMaxOperations)
-                .setOnFinish(this::markForSave);
-    }
-
-    // 更改加速升级的显示的，默认是10x，气体工厂是256x，当然只有速度升级需要更改
-    @NotNull
-    @Override
-    public List<Component> getInfo(@NotNull Upgrade upgrade) {
-        return upgrade == Upgrade.SPEED ? UpgradeUtils.getExpScaledInfo(this, upgrade) : super.getInfo(upgrade);
+    public @NotNull CachedRecipe<FluidChemicalToChemicalRecipe> createNewCachedRecipe(@NotNull FluidChemicalToChemicalRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(new TwoInputCachedRecipe<>(recipe, recheckAllRecipeErrors[cacheIndex], fluidInputHandler, chemicalInputHandlers[cacheIndex], chemicalOutputHandlers[cacheIndex]), cacheIndex);
     }
 
     @Override
@@ -217,7 +206,7 @@ public class TileEntityWashingFactory extends TileEntityChemicalToChemicalFactor
 
     @Override
     public @Nullable FluidChemicalToChemicalUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new FluidChemicalToChemicalUpgradeData(provider, redstone, getControlType(), getEnergyContainer(), progress, null,
+        return new FluidChemicalToChemicalUpgradeData(provider, redstone, getControlType(), getEnergyContainer(), recipeCacheLookupMonitors, null,
                 energySlot, fluidSlot, fluidOutputSlot, inputChemicalTanks, fluidTank, outputChemicalTanks, isSorting(), getComponents(), problemPath());
     }
 

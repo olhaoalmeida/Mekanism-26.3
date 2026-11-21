@@ -1,5 +1,7 @@
 package com.jerry.mekaf.common.tile.factory;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.util.context.ContextMap;
 import com.jerry.mekaf.common.tile.factory.base.TileEntityItemToChemicalFactory;
 import com.jerry.mekaf.common.upgrade.ItemChemicalToChemicalUpgradeData;
 
@@ -113,7 +115,7 @@ public class TileEntityDissolvingFactory extends TileEntityItemToChemicalFactory
                 .setCanTankEject(tank -> tank != chemicalTank);
         usedSoFar = new int[tier.processes];
 
-        chemicalInputHandler = InputHelper.getConstantInputHandler(chemicalTank);
+        chemicalInputHandler = InputHelper.getInputHandler(chemicalTank);
 
         injectUsageMultiplier = (usedSoFar, operatingTicks) -> StatUtils.inversePoisson(injectUsage);
     }
@@ -191,12 +193,12 @@ public class TileEntityDissolvingFactory extends TileEntityItemToChemicalFactory
     }
 
     @Override
-    public @Nullable ChemicalDissolutionRecipe getRecipe(int cacheIndex) {
+    public @Nullable RecipeHolder<ChemicalDissolutionRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(itemInputHandlers[cacheIndex], chemicalInputHandler);
     }
 
     @Override
-    public @NotNull CachedRecipe<ChemicalDissolutionRecipe> createNewCachedRecipe(@NotNull ChemicalDissolutionRecipe recipe, int cacheIndex) {
+    public @NotNull CachedRecipe<ChemicalDissolutionRecipe> createNewCachedRecipe(@NotNull ChemicalDissolutionRecipe recipe, int cacheIndex, ContextMap recipeContext) {
         CachedRecipe<ChemicalDissolutionRecipe> cachedRecipe;
         if (recipe.perTickUsage()) {
             cachedRecipe = ItemStackConstantChemicalToObjectCachedRecipe.create(recipe, recheckAllRecipeErrors[cacheIndex], itemInputHandlers[cacheIndex], chemicalInputHandler,
@@ -263,7 +265,7 @@ public class TileEntityDissolvingFactory extends TileEntityItemToChemicalFactory
     @Override
     public @Nullable ItemChemicalToChemicalUpgradeData getUpgradeData(HolderLookup.Provider provider) {
         return new ItemChemicalToChemicalUpgradeData(provider, redstone, getControlType(), energyContainer,
-                progress, usedSoFar, energySlot, chemicalInputSlot, inputItemSlots, chemicalTank, outputChemicalTanks, isSorting(), getComponents(), problemPath());
+                recipeCacheLookupMonitors, usedSoFar, energySlot, chemicalInputSlot, inputItemSlots, chemicalTank, outputChemicalTanks, isSorting(), getComponents(), problemPath());
     }
 
     @Override
