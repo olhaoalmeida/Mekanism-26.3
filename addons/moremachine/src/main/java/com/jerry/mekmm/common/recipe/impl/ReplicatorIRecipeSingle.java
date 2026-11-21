@@ -1,5 +1,8 @@
 package com.jerry.mekmm.common.recipe.impl;
 
+import net.minecraft.world.item.crafting.Recipe;
+import mekanism.api.recipes.book.InjectingBookCategory.InjectingBookInfo;
+import mekanism.api.recipes.book.InjectingBookCategory;
 import com.jerry.mekmm.api.recipes.basic.MMBasicItemStackChemicalToItemStackRecipe;
 import com.jerry.mekmm.common.registries.MoreMachineBlocks;
 
@@ -21,7 +24,7 @@ public class ReplicatorIRecipeSingle extends MMBasicItemStackChemicalToItemStack
      * @param output        Output.
      */
     public ReplicatorIRecipeSingle(ItemStackIngredient itemInput, ChemicalStackIngredient chemicalInput, ItemStackTemplate output) {
-        super(itemInput, chemicalInput, output);
+        super(new Recipe.CommonInfo(false), new InjectingBookInfo(InjectingBookCategory.MISC, ""), itemInput, chemicalInput, output);
     }
 
     @Override
@@ -38,8 +41,4 @@ public class ReplicatorIRecipeSingle extends MMBasicItemStackChemicalToItemStack
         return "duplicator";
     }
 
-    @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(MoreMachineBlocks.REPLICATOR);
-    }
 }

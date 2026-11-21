@@ -1,5 +1,8 @@
 package com.jerry.mekmm.common.recipe.impl;
 
+import net.minecraft.world.item.crafting.Recipe;
+import mekanism.api.recipes.book.ChemicalInfusingBookCategory.ChemicalInfusingBookInfo;
+import mekanism.api.recipes.book.ChemicalInfusingBookCategory;
 import com.jerry.mekmm.api.recipes.basic.MMBasicChemicalChemicalToChemicalRecipe;
 import com.jerry.mekmm.common.registries.MoreMachineBlocks;
 
@@ -24,7 +27,7 @@ public class ChemicalReplicatorIRecipeSingle extends MMBasicChemicalChemicalToCh
      * @apiNote The order of the inputs does not matter.
      */
     public ChemicalReplicatorIRecipeSingle(ChemicalStackIngredient leftInput, ChemicalStackIngredient rightInput, ChemicalStackTemplate output) {
-        super(leftInput, rightInput, output);
+        super(new Recipe.CommonInfo(false), new ChemicalInfusingBookInfo(ChemicalInfusingBookCategory.MISC, ""), leftInput, rightInput, output);
     }
 
     @Override
@@ -37,8 +40,4 @@ public class ChemicalReplicatorIRecipeSingle extends MMBasicChemicalChemicalToCh
         return null;
     }
 
-    @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(MoreMachineBlocks.FLUID_REPLICATOR);
-    }
 }

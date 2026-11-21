@@ -1,5 +1,11 @@
 package com.jerry.mekmm.api.recipes.basic;
 
+import mekanism.api.recipes.ingredients.chemical.display.ChemicalStackSlotDisplay;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.world.item.crafting.Recipe;
+import mekanism.api.recipes.book.ChemicalInfusingBookCategory.ChemicalInfusingBookInfo;
+import mekanism.api.recipes.book.ChemicalInfusingBookCategory;
 import mekanism.api.chemical.Chemical;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.chemical.ChemicalStackTemplate;
@@ -17,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 @NullMarked
-public abstract class MMBasicChemicalChemicalToChemicalRecipe extends ChemicalChemicalToChemicalRecipe implements IBasicChemicalOutput {
+public abstract class MMBasicChemicalChemicalToChemicalRecipe extends ChemicalChemicalToChemicalRecipe<ChemicalInfusingBookCategory, ChemicalInfusingBookInfo> implements IBasicChemicalOutput {
 
     protected final ChemicalStackIngredient leftInput;
     protected final ChemicalStackIngredient rightInput;
@@ -30,7 +36,8 @@ public abstract class MMBasicChemicalChemicalToChemicalRecipe extends ChemicalCh
      *
      * @apiNote The order of the inputs does not matter.
      */
-    public MMBasicChemicalChemicalToChemicalRecipe(ChemicalStackIngredient leftInput, ChemicalStackIngredient rightInput, ChemicalStackTemplate output) {
+    public MMBasicChemicalChemicalToChemicalRecipe(Recipe.CommonInfo commonInfo, ChemicalInfusingBookInfo bookInfo, ChemicalStackIngredient leftInput, ChemicalStackIngredient rightInput, ChemicalStackTemplate output) {
+        super(commonInfo, bookInfo, 0F);
         this.leftInput = Objects.requireNonNull(leftInput, "Left input cannot be null.");
         this.rightInput = Objects.requireNonNull(rightInput, "Right input cannot be null.");
         this.output = Objects.requireNonNull(output, "Output cannot be null.");
@@ -38,7 +45,7 @@ public abstract class MMBasicChemicalChemicalToChemicalRecipe extends ChemicalCh
 
     @Override
     public boolean test(ChemicalStack input1, ChemicalStack input2) {
-        return (leftInput.test(input1) && rightInput.test(input2)) || (rightInput.test(input1) && leftInput.test(input2));
+        return super.test(input1, input2) || super.test(input2, input1);
     }
 
     @Override
@@ -58,7 +65,12 @@ public abstract class MMBasicChemicalChemicalToChemicalRecipe extends ChemicalCh
     }
 
     @Override
-    public List<ChemicalStackTemplate> getOutputDefinition() {
+    public SlotDisplay getOutputDisplay() {
+        return new ChemicalStackSlotDisplay(output);
+    }
+
+    @Override
+    public List<ChemicalStackTemplate> getOutputDefinition(ContextMap contextMap) {
         return Collections.singletonList(output);
     }
 
