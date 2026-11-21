@@ -155,7 +155,7 @@ public class TileEntityStamper extends TileEntityProgressMachine<StamperRecipe> 
 
     @Nullable
     @Override
-    public StamperRecipe getRecipe(int cacheIndex) {
+    public RecipeHolder<StamperRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(itemInputHandler, moldInputHandler);
     }
 

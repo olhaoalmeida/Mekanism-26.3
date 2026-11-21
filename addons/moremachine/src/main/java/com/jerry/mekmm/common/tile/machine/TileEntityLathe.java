@@ -1,5 +1,7 @@
 package com.jerry.mekmm.common.tile.machine;
 
+import mekanism.api.recipes.book.CrushingBookCategory.CrushingBookInfo;
+import mekanism.api.recipes.book.CrushingBookCategory;
 import com.jerry.mekmm.client.recipe_viewer.MMRecipeViewerRecipeType;
 import com.jerry.mekmm.common.recipe.MoreMachineRecipeType;
 import com.jerry.mekmm.common.registries.MoreMachineBlocks;
@@ -25,12 +27,12 @@ public class TileEntityLathe extends TileEntityElectricMachine {
     }
 
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, ItemStackToItemStackRecipe, SingleItem<ItemStackToItemStackRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, ItemStackToItemStackRecipe<CrushingBookCategory, CrushingBookInfo>, SingleItem<ItemStackToItemStackRecipe<CrushingBookCategory, CrushingBookInfo>>> getRecipeType() {
         return MoreMachineRecipeType.LATHING;
     }
 
     @Override
-    public @Nullable IRecipeViewerRecipeType<ItemStackToItemStackRecipe> recipeViewerType() {
+    public @Nullable IRecipeViewerRecipeType<ItemStackToItemStackRecipe<CrushingBookCategory, CrushingBookInfo>> recipeViewerType() {
         return MMRecipeViewerRecipeType.LATHE;
     }
 

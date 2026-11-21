@@ -73,7 +73,6 @@ public abstract class TripleItemToItemRecipe extends MekanismRecipe<RecipeInput,
 
     public abstract SlotDisplay getOutputDisplay();
 
-    @Override
     public boolean isIncomplete() {
         return getFirstInput().hasNoMatchingInstances() || getSecondInput().hasNoMatchingInstances() || getThirdInput().hasNoMatchingInstances();
     }
