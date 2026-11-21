@@ -46,7 +46,6 @@ import mekanism.common.component.containers.heat.HeatCapacitorBuilder;
 import mekanism.common.component.containers.item.ItemSlotsBuilder;
 import mekanism.common.component.containers.type.ContainerType;
 import mekanism.common.content.blocktype.Machine;
-import mekanism.common.item.block.ItemBlockMekanism;
 import mekanism.common.item.block.ItemBlockTooltip;
 import mekanism.common.recipe.MekanismRecipeType;
 import mekanism.common.recipe.lookup.cache.InputRecipeCache;
@@ -340,12 +339,12 @@ public class MoreMachineBlocks {
         return MM_BLOCKS.register(tier.getBaseTier().getLowerName() + suffix, blockSupplier, itemCreator);
     }
 
-    private static BlockRegistryObject<BlockMoreMachineResource, ItemBlockMekanism<BlockMoreMachineResource>> registerResourceBlock(MoreMachineBlockResourceInfo resource) {
+    private static BlockRegistryObject<BlockMoreMachineResource, BlockItem> registerResourceBlock(MoreMachineBlockResourceInfo resource) {
         return MM_BLOCKS.register("block_" + resource.getRegistrySuffix(), properties -> new BlockMoreMachineResource(properties, resource), (block, properties) -> {
             if (!block.getResourceInfo().burnsInFire()) {
                 properties = properties.fireResistant();
             }
-            return new ItemBlockMekanism<>(block, properties);
+            return new BlockItem(block, properties);
         });
     }
 

@@ -241,7 +241,7 @@ public class TileEntityReplicator extends TileEntityProgressMachine<MMBasicItemS
         if (recipe != null) {
             return new ReplicatorIRecipeSingle(
                     IngredientCreatorAccess.item().fromHolder(itemHolder, 1),
-                    IngredientCreatorAccess.chemicalStack().fromHolder(MoreMachineChemicals.UU_MATTER, Math.toIntExact(recipe.UUAmount())),
+                    IngredientCreatorAccess.chemicalStack().fromHolder(chemicalStack.typeHolder(), Math.toIntExact(recipe.UUAmount())),
                     new ItemStackTemplate(itemHolder, 1));
         }
         return null;

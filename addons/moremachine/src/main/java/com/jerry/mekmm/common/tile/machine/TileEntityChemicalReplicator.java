@@ -251,7 +251,7 @@ public class TileEntityChemicalReplicator extends TileEntityProgressMachine<MMBa
         if (recipe != null) {
             return new ChemicalReplicatorIRecipeSingle(
                     IngredientCreatorAccess.chemicalStack().fromHolder(chemicalHolder, Math.toIntExact(recipe.inputAmount())),
-                    IngredientCreatorAccess.chemicalStack().fromHolder(MoreMachineChemicals.UU_MATTER, Math.toIntExact(recipe.UUAmount())),
+                    IngredientCreatorAccess.chemicalStack().fromHolder(UUStack.typeHolder(), Math.toIntExact(recipe.UUAmount())),
                     new ChemicalStackTemplate(chemicalHolder, Math.toIntExact(recipe.outputAmount())));
         }
         return null;

@@ -278,7 +278,7 @@ public class TileEntityFluidReplicator extends TileEntityProgressMachine<BasicFl
         if (recipe != null) {
             return new FluidReplicatorIRecipeSingle(
                     IngredientCreatorAccess.fluid().fromHolder(fluidHolder, recipe.inputAmount()),
-                    IngredientCreatorAccess.chemicalStack().fromHolder(MoreMachineChemicals.UU_MATTER, Math.toIntExact(recipe.UUAmount())),
+                    IngredientCreatorAccess.chemicalStack().fromHolder(chemicalStack.typeHolder(), Math.toIntExact(recipe.UUAmount())),
                     new FluidStackTemplate(fluidHolder, recipe.outputAmount()));
         }
         return null;

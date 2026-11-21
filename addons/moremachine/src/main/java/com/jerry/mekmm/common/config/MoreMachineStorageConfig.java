@@ -82,6 +82,6 @@ public class MoreMachineStorageConfig extends BaseMekanismConfig {
 
     @Override
     public ModConfig.Type getConfigType() {
-        return ModConfig.Type.SERVER;
+        return ModConfig.Type.SYNCED;
     }
 }

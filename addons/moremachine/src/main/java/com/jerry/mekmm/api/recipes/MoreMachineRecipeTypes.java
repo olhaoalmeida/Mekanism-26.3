@@ -1,5 +1,7 @@
 package com.jerry.mekmm.api.recipes;
 
+import mekanism.api.recipes.book.CrushingBookCategory.CrushingBookInfo;
+import mekanism.api.recipes.book.CrushingBookCategory;
 import mekanism.api.recipes.ItemStackToItemStackRecipe;
 import mekanism.common.Mekanism;
 
@@ -21,7 +23,7 @@ public class MoreMachineRecipeTypes {
     public static final DeferredHolder<RecipeType<?>, RecipeType<RecyclerRecipe>> TYPE_RECYCLER = DeferredHolder.create(Registries.RECIPE_TYPE, NAME_RECYCLING);
     public static final DeferredHolder<RecipeType<?>, RecipeType<PlantingRecipe>> TYPE_PLANTING = DeferredHolder.create(Registries.RECIPE_TYPE, NAME_PLANTING);
     public static final DeferredHolder<RecipeType<?>, RecipeType<StamperRecipe>> TYPE_STAMPING = DeferredHolder.create(Registries.RECIPE_TYPE, NAME_STAMPING);
-    public static final DeferredHolder<RecipeType<?>, RecipeType<ItemStackToItemStackRecipe>> TYPE_LATHING = DeferredHolder.create(Registries.RECIPE_TYPE, NAME_LATHING);
-    public static final DeferredHolder<RecipeType<?>, RecipeType<ItemStackToItemStackRecipe>> TYPE_ROLLING_MILL = DeferredHolder.create(Registries.RECIPE_TYPE, NAME_ROLLING_MILL);
+    public static final DeferredHolder<RecipeType<?>, RecipeType<ItemStackToItemStackRecipe<CrushingBookCategory, CrushingBookInfo>>> TYPE_LATHING = DeferredHolder.create(Registries.RECIPE_TYPE, NAME_LATHING);
+    public static final DeferredHolder<RecipeType<?>, RecipeType<ItemStackToItemStackRecipe<CrushingBookCategory, CrushingBookInfo>>> TYPE_ROLLING_MILL = DeferredHolder.create(Registries.RECIPE_TYPE, NAME_ROLLING_MILL);
     public static final DeferredHolder<RecipeType<?>, RecipeType<TripleItemToItemRecipe>> TYPE_PRESSING = DeferredHolder.create(Registries.RECIPE_TYPE, NAME_PRESSING);
 }

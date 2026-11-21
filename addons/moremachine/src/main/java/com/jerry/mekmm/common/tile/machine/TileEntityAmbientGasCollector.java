@@ -171,7 +171,7 @@ public class TileEntityAmbientGasCollector extends TileEntityMekanism {
             BlockState blockState = state.get();
             Block block = blockState.getBlock();
             if (isAir(block)) {
-                ChemicalStack chemicalStack = new ChemicalStack(MoreMachineChemicals.UNSTABLE_DIMENSIONAL_GAS, estimateIncrementAmount());
+                ChemicalStack chemicalStack = new ChemicalStack(MoreMachineChemicals.holder(level.registryAccess(), MoreMachineChemicals.UNSTABLE_DIMENSIONAL_GAS), estimateIncrementAmount());
                 chemicalTank.insert(ChemicalResource.of(chemicalStack), chemicalStack.amount(), transaction, AutomationType.INTERNAL);
                 return true;
             }

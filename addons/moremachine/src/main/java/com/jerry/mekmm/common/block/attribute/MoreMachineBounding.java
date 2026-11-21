@@ -1,5 +1,7 @@
 package com.jerry.mekmm.common.block.attribute;
 
+import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.LevelReader;
 import mekanism.api.RelativeSide;
 import mekanism.common.block.attribute.Attribute;
 import mekanism.common.block.attribute.AttributeHasBounding;
@@ -23,7 +25,7 @@ public class MoreMachineBounding {
     public static final AttributeHasBounding VERTICAL_THREE_BLOCK = new AttributeHasBounding(new HandleBoundingBlock() {
 
         @Override
-        public <DATA> boolean handle(Level level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<Level, BlockPos, DATA> consumer) {
+        public <LEVEL extends LevelReader, DATA extends @Nullable Object> boolean handle(LEVEL level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<LEVEL, BlockPos, DATA> consumer) {
             return consumer.accept(level, pos.above(), data) && consumer.accept(level, pos.above().above(), data);
         }
     });
@@ -31,7 +33,7 @@ public class MoreMachineBounding {
     public static final AttributeHasBounding FULL_JAVA_ENTITY = new AttributeHasBounding(new HandleBoundingBlock() {
 
         @Override
-        public <DATA> boolean handle(Level level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<Level, BlockPos, DATA> predicate) {
+        public <LEVEL extends LevelReader, DATA extends @Nullable Object> boolean handle(LEVEL level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<LEVEL, BlockPos, DATA> predicate) {
             BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
             for (int x = -1; x <= 1; x++) {
                 for (int y = 0; y <= 2; y++) {
@@ -59,7 +61,7 @@ public class MoreMachineBounding {
     public static final AttributeHasBounding FULL_JAVA_ENTITY_BUT_TOP_BACK_2X3 = new AttributeHasBounding(new HandleBoundingBlock() {
 
         @Override
-        public <DATA> boolean handle(Level level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<Level, BlockPos, DATA> predicate) {
+        public <LEVEL extends LevelReader, DATA extends @Nullable Object> boolean handle(LEVEL level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<LEVEL, BlockPos, DATA> predicate) {
             BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
             for (int x = -1; x <= 1; x++) {
                 for (int y = 0; y <= 1; y++) {
@@ -92,7 +94,7 @@ public class MoreMachineBounding {
     public static final AttributeHasBounding LARGE_PIGMENT_MIXER = new AttributeHasBounding(new HandleBoundingBlock() {
 
         @Override
-        public <DATA> boolean handle(Level level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<Level, BlockPos, DATA> predicate) {
+        public <LEVEL extends LevelReader, DATA extends @Nullable Object> boolean handle(LEVEL level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<LEVEL, BlockPos, DATA> predicate) {
             BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
             for (int x = -1; x <= 1; x++) {
                 for (int y = 0; y <= 1; y++) {
@@ -119,7 +121,7 @@ public class MoreMachineBounding {
     public static final AttributeLargeWindGeneratorProxy LARGE_WIND_GENERATOR = new AttributeLargeWindGeneratorProxy(new HandleBoundingBlock() {
 
         @Override
-        public <DATA> boolean handle(Level level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<Level, BlockPos, DATA> predicate) {
+        public <LEVEL extends LevelReader, DATA extends @Nullable Object> boolean handle(LEVEL level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<LEVEL, BlockPos, DATA> predicate) {
             Direction facing = Attribute.getFacing(state);
             if (facing == null || !facing.getAxis().isHorizontal()) {
                 return false;
@@ -136,7 +138,7 @@ public class MoreMachineBounding {
     public static final AttributeHasBounding SOLAR_HEAT_GENERATOR = new AttributeHasBounding(new HandleBoundingBlock() {
 
         @Override
-        public <DATA> boolean handle(Level level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<Level, BlockPos, DATA> predicate) {
+        public <LEVEL extends LevelReader, DATA extends @Nullable Object> boolean handle(LEVEL level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<LEVEL, BlockPos, DATA> predicate) {
             BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
             Direction facing = Attribute.getFacing(state);
             if (facing == null) {

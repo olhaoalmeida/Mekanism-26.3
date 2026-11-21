@@ -1,5 +1,6 @@
 package com.jerry.mekmm.common.recipe;
 
+import mekanism.api.recipes.vanilla_input.BiItemRecipeInput;
 import com.jerry.mekmm.api.recipes.PlantingRecipe;
 import com.jerry.mekmm.api.recipes.RecyclerRecipe;
 import mekanism.api.recipes.book.*;
@@ -25,7 +26,7 @@ public class MoreMachineRecipeType {
 
     public static RecipeTypeRegistryObject<SingleItemChemicalRecipeInput, InjectingBookCategory, InjectingBookInfo, PlantingRecipe, InputRecipeCache.ItemChemical<PlantingRecipe>> PLANTING_STATION;
 
-    public static RecipeTypeRegistryObject<RecipeInput, CombiningBookCategory, CombiningBookInfo, StamperRecipe, InputRecipeCache.DoubleItem<StamperRecipe>> STAMPING;
+    public static RecipeTypeRegistryObject<BiItemRecipeInput, CombiningBookCategory, CombiningBookInfo, StamperRecipe, InputRecipeCache.DoubleItem<StamperRecipe>> STAMPING;
 
     public static RecipeTypeRegistryObject<SingleRecipeInput, CrushingBookCategory, CrushingBookInfo, ItemStackToItemStackRecipe<CrushingBookCategory, CrushingBookInfo>, InputRecipeCache.SingleItem<ItemStackToItemStackRecipe<CrushingBookCategory, CrushingBookInfo>>> LATHING;
 

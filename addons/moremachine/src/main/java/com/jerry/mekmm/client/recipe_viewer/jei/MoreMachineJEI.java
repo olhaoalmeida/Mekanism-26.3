@@ -84,7 +84,7 @@ public class MoreMachineJEI implements IModPlugin {
         RecipeRegistryHelper.register(registry, MMRecipeViewerRecipeType.ROLLING_MILL, MoreMachineRecipeType.ROLLING_MILL);
         RecipeRegistryHelper.register(registry, MMRecipeViewerRecipeType.PRESSING, MoreMachineRecipeType.PRESSING);
 
-        registry.addIngredientInfo(MoreMachineChemicals.UNSTABLE_DIMENSIONAL_GAS.asResource().toStack(FluidType.BUCKET_VOLUME), MekanismJEI.TYPE_CHEMICAL,
+        registry.addIngredientInfo(MoreMachineChemicals.stack(net.minecraft.client.Minecraft.getInstance().getConnection().registryAccess(), MoreMachineChemicals.UNSTABLE_DIMENSIONAL_GAS, FluidType.BUCKET_VOLUME), MekanismJEI.TYPE_CHEMICAL,
                 MoreMachineLang.RECIPE_VIEWER_INFO_UNSTABLE_DIMENSIONAL_GAS.translate(MoreMachineConfig.general.gasCollectAmount.get()));
     }
 

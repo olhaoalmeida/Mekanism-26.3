@@ -89,6 +89,6 @@ public class MoreMachineGeneratorsConfig extends BaseMekanismConfig {
 
     @Override
     public ModConfig.Type getConfigType() {
-        return ModConfig.Type.SERVER;
+        return ModConfig.Type.SYNCED;
     }
 }
