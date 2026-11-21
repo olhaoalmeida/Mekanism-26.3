@@ -1,0 +1,400 @@
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/item/block/ItemBlockAuthorDoll.java:7: error: type ItemBlockDoll does not take parameters
+public class ItemBlockAuthorDoll extends ItemBlockDoll<BlockAuthorDoll> {
+                                                      ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/item/block/ItemBlockModelerDoll.java:7: error: type ItemBlockDoll does not take parameters
+public class ItemBlockModelerDoll extends ItemBlockDoll<BlockModelerDoll> {
+                                                       ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/item/block/ItemBlockGTriXyFumo.java:7: error: type ItemBlockDoll does not take parameters
+public class ItemBlockGTriXyFumo extends ItemBlockDoll<BlockGTriXyFumo> {
+                                                      ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/item/block/ItemBlockSuikaHinataFumo.java:7: error: type ItemBlockDoll does not take parameters
+public class ItemBlockSuikaHinataFumo extends ItemBlockDoll<BlockSuikaHinataFumo> {
+                                                           ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/item/block/ItemBlockLexEdenFumo.java:7: error: type ItemBlockDoll does not take parameters
+public class ItemBlockLexEdenFumo extends ItemBlockDoll<BlockLexEdenFumo> {
+                                                       ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/item/block/ItemBlockQiuYeQAQ2024Fumo.java:7: error: type ItemBlockDoll does not take parameters
+public class ItemBlockQiuYeQAQ2024Fumo extends ItemBlockDoll<BlockQiuYeQAQ2024Fumo> {
+                                                            ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/gui/machine/GuiMoreMachineFactory.java:31: error: type GuiDumpButton does not take parameters
+    private GuiDumpButton<?> dumpButton;
+                         ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/recipe_viewer/MMRecipeViewerRecipeType.java:21: error: wrong number of type arguments; required 5
+    public static final RVRecipeTypeWrapper<?, RecyclerRecipe, ?> RECYCLER = new RVRecipeTypeWrapper<>(MoreMachineRecipeType.RECYCLING, RecyclerRecipe.class, -28, -16, 144, 54, MoreMachineBlocks.RECYCLER);
+                                           ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/recipe_viewer/MMRecipeViewerRecipeType.java:23: error: wrong number of type arguments; required 5
+    public static final RVRecipeTypeWrapper<?, PlantingRecipe, ?> PLANTING_STATION = new RVRecipeTypeWrapper<>(MoreMachineRecipeType.PLANTING_STATION, PlantingRecipe.class, -28, -16, 144, 54, MoreMachineBlocks.PLANTING_STATION);
+                                           ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/recipe_viewer/MMRecipeViewerRecipeType.java:25: error: wrong number of type arguments; required 5
+    public static final RVRecipeTypeWrapper<?, StamperRecipe, ?> STAMPING = new RVRecipeTypeWrapper<>(MoreMachineRecipeType.STAMPING, StamperRecipe.class, -28, -16, 144, 54, MoreMachineBlocks.CNC_STAMPER);
+                                           ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/recipe_viewer/MMRecipeViewerRecipeType.java:27: error: wrong number of type arguments; required 5
+    public static final RVRecipeTypeWrapper<?, ItemStackToItemStackRecipe, ?> LATHE = new RVRecipeTypeWrapper<>(MoreMachineRecipeType.LATHING, ItemStackToItemStackRecipe.class, -28, -16, 144, 54, MoreMachineBlocks.CNC_LATHE);
+                                           ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/recipe_viewer/MMRecipeViewerRecipeType.java:29: error: wrong number of type arguments; required 5
+    public static final RVRecipeTypeWrapper<?, ItemStackToItemStackRecipe, ?> ROLLING_MILL = new RVRecipeTypeWrapper<>(MoreMachineRecipeType.ROLLING_MILL, ItemStackToItemStackRecipe.class, -28, -16, 144, 54, MoreMachineBlocks.CNC_ROLLING_MILL);
+                                           ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/recipe_viewer/MMRecipeViewerRecipeType.java:31: error: wrong number of type arguments; required 5
+    public static final RVRecipeTypeWrapper<?, TripleItemToItemRecipe, ?> PRESSING = new RVRecipeTypeWrapper<>(MoreMachineRecipeType.PRESSING, TripleItemToItemRecipe.class, -28, -16, 144, 54, MoreMachineBlocks.PRESSER);
+                                           ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/mixin/tile/MixinTileEntityIsotopicCentrifuge.java:31: error: wrong number of type arguments; required 2
+public abstract class MixinTileEntityIsotopicCentrifuge extends TileEntityRecipeMachine<ChemicalToChemicalRecipe> implements IBoundingBlock, ChemicalRecipeLookupHandler<ChemicalToChemicalRecipe> {
+                                                                                       ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/mixin/tile/MixinTileEntityChemicalWasher.java:33: error: wrong number of type arguments; required 2
+public abstract class MixinTileEntityChemicalWasher extends TileEntityRecipeMachine<FluidChemicalToChemicalRecipe> implements
+                                                                                   ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/mixin/client/MixinRecipeViewerRecipeType.java:30: error: wrong number of type arguments; required 5
+    public static RVRecipeTypeWrapper<?, ChemicalChemicalToChemicalRecipe, ?> CHEMICAL_INFUSING;
+                                     ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/mixin/client/MixinRecipeViewerRecipeType.java:35: error: wrong number of type arguments; required 5
+    public static RVRecipeTypeWrapper<?, ElectrolysisRecipe, ?> SEPARATING;
+                                     ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/mixin/client/MixinRecipeViewerRecipeType.java:40: error: wrong number of type arguments; required 5
+    public static RVRecipeTypeWrapper<?, ChemicalToChemicalRecipe, ?> ACTIVATING;
+                                     ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/mixin/client/MixinRecipeViewerRecipeType.java:45: error: wrong number of type arguments; required 5
+    public static RVRecipeTypeWrapper<?, NucleosynthesizingRecipe, ?> NUCLEOSYNTHESIZING;
+                                     ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/mixin/client/MixinRecipeViewerRecipeType.java:50: error: wrong number of type arguments; required 5
+    public static SimpleRVRecipeType<?, ItemStackToChemicalRecipe, ?> CHEMICAL_CONVERSION;
+                                    ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/mixin/client/MixinRecipeViewerRecipeType.java:55: error: wrong number of type arguments; required 5
+    public static RVRecipeTypeWrapper<?, ChemicalChemicalToChemicalRecipe, ?> PIGMENT_MIXING;
+                                     ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekaf/common/tile/factory/TileEntityWashingFactory.java:180: error: wrong number of type arguments; required 5
+    public @NotNull IMekanismRecipeTypeProvider<?, FluidChemicalToChemicalRecipe<?, ?>, InputRecipeCache.FluidChemical<FluidChemicalToChemicalRecipe<?, ?>>> getRecipeType() {
+                                               ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekaf/common/tile/factory/TileEntityDissolvingFactory.java:191: error: wrong number of type arguments; required 5
+    public @NotNull IMekanismRecipeTypeProvider<?, ChemicalDissolutionRecipe, InputRecipeCache.ItemChemical<ChemicalDissolutionRecipe>> getRecipeType() {
+                                               ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekaf/common/tile/factory/TileEntityCrystallizingFactory.java:84: error: wrong number of type arguments; required 5
+    public @NotNull IMekanismRecipeTypeProvider<?, ChemicalCrystallizerRecipe, InputRecipeCache.SingleChemical<ChemicalCrystallizerRecipe>> getRecipeType() {
+                                               ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekaf/common/attachments/containers/chemical/AFChemicalTanksBuilder.java:39: error: wrong number of type arguments; required 3
+    public <VANILLA_INPUT extends RecipeInput, RECIPE extends MekanismRecipe<VANILLA_INPUT>, INPUT_CACHE extends IInputRecipeCache> AFChemicalTanksBuilder addBasic(long capacity,
+                                                                            ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekaf/common/attachments/containers/chemical/AFChemicalTanksBuilder.java:40: error: wrong number of type arguments; required 5
+                                                                                                                                                                    IMekanismRecipeTypeProvider<VANILLA_INPUT, RECIPE, INPUT_CACHE> recipeType, ContainsRecipe<INPUT_CACHE, ChemicalResource> containsRecipe) {
+                                                                                                                                                                                               ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekaf/client/gui/machine/GuiAdvancedFactory.java:40: error: type GuiDumpButton does not take parameters
+    private GuiDumpButton<?> dumpButton;
+                         ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/tile/prefab/TileEntityLargeChemicalTank.java:45: error: cannot find symbol
+import mekanism.common.util.NBTUtils;
+                           ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/gui/machine/GuiLargeRotaryCondensentrator.java:8: error: cannot find symbol
+import mekanism.client.gui.element.GuiDownArrow;
+                                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/render/tileentity/RenderLargeAntiprotonicNucleosynthesizer.java:9: error: cannot find symbol
+import mekanism.client.model.ModelEnergyCore;
+                            ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/render/tileentity/RenderLargeAntiprotonicNucleosynthesizer.java:32: error: cannot find symbol
+    private final ModelEnergyCore core;
+                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/render/tileentity/RenderLargePigmentMixer.java:8: error: package mekanism.client.render.lib.Outlines does not exist
+import mekanism.client.render.lib.Outlines.Line;
+                                          ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/render/tileentity/RenderLargePigmentMixer.java:38: error: cannot find symbol
+    private static List<Line> lines;
+                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/content/blocktype/MoreMachineMachine.java:13: error: cannot find symbol
+import mekanism.common.lib.math.Pos3D;
+                               ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/registries/MoreMachineBlocks.java:49: error: cannot find symbol
+import mekanism.common.item.block.ItemBlockMekanism;
+                                 ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/content/blocktype/MoreMachineFactory.java:14: error: cannot find symbol
+import mekanism.common.lib.math.Pos3D;
+                               ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/tile/machine/TileEntityWirelessChargingStation.java:25: error: cannot find symbol
+import mekanism.common.integration.curios.CuriosIntegration;
+                                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/registries/MoreMachineBlocks.java:343: error: cannot find symbol
+    private static BlockRegistryObject<BlockMoreMachineResource, ItemBlockMekanism<BlockMoreMachineResource>> registerResourceBlock(MoreMachineBlockResourceInfo resource) {
+                                                                 ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/registries/MoreMachineChemicals.java:9: error: cannot find symbol
+import mekanism.common.registration.impl.ChemicalDeferredRegister;
+                                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/registries/MoreMachineChemicals.java:10: error: cannot find symbol
+import mekanism.common.registration.impl.DeferredChemical;
+                                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/registries/MoreMachineChemicals.java:11: error: cannot find symbol
+import mekanism.common.registration.impl.SlurryRegistryObject;
+                                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/registries/MoreMachineChemicals.java:20: error: cannot find symbol
+    public static final ChemicalDeferredRegister MM_CHEMICALS = new ChemicalDeferredRegister(Mekmm.MOD_ID);
+                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/registries/MoreMachineChemicals.java:22: error: cannot find symbol
+    public static final DeferredChemical<Chemical> NUTRITIONAL_PASTE = MM_CHEMICALS.register(MoreMachineChemicalConstants.NUTRITIONAL_PASTE);
+                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/registries/MoreMachineChemicals.java:23: error: cannot find symbol
+    public static final DeferredChemical<Chemical> NUTRIENT_SOLUTION = MM_CHEMICALS.register(MoreMachineChemicalConstants.NUTRIENT_SOLUTION);
+                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/registries/MoreMachineChemicals.java:24: error: cannot find symbol
+    public static final DeferredChemical<Chemical> UU_MATTER = MM_CHEMICALS.register(MoreMachineChemicalConstants.UU_MATTER);
+                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/registries/MoreMachineChemicals.java:25: error: cannot find symbol
+    public static final DeferredChemical<Chemical> UNSTABLE_DIMENSIONAL_GAS = MM_CHEMICALS.register(MoreMachineChemicalConstants.UNSTABLE_DIMENSIONAL_GAS);
+                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/common/registries/MoreMachineChemicals.java:26: error: cannot find symbol
+    public static final Map<MoreMachineResource, SlurryRegistryObject<Chemical, Chemical>> PROCESSED_RESOURCES = new LinkedHashMap<>();
+                                                 ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/renderer/MoreMachineRenderType.java:7: error: cannot find symbol
+import net.minecraft.client.renderer.rendertype.OutputTarget;
+                                               ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/renderer/MoreMachineRenderType.java:11: error: cannot find symbol
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+                                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/renderer/MoreMachineRenderType.java:17: error: cannot find symbol
+    private static final RenderPipeline LINES_NO_DEPTH_PIPELINE = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
+                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/gui/element/GuiWirelessChargingStationSwitch.java:8: error: cannot find symbol
+import mekanism.common.util.MekanismUtils.ResourceType;
+                                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/gui/machine/GuiStamper.java:7: error: cannot find symbol
+import mekanism.client.gui.element.GuiUpArrow;
+                                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/gui/machine/GuiFluidReplicator.java:8: error: cannot find symbol
+import mekanism.client.gui.element.GuiDownArrow;
+                                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/gui/machine/GuiRecycler.java:7: error: cannot find symbol
+import mekanism.client.gui.element.GuiUpArrow;
+                                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/gui/element/button/ConnectListButton.java:15: error: cannot find symbol
+import mekanism.common.util.MekanismUtils.ResourceType;
+                                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/gui/element/bar/GuiFlexibleHorizontalRateBar.java:7: error: cannot find symbol
+import mekanism.common.util.MekanismUtils.ResourceType;
+                                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/recipe_viewer/jei/machine/StamperRecipeCategory.java:5: error: cannot find symbol
+import mekanism.client.gui.element.GuiUpArrow;
+                                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/recipe_viewer/jei/machine/RecyclerRecipeCategory.java:5: error: cannot find symbol
+import mekanism.client.gui.element.GuiUpArrow;
+                                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/render/RenderTickHandler.java:6: error: cannot find symbol
+import net.minecraft.client.renderer.MultiBufferSource;
+                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/render/RenderTickHandler.java:39: error: cannot find symbol
+    private static void renderHighlight(PoseStack poseStack, MultiBufferSource bufferSource, BlockPos pos, Vec3 cameraPos, BlockHighlightManager.HighlightData data, long gameTime) {
+                                                             ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/render/RenderLineHelper.java:3: error: cannot find symbol
+import net.minecraft.client.renderer.MultiBufferSource;
+                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/client/render/RenderLineHelper.java:14: error: cannot find symbol
+    public static void renderLine(PoseStack poseStack, MultiBufferSource buffers, Vector3f start, Vector3f end, float r, float g, float b, float thickness) {
+                                                       ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/mixin/tile/MixinTileEntityPressurizedReactionChamber.java:10: error: cannot find symbol
+import mekanism.common.capabilities.energy.PRCEnergyContainer;
+                                          ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekmm/mixin/tile/MixinTileEntityPressurizedReactionChamber.java:37: error: cannot find symbol
+    private PRCEnergyContainer energyContainer;
+            ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklg/common/registries/LargeGeneratorBlockTypes.java:8: error: cannot find symbol
+import mekanism.common.lib.math.Pos3D;
+                               ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklg/client/gui/generator/GuiLargeWindGenerator.java:12: error: cannot find symbol
+import mekanism.common.util.MekanismUtils.ResourceType;
+                                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekaf/common/content/blocktype/AdvancedFactory.java:15: error: cannot find symbol
+import mekanism.common.lib.math.Pos3D;
+                               ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekaf/common/tile/factory/TileEntityLiquifyingFactory.java:43: error: package mekanism.common.recipe.impl does not exist
+import mekanism.common.recipe.impl.NutritionalLiquifierIRecipe;
+                                  ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/mekaf/client/gui/machine/GuiAdvancedFactory.java:13: error: cannot find symbol
+import mekanism.client.gui.element.GuiDownArrow;
+                                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/registries/LargeMachineBlockTypes.java:84: error: <anonymous com.jerry.meklm.common.registries.LargeMachineBlockTypes$1> is not abstract and does not override abstract method <LEVEL,DATA>handle(LEVEL,BlockPos,BlockState,DATA,TriBooleanFunction<LEVEL,BlockPos,DATA>) in HandleBoundingBlock
+            .withBounding(new HandleBoundingBlock() {
+                                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/registries/LargeMachineBlockTypes.java:86: error: method does not override or implement a method from a supertype
+                @Override
+                ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/registries/LargeMachineBlockTypes.java:112: error: cannot find symbol
+            .withSupportedUpgrades(Upgrade.SPEED, Upgrade.MUFFLING)
+                                          ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/registries/LargeMachineBlockTypes.java:112: error: cannot find symbol
+            .withSupportedUpgrades(Upgrade.SPEED, Upgrade.MUFFLING)
+                                                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/registries/LargeMachineBlockTypes.java:151: error: no suitable method found for withCustomShape(VoxelShape[])
+                .withCustomShape(LargeMachineBlockShapes.getLargeChemicalTank(tier))
+                ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/tile/prefab/TileEntityLargeChemicalTank.java:96: error: cannot find symbol
+        setupIOConfig(TransmissionType.CHEMICAL, getChemicalTank(), RelativeSide.TOP);
+                                                 ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/tile/prefab/TileEntityLargeChemicalTank.java:213: error: cannot find symbol
+            getChemicalTank().copyContents(data.chemicalTank, transaction);
+            ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/tile/prefab/TileEntityLargeChemicalTank.java:228: error: cannot find symbol
+        return new ChemicalTankUpgradeData(provider, redstone, getControlType(), drainSlot, fillSlot, dumping, getChemicalTank(), getComponents(), problemPath());
+                                                                                                               ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/tile/prefab/TileEntityLargeChemicalTank.java:234: error: cannot find symbol
+        NBTUtils.writeEnum(output, SerializationConstants.DUMP_MODE, dumping);
+        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/tile/prefab/TileEntityLargeChemicalTank.java:240: error: cannot find symbol
+        NBTUtils.setEnumIfPresent(input, SerializationConstants.DUMP_MODE, GasMode.BY_ID, mode -> dumping = mode);
+        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/tile/prefab/TileEntityLargeChemicalTank.java:266: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/tier/MidChemicalTankTier.java:50: error: cannot find symbol
+        return storageReference == null ? getBaseStorage() : storageReference.getOrDefault();
+                                          ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/tier/MidChemicalTankTier.java:55: error: cannot find symbol
+        return outputReference == null ? getBaseOutput() : outputReference.getOrDefault();
+                                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/tier/MaxChemicalTankTier.java:50: error: cannot find symbol
+        return storageReference == null ? getBaseStorage() : storageReference.getOrDefault();
+                                          ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/tier/MaxChemicalTankTier.java:55: error: cannot find symbol
+        return outputReference == null ? getBaseOutput() : outputReference.getOrDefault();
+                                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/item/block/ItemBlockLargeChemicalTank.java:52: error: constructor ItemBlockTooltip in class ItemBlockTooltip cannot be applied to given types;
+        super(block, true, properties
+        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/item/block/ItemBlockLargeChemicalTank.java:65: error: cannot find symbol
+        return StorageUtils.isBarVisible(stack);
+                           ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/item/block/ItemBlockLargeChemicalTank.java:70: error: incompatible types: ItemStack cannot be converted to double
+        return StorageUtils.getBarWidth(stack);
+                                        ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/item/block/ItemBlockMidChemicalTank.java:31: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/item/block/ItemBlockMidChemicalTank.java:40: error: incompatible types: ItemStack cannot be converted to ItemResource
+        StorageUtils.addStoredSubstance(ItemAccessUtils.sideEffectFreeAccess(stack), tooltipAdder, false);
+                                                                             ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/item/block/ItemBlockMaxChemicalTank.java:31: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/item/block/ItemBlockMaxChemicalTank.java:40: error: incompatible types: ItemStack cannot be converted to ItemResource
+        StorageUtils.addStoredSubstance(ItemAccessUtils.sideEffectFreeAccess(stack), tooltipAdder, false);
+                                                                             ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/capabilities/holder/chemical/AdjustableChemicalTankHelper.java:35: error: cannot find symbol
+                (outputTank.get().isEmpty() && type.getChemical().isRadioactive() && RadiationManager.isGlobalRadiationEnabled());
+                                                                 ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/content/blocktype/LargeMachineBlockShapes.java:82: error: incompatible types: bad type in conditional expression
+        return tier instanceof MidChemicalTankTier ? MID_CHEMICAL_TANK : MAX_CHEMICAL_TANK;
+                                                     ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/content/blocktype/LargeMachineBlockShapes.java:82: error: incompatible types: bad type in conditional expression
+        return tier instanceof MidChemicalTankTier ? MID_CHEMICAL_TANK : MAX_CHEMICAL_TANK;
+                                                                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/common/attachments/containers/chemical/ComponentBackedLargeChemicalTankTank.java:21: error: cannot find symbol
+        return new ComponentBackedLargeChemicalTankTank(attachedAccess, tankIndex, (ILargeChemicalTankTier) item.getTier());
+                                                                                                                ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/gui/machine/GuiLargeRotaryCondensentrator.java:47: error: cannot find symbol
+        addRenderableWidget(new GuiDownArrow(this, 159, 44));
+                                ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/gui/machine/GuiLargeRotaryCondensentrator.java:85: error: no suitable constructor found for ToggleButton(GuiLargeRotaryCondensentrator,int,int,tile::getMode,(element,,[...]ile)))
+        addRenderableWidget(new ToggleButton(this, 4, 4, tile::getMode,
+                            ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/gui/machine/GuiLargePigmentMixer.java:112: error: cannot find symbol
+                        return getColor(recipe.getOutput(leftInput, rightInput).chemical().value().getColorRepresentation());
+                                                                               ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/gui/machine/GuiLargePigmentMixer.java:117: error: cannot find symbol
+            return getColor(tile.outputTank.resource().getChemicalColorRepresentation());
+                                                      ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/gui/machine/GuiLargePigmentMixer.java:121: error: incompatible types: RecipeHolder<ChemicalChemicalToChemicalRecipe<PigmentMixingBookCategory,PigmentMixingBookInfo>> cannot be converted to ChemicalChemicalToChemicalRecipe
+            ChemicalChemicalToChemicalRecipe recipe = tile.getRecipe(0);
+                                                                    ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/gui/machine/GuiLargePigmentMixer.java:72: error: cannot find symbol
+            return tile == null ? 0xFFFFFFFF : getColor(tile.leftInputTank.resource().getChemicalColorRepresentation());
+                                                                                     ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/gui/machine/GuiLargePigmentMixer.java:80: error: cannot find symbol
+            return tile == null ? 0xFFFFFFFF : getColor(tile.rightInputTank.resource().getChemicalColorRepresentation());
+                                                                                      ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/gui/machine/base/GuiLargeChemicalTank.java:37: error: cannot find symbol
+        addRenderableWidget(new GuiChemicalBar(this, GuiChemicalBar.getProvider(tile.getChemicalTank(), tile.getChemicalTanks()), 42, 16, 116, 10, true));
+                                                                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/gui/machine/base/GuiLargeChemicalTank.java:40: error: cannot find symbol
+            IChemicalTank tank = tile.getChemicalTank();
+                                     ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/gui/machine/base/GuiLargeChemicalTank.java:43: error: cannot find symbol
+                ret.add(MekanismLang.GENERIC_FRACTION.translate(0, TextUtils.format(tile.getTier().getStorage())));
+                                                                                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/gui/machine/GuiLargeAntiprotonicNucleosynthesizer.java:39: error: incompatible types: Vec3 cannot be converted to Vector3fc
+    private final Supplier<BoltEffect> boltSupplier = () -> new BoltEffect(boltRenderInfo, from, to, 15)
+                                                                                           ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/gui/machine/GuiLargeAntiprotonicNucleosynthesizer.java:56: error: incompatible types: inference variable T has incompatible bounds
+        screen = addRenderableWidget(new GuiInnerScreen(this, 45, 18, 104, 68).recipeViewerCategory(tile));
+                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/render/tileentity/RenderLargeAntiprotonicNucleosynthesizer.java:35: error: constructor MekanismTileEntityRenderer in class MekanismTileEntityRenderer<TILE,STATE> cannot be applied to given types;
+        super(context);
+        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/render/tileentity/RenderLargeAntiprotonicNucleosynthesizer.java:36: error: cannot find symbol
+        core = new ModelEnergyCore(context.entityModelSet());
+                   ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/src/main/java/com/jerry/meklm/client/render/tileentity/RenderLargeAntiprotonicNucleosynthesizer.java:67: error: no suitable method found for mulPose(Quaternionf)
+        matrix.mulPose(RenderEnergyCube.coreVec.rotationDegrees(36F + scaledTicks));
