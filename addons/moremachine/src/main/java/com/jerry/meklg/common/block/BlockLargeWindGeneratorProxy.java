@@ -70,8 +70,8 @@ public class BlockLargeWindGeneratorProxy extends Block implements IStateFluidLo
     public BlockLargeWindGeneratorProxy(BlockBehaviour.Properties properties) {
         super(BlockStateHelper.applyLightLevelAdjustments(properties.dynamicShape()
                 .noOcclusion()
-                .isViewBlocking(BlockStateHelper.NEVER_PREDICATE)
-                .pushReaction(PushReaction.BLOCK)));
+                .isViewBlocking(BlockStateHelper.NEVER_VIEW_BLOCKING)
+                .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK)));
         registerDefaultState(BlockStateHelper.getDefaultState(stateDefinition.any()
                 .setValue(OFFSET_X, encodeHorizontalOffset(0))
                 .setValue(OFFSET_Y, 0)
@@ -195,7 +195,7 @@ public class BlockLargeWindGeneratorProxy extends Block implements IStateFluidLo
     }
 
     private BlockHitResult withHitResultForMain(BlockHitResult hit, BlockPos mainPos) {
-        Vec3 location = mainPos.getCenter().relative(hit.getDirection(), 0.5);
+        Vec3 location = net.minecraft.world.phys.Vec3.atCenterOf(mainPos).relative(hit.getDirection(), 0.5);
         if (hit.getType() == Type.MISS) {
             return BlockHitResult.miss(location, hit.getDirection(), mainPos);
         }
@@ -294,7 +294,7 @@ public class BlockLargeWindGeneratorProxy extends Block implements IStateFluidLo
     }
 
     @Override
-    public void playerDestroy(Level world, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack stack) {
+    public void playerDestroy(net.minecraft.server.level.ServerLevel world, net.minecraft.server.level.ServerPlayer player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack stack) {
         BlockPos mainPos = getValidMainPos(world, state, pos, true);
         if (mainPos != null) {
             BlockState mainState = world.getBlockState(mainPos);
@@ -325,7 +325,7 @@ public class BlockLargeWindGeneratorProxy extends Block implements IStateFluidLo
                 BlockEntity mainTile = WorldUtils.getTileEntity(level, mainPos);
                 if (mainTile instanceof IBoundingBlock boundingBlock) {
                     int newSignal = level.getBestNeighborSignal(pos);
-                    boundingBlock.onBoundingBlockPowerChange(pos, Redstone.SIGNAL_NONE, newSignal);
+                    boundingBlock.onBoundingBlockPowerChange(pos, Redstone.SIGNAL_NONE, newSignal, null);
                 }
             }
         }

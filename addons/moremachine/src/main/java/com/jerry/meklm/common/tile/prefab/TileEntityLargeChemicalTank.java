@@ -42,7 +42,6 @@ import mekanism.common.tile.prefab.TileEntityConfigurableMachine;
 import mekanism.common.upgrade.ChemicalTankUpgradeData;
 import mekanism.common.upgrade.IUpgradeData;
 import mekanism.common.util.ChemicalUtils;
-import mekanism.common.util.NBTUtils;
 import mekanism.common.util.ResourceUtils;
 
 import net.minecraft.core.BlockPos;
@@ -231,13 +230,13 @@ public class TileEntityLargeChemicalTank<TIER extends ILargeChemicalTankTier> ex
     @Override
     public void writeSustainedData(@NotNull ValueOutput output) {
         super.writeSustainedData(output);
-        NBTUtils.writeEnum(output, SerializationConstants.DUMP_MODE, dumping);
+        output.store(SerializationConstants.DUMP_MODE, GasMode.CODEC, dumping);
     }
 
     @Override
     public void readSustainedData(@NotNull ValueInput input) {
         super.readSustainedData(input);
-        NBTUtils.setEnumIfPresent(input, SerializationConstants.DUMP_MODE, GasMode.BY_ID, mode -> dumping = mode);
+        dumping = input.read(SerializationConstants.DUMP_MODE, GasMode.CODEC).orElse(GasMode.IDLE);
     }
 
     @Override
@@ -264,7 +263,7 @@ public class TileEntityLargeChemicalTank<TIER extends ILargeChemicalTankTier> ex
     }
 
     @Override
-    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel) {
+    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel, @Nullable net.minecraft.world.level.redstone.Orientation orientation) {
         if (oldLevel > 0) {
             if (newLevel == 0) {
                 numPowering--;

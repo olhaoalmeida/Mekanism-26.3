@@ -5,7 +5,6 @@ import com.jerry.meklm.common.tile.machine.TileEntityLargeRotaryCondensentrator;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.api.text.ILangEntry;
 import mekanism.client.gui.GuiMekanismTile;
-import mekanism.client.gui.element.GuiDownArrow;
 import mekanism.client.gui.element.GuiElement;
 import mekanism.client.gui.element.bar.GuiHorizontalPowerBar;
 import mekanism.client.gui.element.button.ToggleButton;
@@ -44,7 +43,6 @@ public class GuiLargeRotaryCondensentrator extends GuiMekanismTile<TileEntityLar
     @Override
     protected void addGuiElements() {
         super.addGuiElements();
-        addRenderableWidget(new GuiDownArrow(this, 159, 44));
         energyBar = addRenderableWidget(new GuiHorizontalPowerBar(this, tile.getEnergyContainer(), 115, 75))
                 .warning(WarningType.NOT_ENOUGH_ENERGY, tile.getWarningCheck(RecipeError.NOT_ENOUGH_ENERGY))
                 .warning(WarningType.NOT_ENOUGH_ENERGY_REDUCED_RATE, tile.getWarningCheck(RecipeError.NOT_ENOUGH_ENERGY_REDUCED_RATE));

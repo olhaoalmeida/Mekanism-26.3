@@ -26,6 +26,10 @@ sourceSets {
         exclude 'com/jerry/mekmm/mixin/client/render/MixinRenderTickHandler.java'
         exclude 'com/jerry/mekmm/client/integration/DistantHorizonsIntegration.java'
         exclude 'com/jerry/datagen/**'
+        // TEMP(26.3 port): JEI integration and client recipe-viewer mixins are re-enabled after the core compiles
+        exclude 'com/jerry/mekmm/client/recipe_viewer/jei/**'
+        exclude 'com/jerry/mekmm/mixin/client/MixinRecipeViewerRecipeType.java'
+        exclude 'com/jerry/mekmm/mixin/client/recipe_viewer/**'
         exclude 'com/jerry/mekmm/api/datagen/**'
         exclude 'com/jerry/mekmm/mixin/PersistingMekanismDatagenCache.java'
     }

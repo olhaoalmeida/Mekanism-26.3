@@ -19,10 +19,7 @@
 		"tile.MixinTileEntityPigmentExtractor",
 		"tile.MixinTileEntityPressurizedReactionChamber"
 	],
-	"client": [
-		"client.MixinRecipeViewerRecipeType",
-		"client.recipe_viewer.type.MixinRotaryRVRecipeType"
-	],
+	"client": [],
 	"injectors": {
 		"defaultRequire": 1
 	}

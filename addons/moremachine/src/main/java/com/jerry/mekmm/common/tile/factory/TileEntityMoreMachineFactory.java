@@ -441,7 +441,7 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
     }
 
 
-    public double getScaledProgress(int i, int process) {
+    public float getScaledProgress(int i, int process) {
         return (double) getProgress(process) * i / ticksRequired;
     }
 

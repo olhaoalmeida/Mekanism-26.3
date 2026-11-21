@@ -190,7 +190,7 @@ public class MoreMachineBounding {
             return predicate.accept(level, mutable, data);
         }
 
-        private <DATA> boolean handlePanel(Level level, BlockPos pos, DATA data, TriBooleanFunction<Level, BlockPos, DATA> predicate,
+        private <LEVEL extends LevelReader, DATA> boolean handlePanel(LEVEL level, BlockPos pos, DATA data, TriBooleanFunction<LEVEL, BlockPos, DATA> predicate,
                                            BlockPos.MutableBlockPos mutable, Direction side, int offset) {
             Vec3i forward = side.getUnitVec3i();
             Vec3i axis = side.getClockWise().getUnitVec3i();
