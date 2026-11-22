@@ -53,7 +53,7 @@ public class MixinOreType {
     @Unique
     private static OreType mekmm$addVariant(String internalName, IResource resource, float smeltingExp, BaseOreConfig... configs) {
         ArrayList<OreType> variants = new ArrayList<>(Arrays.asList($VALUES));
-        OreType ore = mekmm$initInvoker(internalName, variants.getLast().ordinal() + 1, resource, configs);
+        OreType ore = mekmm$initInvoker(internalName, variants.getLast().ordinal() + 1, resource, smeltingExp, configs);
         variants.add(ore);
         $VALUES = variants.toArray(new OreType[0]);
         return ore;
