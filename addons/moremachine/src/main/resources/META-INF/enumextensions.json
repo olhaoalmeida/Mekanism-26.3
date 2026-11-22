@@ -2,37 +2,37 @@
   "entries": [
     {
       "enum": "net/minecraft/world/inventory/RecipeBookType",
-      "name": "MEKANISM_RECYCLING",
+      "name": "MEKMM_RECYCLING",
       "constructor": "()V",
       "parameters": []
     },
     {
       "enum": "net/minecraft/world/inventory/RecipeBookType",
-      "name": "MEKANISM_PLANTING",
+      "name": "MEKMM_PLANTING",
       "constructor": "()V",
       "parameters": []
     },
     {
       "enum": "net/minecraft/world/inventory/RecipeBookType",
-      "name": "MEKANISM_STAMPING",
+      "name": "MEKMM_STAMPING",
       "constructor": "()V",
       "parameters": []
     },
     {
       "enum": "net/minecraft/world/inventory/RecipeBookType",
-      "name": "MEKANISM_LATHING",
+      "name": "MEKMM_LATHING",
       "constructor": "()V",
       "parameters": []
     },
     {
       "enum": "net/minecraft/world/inventory/RecipeBookType",
-      "name": "MEKANISM_ROLLING_MILL",
+      "name": "MEKMM_ROLLING_MILL",
       "constructor": "()V",
       "parameters": []
     },
     {
       "enum": "net/minecraft/world/inventory/RecipeBookType",
-      "name": "MEKANISM_PRESSING",
+      "name": "MEKMM_PRESSING",
       "constructor": "()V",
       "parameters": []
     }
