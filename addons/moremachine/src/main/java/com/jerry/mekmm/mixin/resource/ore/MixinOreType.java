@@ -37,6 +37,11 @@ public class MixinOreType {
     @Mutable
     public static Codec<OreType> CODEC;
 
+    @Shadow
+    @Final
+    @Mutable
+    public static java.util.List<OreType> VALUES;
+
     @Invoker("<init>")
     public static OreType mekmm$initInvoker(String internalName, int internalId, IResource resource, float smeltingExp, BaseOreConfig... configs) {
         throw new AssertionError();
@@ -47,6 +52,7 @@ public class MixinOreType {
         MoreMachineOreType.SILVER = mekmm$addVariant("SILVER", MoreMachineResource.SILVER, 1.0F,
                 new BaseOreConfig("small", 16, 0, 4, HeightShape.TRAPEZOID, OreAnchor.absolute(-24), OreAnchor.absolute(88)),
                 new BaseOreConfig("large", 10, 0, 8, HeightShape.TRAPEZOID, OreAnchor.absolute(-32), OreAnchor.absolute(64)));
+        VALUES = java.util.List.of($VALUES);
         CODEC = StringRepresentable.fromEnum(OreType::values);
     }
 
