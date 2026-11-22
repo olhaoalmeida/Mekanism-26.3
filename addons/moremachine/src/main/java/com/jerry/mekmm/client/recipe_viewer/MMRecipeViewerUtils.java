@@ -38,7 +38,7 @@ public class MMRecipeViewerUtils {
         for (Map.Entry<ResourceKey<Item>, Item> entry : BuiltInRegistries.ITEM.entrySet()) {
             MMBasicItemStackChemicalToItemStackRecipe recipe = TileEntityReplicator.getRecipe(entry.getValue().getDefaultInstance(), MoreMachineChemicals.stack(registries(), MoreMachineChemicals.UU_MATTER, 1));
             if (recipe != null) {
-                replicator.put(RegistryUtils.synthetic(entry.key().identifier(), "replicator", Mekmm.MOD_ID), recipe);
+                replicator.put(RegistryUtils.synthetic(entry.getKey().identifier(), "replicator", Mekmm.MOD_ID), recipe);
             }
         }
         return replicator;
@@ -49,7 +49,7 @@ public class MMRecipeViewerUtils {
         for (Map.Entry<ResourceKey<Fluid>, Fluid> entry : BuiltInRegistries.FLUID.entrySet()) {
             BasicFluidChemicalToFluidRecipe recipe = TileEntityFluidReplicator.getRecipe(new FluidStack(entry.getValue(), 1), MoreMachineChemicals.stack(registries(), MoreMachineChemicals.UU_MATTER, 1));
             if (recipe != null) {
-                replicator.put(RegistryUtils.synthetic(entry.key().identifier(), "replicator", Mekmm.MOD_ID), recipe);
+                replicator.put(RegistryUtils.synthetic(entry.getKey().identifier(), "replicator", Mekmm.MOD_ID), recipe);
             }
         }
         return replicator;
@@ -61,7 +61,7 @@ public class MMRecipeViewerUtils {
             // mek将很多方法弃用了，所以只能使用这个办法。
             MMBasicChemicalChemicalToChemicalRecipe recipe = TileEntityChemicalReplicator.getRecipe(new ChemicalStack(entry, 1), MoreMachineChemicals.stack(registries(), MoreMachineChemicals.UU_MATTER, 1));
             if (recipe != null) {
-                replicator.put(RegistryUtils.synthetic(entry.key().identifier(), "replicator", Mekmm.MOD_ID), recipe);
+                replicator.put(RegistryUtils.synthetic(entry.getKey().identifier(), "replicator", Mekmm.MOD_ID), recipe);
             }
         }
         return replicator;

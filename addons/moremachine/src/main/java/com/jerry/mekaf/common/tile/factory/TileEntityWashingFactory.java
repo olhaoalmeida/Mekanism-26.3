@@ -157,7 +157,7 @@ public class TileEntityWashingFactory extends TileEntityChemicalToChemicalFactor
 
     @Override
     protected @Nullable RecipeHolder<FluidChemicalToChemicalRecipe<?, ?>> findRecipe(int process, @NotNull ChemicalResource fallbackInput, @NotNull IChemicalTank outputTank) {
-        return getRecipeType().getInputCache().findTypeBasedRecipe(level, fluidTank.resource(), fallbackInput, outputTank.resource(), OUTPUT_CHECK);
+        return getRecipeType().getInputCache().findTypeBasedRecipeHolder(level, fluidTank.resource(), fallbackInput, outputTank.resource(), OUTPUT_CHECK);
     }
 
     @Override

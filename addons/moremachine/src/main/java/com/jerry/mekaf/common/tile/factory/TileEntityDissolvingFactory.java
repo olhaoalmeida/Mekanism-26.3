@@ -218,7 +218,7 @@ public class TileEntityDissolvingFactory extends TileEntityItemToChemicalFactory
                 .setActive(active -> setActiveState(active, cacheIndex))
                 .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
                 .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
+                .setOnFinish(_ -> markForSave())
                 .setBaselineMaxOperations(this::getOperationsPerTick);
     }
 

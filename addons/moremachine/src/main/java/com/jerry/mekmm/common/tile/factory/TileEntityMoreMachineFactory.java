@@ -104,6 +104,10 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
     private final boolean[] activeStates;
     protected ProcessInfo[] processInfoSlots;
     protected RecipeContainers[] recipeContainers;
+
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return recipeContainers[cacheIndex];
+    }
     /**
      * This Factory's tier.
      */
