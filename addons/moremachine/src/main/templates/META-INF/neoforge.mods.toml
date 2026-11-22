@@ -12,6 +12,7 @@ license = "${mod_license}"
     logoFile = "logo.png"
     displayURL = "${mod_url}"
     credits="Thank you to all those who have made any contributions to this mod"
+    enumExtensions="META-INF/enumextensions.json"
 
 [[mixins]]
     config = "${mod_id}.mixins.json"
