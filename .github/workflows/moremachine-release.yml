@@ -1,0 +1,22 @@
+name: moremachine-release
+on: workflow_dispatch
+permissions: { contents: write }
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 25 }
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew assemble --no-daemon --console=plain
+      - name: build MoreMachine
+        working-directory: addons/moremachine
+        run: chmod +x gradlew && ./gradlew jar -x spotlessCheck -x spotlessApply --no-daemon --console=plain
+      - name: create release
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          tag="moremachine-v2.0.0-26.3-r${{ github.run_number }}"
+          gh release create "$tag" --prerelease --title "More Machine 2.0.0 (MC 26.3 / Mekanism 10.8) r${{ github.run_number }}" \
+            --notes "Port do More Machine (Mekanism-MoreMachine: More Machine, Advanced Factory, Large Machine, Large Generator) para NeoForge 26.3 / Mekanism 10.8. Requer o Mekanism 10.8 desta mesma repo (releases v10.8.0-26.3-r*). Testado no CI headless: compila, servidor dedicado sobe até Done e o cliente entra no mundo. NÃO testado jogando. Pendente/desativado neste build: integração JEI/EMI/SEMI de receitas, integração CraftTweaker, Distant Horizons, e integração Evolved Mekanism; alguns itens perderam tooltips/outline (marcados TODO). Receita mekmm:presser/reflector com ingrediente vazio." \
+            addons/moremachine/build/libs/mekmm-26.3-2.0.0.jar
