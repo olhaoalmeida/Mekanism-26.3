@@ -17,9 +17,19 @@ jobs:
           set +e
           chmod +x gradlew
           mkdir -p run/server && echo "eula=true" > run/server/eula.txt
-          timeout 900 ./gradlew runServer --no-daemon --console=plain -x spotlessCheck -x spotlessApply < <(sleep 420; echo stop; sleep 60) > ../../boot.log 2>&1
-          echo "exit=$?" >> ../../boot.log
-          grep -nE "Done \(|FAILED|Mixin|mixin|ERROR|Exception|Caused by|mekmm|mekaf|meklm|meklg" ../../boot.log | head -200 > ../../boot-summary.txt || true
+          rm -f in.fifo; mkfifo in.fifo
+          (timeout 800 ./gradlew runServer --no-daemon --console=plain -x spotlessCheck -x spotlessApply < in.fifo > ../../boot.log 2>&1; echo "exit=$?" >> ../../boot.log) &
+          exec 3>in.fifo
+          for i in $(seq 1 150); do
+            sleep 4
+            if grep -qE "Done \(|BUILD FAILED|FatalStartup|Failed to start" ../../boot.log; then break; fi
+          done
+          sleep 20
+          echo stop >&3
+          sleep 40
+          pkill -f runServer || true
+          wait || true
+                    grep -nE "Done \(|FAILED|Mixin|mixin|ERROR|Exception|Caused by|mekmm|mekaf|meklm|meklg" ../../boot.log | head -200 > ../../boot-summary.txt || true
       - name: publish
         if: always()
         run: |
