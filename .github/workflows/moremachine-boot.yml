@@ -1,0 +1,27 @@
+name: moremachine-boot
+on: workflow_dispatch
+permissions: { contents: write }
+jobs:
+  boot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 25 }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: build Mekanism
+        run: ./gradlew assemble --no-daemon --console=plain > mek.log 2>&1 || (tail -50 mek.log; exit 1)
+      - name: boot server with MoreMachine
+        working-directory: addons/moremachine
+        run: |
+          set +e
+          chmod +x gradlew
+          mkdir -p run/server && echo "eula=true" > run/server/eula.txt
+          timeout 900 ./gradlew runServer --no-daemon --console=plain -x spotlessCheck -x spotlessApply < <(sleep 420; echo stop; sleep 60) > ../../boot.log 2>&1
+          echo "exit=$?" >> ../../boot.log
+          grep -nE "Done \(|FAILED|Mixin|mixin|ERROR|Exception|Caused by|mekmm|mekaf|meklm|meklg" ../../boot.log | head -200 > ../../boot-summary.txt || true
+      - name: publish
+        if: always()
+        run: |
+          mkdir -p out && cp boot.log boot-summary.txt out/ || true
+          cd out && git init -q && git checkout -q -b ci-mmboot && git add -A && git -c user.name=ci -c user.email=ci@x commit -qm log && git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} ci-mmboot
