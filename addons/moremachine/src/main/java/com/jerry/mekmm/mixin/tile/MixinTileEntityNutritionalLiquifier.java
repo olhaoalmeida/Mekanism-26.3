@@ -5,7 +5,7 @@ import com.jerry.mekaf.common.upgrade.NutritionLiquifyingUpgradeData;
 import com.jerry.mekmm.common.util.MoreMachineUtils;
 
 import mekanism.api.fluid.IFluidTank;
-import mekanism.api.recipes.basic.BasicItemStackToFluidOptionalItemRecipe;
+import mekanism.api.recipes.ItemStackToFluidOptionalItemRecipe;
 import mekanism.api.recipes.cache.CachedRecipe;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
