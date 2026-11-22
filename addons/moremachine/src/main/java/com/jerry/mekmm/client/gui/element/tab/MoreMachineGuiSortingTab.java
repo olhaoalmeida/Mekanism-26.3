@@ -32,8 +32,8 @@ public class MoreMachineGuiSortingTab extends GuiInsetElement<TileEntityMoreMach
     }
 
     @Override
-    protected int getTabColor(GuiGraphicsExtractor guiGraphics) {
-        return MekanismRenderer.color(SpecialColors.TAB_FACTORY_SORT);
+    protected int getTabColor() {
+        return SpecialColors.TAB_FACTORY_SORT.argb();
     }
 
     @Override

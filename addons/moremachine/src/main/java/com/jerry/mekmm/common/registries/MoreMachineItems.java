@@ -6,13 +6,10 @@ import com.jerry.mekmm.common.item.ItemReflector;
 import com.jerry.mekmm.common.resource.MoreMachineResource;
 import com.jerry.mekmm.common.util.MoreMachineEnumUtils;
 
-import mekanism.api.upgrade.Upgrade;
-import mekanism.common.item.ItemUpgrade;
 import mekanism.common.registration.impl.ItemDeferredRegister;
 import mekanism.common.registration.impl.ItemRegistryObject;
 import mekanism.common.resource.IResource;
 import mekanism.common.resource.ResourceType;
-import mekanism.common.util.EnumUtils;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -40,17 +37,13 @@ public class MoreMachineItems {
     public static final ItemRegistryObject<Item> REFLECTOR = MM_ITEMS.registerItem("reflector", ItemReflector::new);
 
     static {
-        for (ResourceType type : EnumUtils.RESOURCE_TYPES) {
+        for (ResourceType type : ResourceType.values()) {
             for (MoreMachineResource resource : MoreMachineEnumUtils.MM_RESOURCES) {
                 if (resource.has(type)) {
                     PROCESSED_RESOURCES.put(type, resource, registerResource(type, resource));
                 }
             }
         }
-    }
-
-    private static ItemRegistryObject<ItemUpgrade> registerUpgrade(Upgrade type, Rarity rarity) {
-        return MM_ITEMS.registerItem("upgrade_" + type.getSerializedName(), properties -> new ItemUpgrade(type, properties.rarity(rarity)));
     }
 
     private static ItemRegistryObject<Item> registerResource(ResourceType type, IResource resource) {

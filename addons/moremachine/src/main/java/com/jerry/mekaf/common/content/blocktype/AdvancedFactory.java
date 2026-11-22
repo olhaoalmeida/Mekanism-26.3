@@ -62,7 +62,6 @@ public class AdvancedFactory<TILE extends TileEntityAdvancedFactoryBase<?>> exte
                     () -> AdvancedFactoryContainerTypes.ADVANCED_FACTORY, type.getBaseMachine(), tier));
             // Note, we can't just return the builder here as then it gets all confused about object types, so we just
             // assign the value here, and then return the builder itself as it is the same object
-            builder.withComputerSupport(tier, type.getSerializedName() + "Factory");
             builder.withCustomShape(AdvancedFactoryBlockShapes.getShape(type));
             builder.with(switch (type) {
                 case OXIDIZING, DISSOLVING, CRYSTALLIZING, PIGMENT_EXTRACTING, PAINTING -> AttributeSideConfig.ADVANCED_ELECTRIC_MACHINE;

@@ -350,14 +350,14 @@ public class MoreMachineBlocks {
 
     private static OreBlockType registerOre(OreType ore) {
         String name = ore.getResource().getRegistrySuffix() + "_ore";
-        BlockRegistryObject<BlockOre, ItemBlockTooltip> stoneOre = MM_BLOCKS.registerDetails(name, properties -> new BlockOre(ore,
+        BlockRegistryObject<BlockOre, BlockItem> stoneOre = MM_BLOCKS.register(name, properties -> new BlockOre(ore,
                 BlockStateHelper.applyLightLevelAdjustments(properties)
                         .strength(3, 3)
                         .requiresCorrectToolForDrops()
                         .mapColor(MapColor.STONE)
                         .instrument(NoteBlockInstrument.BASEDRUM)));
-        BlockRegistryObject<BlockOre, ItemBlockTooltip> deepslateOre = MM_BLOCKS.register("deepslate_" + name, () -> BlockBehaviour.Properties.ofLegacyCopy(stoneOre.value()),
-                properties -> new BlockOre(ore, properties.mapColor(MapColor.DEEPSLATE).strength(4.5F, 3).sound(SoundType.DEEPSLATE)), ItemBlockTooltip::new);
+        BlockRegistryObject<BlockOre, BlockItem> deepslateOre = MM_BLOCKS.register("deepslate_" + name, () -> BlockBehaviour.Properties.ofLegacyCopy(stoneOre.value()),
+                properties -> new BlockOre(ore, properties.mapColor(MapColor.DEEPSLATE).strength(4.5F, 3).sound(SoundType.DEEPSLATE)), BlockItem::new);
         return new OreBlockType(stoneOre, deepslateOre);
     }
 

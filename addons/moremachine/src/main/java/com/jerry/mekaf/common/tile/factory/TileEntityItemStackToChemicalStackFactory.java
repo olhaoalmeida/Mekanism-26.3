@@ -84,20 +84,22 @@ public class TileEntityItemStackToChemicalStackFactory extends TileEntityItemToC
         return containsRecipe(stack);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, ItemStackToChemicalRecipe<?, ?>, SingleItem<ItemStackToChemicalRecipe<?, ?>>> getRecipeType() {
         return switch (getAdvancedFactoryType()) {
-            case OXIDIZING -> MekanismRecipeType.OXIDIZING;
-            case PIGMENT_EXTRACTING -> MekanismRecipeType.PIGMENT_EXTRACTING;
+            case OXIDIZING -> (IMekanismRecipeTypeProvider) MekanismRecipeType.OXIDIZING;
+            case PIGMENT_EXTRACTING -> (IMekanismRecipeTypeProvider) MekanismRecipeType.PIGMENT_EXTRACTING;
             default -> throw new IllegalStateException("Unhandled factory type");
         };
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public IRecipeViewerRecipeType<ItemStackToChemicalRecipe<?, ?>> recipeViewerType() {
         return switch (getAdvancedFactoryType()) {
-            case OXIDIZING -> RecipeViewerRecipeType.OXIDIZING;
-            case PIGMENT_EXTRACTING -> RecipeViewerRecipeType.PIGMENT_EXTRACTING;
+            case OXIDIZING -> (IRecipeViewerRecipeType) RecipeViewerRecipeType.OXIDIZING;
+            case PIGMENT_EXTRACTING -> (IRecipeViewerRecipeType) RecipeViewerRecipeType.PIGMENT_EXTRACTING;
             default -> throw new IllegalStateException("Unhandled factory type");
         };
     }

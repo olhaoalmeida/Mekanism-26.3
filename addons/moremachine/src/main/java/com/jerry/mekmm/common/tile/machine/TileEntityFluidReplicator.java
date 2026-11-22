@@ -151,7 +151,7 @@ public class TileEntityFluidReplicator extends TileEntityProgressMachine<BasicFl
 
         fluidInputHandler = InputHelper.getInputHandler(inputTank, RecipeError.NOT_ENOUGH_INPUT);
         fluidOutputHandler = OutputHelper.getOutputHandler(outputTank, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
-        chemicalInputHandler = InputHelper.getInputHandler(uuTank);
+        chemicalInputHandler = InputHelper.getInputHandler(uuTank, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
     }
 
     @Override

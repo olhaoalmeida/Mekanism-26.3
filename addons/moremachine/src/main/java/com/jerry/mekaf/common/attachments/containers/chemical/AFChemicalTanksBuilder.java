@@ -4,6 +4,7 @@ import mekanism.api.chemical.ChemicalResource;
 import mekanism.api.chemical.IChemicalTank;
 import mekanism.api.functions.ConstantPredicates;
 import mekanism.api.recipes.MekanismRecipe;
+import mekanism.api.recipes.book.MekanismBookCategory;
 import mekanism.api.resource.LargeResourceStack;
 import mekanism.common.component.containers.ContainsRecipe;
 import mekanism.common.component.containers.chemical.ComponentBackedChemicalTank;
@@ -15,6 +16,7 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.recipe.IMekanismRecipeTypeProvider;
 import mekanism.common.recipe.lookup.cache.IInputRecipeCache;
 
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
 
 import java.util.ArrayList;
@@ -36,8 +38,8 @@ public class AFChemicalTanksBuilder {
         return new BaseContainerBuilder<>(tankCreators, LargeResourceStack.CHEMICAL_HELPER);
     }
 
-    public <VANILLA_INPUT extends RecipeInput, RECIPE extends MekanismRecipe<VANILLA_INPUT>, INPUT_CACHE extends IInputRecipeCache> AFChemicalTanksBuilder addBasic(long capacity,
-                                                                                                                                                                    IMekanismRecipeTypeProvider<VANILLA_INPUT, RECIPE, INPUT_CACHE> recipeType, ContainsRecipe<INPUT_CACHE, ChemicalResource> containsRecipe) {
+    public <VANILLA_INPUT extends RecipeInput, BOOK_CATEGORY extends MekanismBookCategory, BOOK_INFO extends Recipe.BookInfo<BOOK_CATEGORY>, RECIPE extends MekanismRecipe<VANILLA_INPUT, BOOK_CATEGORY, BOOK_INFO>, INPUT_CACHE extends IInputRecipeCache> AFChemicalTanksBuilder addBasic(long capacity,
+                                                                                                                                                                    IMekanismRecipeTypeProvider<VANILLA_INPUT, BOOK_CATEGORY, BOOK_INFO, RECIPE, INPUT_CACHE> recipeType, ContainsRecipe<INPUT_CACHE, ChemicalResource> containsRecipe) {
         return addBasic(capacity, chemical -> containsRecipe.check(recipeType.getInputCache(), null, chemical));
     }
 

@@ -22,11 +22,6 @@ public class AdvancedFactoryEnergyContainer extends MachineEnergyContainer<TileE
 
     private AdvancedFactoryEnergyContainer(long maxEnergy, int energyPerTick, Predicate<@NotNull AutomationType> canExtract,
                                            Predicate<@NotNull AutomationType> canInsert, TileEntityAdvancedFactoryBase<?> tile, @Nullable IContentsListener listener) {
-        super(maxEnergy, energyPerTick, canExtract, canInsert, tile, listener);
-    }
-
-    @Override
-    public int getBaseEnergyPerTick() {
-        return Math.toIntExact(super.getBaseEnergyPerTick() + tile.getRecipeEnergyRequired());
+        super(maxEnergy, energyPerTick, canExtract, canInsert, tile, (base, t) -> base + Math.toIntExact(t.getRecipeEnergyRequired()), listener);
     }
 }

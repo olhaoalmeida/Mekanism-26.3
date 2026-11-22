@@ -106,7 +106,7 @@ public abstract class TileEntityChemicalToChemicalFactory<RECIPE extends Mekanis
             outputTank[i] = BasicChemicalTank.output(MAX_CHEMICAL * tier.processes, updateSortingAndUnpause);
             inputTank[i] = BasicChemicalTank.create(MAX_CHEMICAL * tier.processes,
                     // 这个type似乎没什么用，就不增加isValidInputChemical的参数了
-                    MekContainerHelper.radioactiveInputTankPredicate(() -> outputTank[index]), this::getLevel, (stack, _) -> isValidInputChemical(stack),
+                    MekContainerHelper.radioactiveInputTankPredicate(() -> outputTank[index], this::getLevel), (stack, _) -> isValidInputChemical(stack),
                     stack -> isChemicalValidForTank(stack) && inputProducesOutput(index, stack, outputTank[index], false),
                     ChemicalAttributeValidator.ALWAYS_ALLOW, recipeCacheLookupMonitors[index]);
             builder.addContainer(inputTank[i]);

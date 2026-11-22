@@ -21,7 +21,6 @@ import com.jerry.mekmm.common.tile.machine.TileEntityWirelessTransmissionStation
 import com.jerry.mekmm.common.util.MoreMachineEnumUtils;
 import com.jerry.mekmm.common.util.MoreMachineUtils;
 
-import mekanism.api.upgrade.Upgrade;
 import mekanism.api.math.MathUtils;
 import mekanism.common.block.attribute.*;
 import mekanism.common.content.blocktype.BlockTypeTile;
@@ -149,7 +148,7 @@ public class MoreMachineBlockTypes {
             .createMachine(() -> MoreMachineTileEntityTypes.AMBIENT_GAS_COLLECTOR, MoreMachineLang.DESCRIPTION_AMBIENT_GAS_COLLECTOR)
             .withGui(() -> MoreMachineContainerTypes.AMBIENT_GAS_COLLECTOR)
             .withEnergyConfig(() -> MathUtils.clampToInt(MoreMachineConfig.usage.ambientGasCollector.get()), MoreMachineConfig.storage.ambientGasCollector::get)
-            .withSupportedUpgrades(Upgrade.SPEED, Upgrade.ENERGY)
+            .with(AttributeUpgradeSupport.SIMPLE_MACHINE_UPGRADES)
             .withCustomShape(MoreMachineBlockShapes.AMBIENT_GAS_COLLECTOR)
             .withComputerSupport("ambientGasCollector")
             .replace(Attributes.ACTIVE)

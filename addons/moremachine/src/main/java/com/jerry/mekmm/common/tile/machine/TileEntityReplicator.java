@@ -121,7 +121,7 @@ public class TileEntityReplicator extends TileEntityProgressMachine<MMBasicItemS
 
         ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM);
 
-        chemicalInputHandler = InputHelper.getInputHandler(chemicalTank);
+        chemicalInputHandler = InputHelper.getInputHandler(chemicalTank, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
         itemInputHandler = InputHelper.getInputHandler(inputSlot, RecipeError.NOT_ENOUGH_INPUT);
         outputHandler = OutputHelper.getOutputHandler(outputSlot, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
     }

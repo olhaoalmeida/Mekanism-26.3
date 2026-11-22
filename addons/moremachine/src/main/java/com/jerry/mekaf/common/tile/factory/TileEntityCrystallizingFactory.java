@@ -81,7 +81,7 @@ public class TileEntityCrystallizingFactory extends TileEntityChemicalToItemFact
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, ChemicalCrystallizerRecipe, InputRecipeCache.SingleChemical<ChemicalCrystallizerRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, ChemicalCrystallizerRecipe, InputRecipeCache.SingleChemical<ChemicalCrystallizerRecipe>> getRecipeType() {
         return (IMekanismRecipeTypeProvider) MekanismRecipeType.CRYSTALLIZING;
     }
 

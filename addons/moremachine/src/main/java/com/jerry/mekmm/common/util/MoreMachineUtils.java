@@ -59,11 +59,11 @@ public class MoreMachineUtils {
         // Compatible wit Emek
         if (Mekmm.hooks.evolvedMekanism.isLoaded()) {
             FactoryTier[] mergedTiers;
-            mergedTiers = Arrays.copyOf(EnumUtils.FACTORY_TIERS, EnumUtils.FACTORY_TIERS.length + MoreMachineEnumUtils.EM_TIERS.length);
-            System.arraycopy(MoreMachineEnumUtils.EM_TIERS, 0, mergedTiers, EnumUtils.FACTORY_TIERS.length, MoreMachineEnumUtils.EM_TIERS.length);
+            mergedTiers = Arrays.copyOf(FactoryTier.values(), FactoryTier.values().length + MoreMachineEnumUtils.EM_TIERS.length);
+            System.arraycopy(MoreMachineEnumUtils.EM_TIERS, 0, mergedTiers, FactoryTier.values().length, MoreMachineEnumUtils.EM_TIERS.length);
             return mergedTiers;
         } else {
-            return EnumUtils.FACTORY_TIERS;
+            return FactoryTier.values();
         }
     }
 

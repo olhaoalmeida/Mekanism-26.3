@@ -90,11 +90,12 @@ public class TileEntityMoreMachineItemStackToItemStackFactory extends TileEntity
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public IRecipeViewerRecipeType<ItemStackToItemStackRecipe<?, ?>> recipeViewerType() {
-        return switch (type) {
+        IRecipeViewerRecipeType<?> viewerType = switch (type) {
             case CNC_LATHING -> MMRecipeViewerRecipeType.LATHE;
             // TODO: Make it so that it throws an error if it is not one of the three types
             default -> MMRecipeViewerRecipeType.ROLLING_MILL;
         };
+        return (IRecipeViewerRecipeType<ItemStackToItemStackRecipe<?, ?>>) viewerType;
     }
 
     @Nullable

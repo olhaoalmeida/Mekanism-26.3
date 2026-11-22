@@ -32,11 +32,11 @@ public class MMRecipeViewerRecipeType {
 
     public static final RVRecipeTypeWrapper<?, ?, ?, TripleItemToItemRecipe, ?> PRESSING = new RVRecipeTypeWrapper<>(MoreMachineRecipeType.PRESSING, TripleItemToItemRecipe.class, -28, -16, 144, 54, MoreMachineBlocks.PRESSER);
 
-    public static final FakeRVRecipeType<MMBasicItemStackChemicalToItemStackRecipe> REPLICATOR = new FakeRVRecipeType<>(MoreMachineBlocks.REPLICATOR, MMBasicItemStackChemicalToItemStackRecipe.class, -3, -3, 170, 79);
+    public static final FakeRVRecipeType<MMBasicItemStackChemicalToItemStackRecipe> REPLICATOR = new FakeRVRecipeType<>(MoreMachineBlocks.REPLICATOR.getId(), MoreMachineBlocks.REPLICATOR, MoreMachineBlocks.REPLICATOR, MMBasicItemStackChemicalToItemStackRecipe.class, -3, -3, 170, 79);
 
-    public static final FakeRVRecipeType<BasicFluidChemicalToFluidRecipe> FLUID_REPLICATOR = new FakeRVRecipeType<>(MoreMachineBlocks.FLUID_REPLICATOR, BasicFluidChemicalToFluidRecipe.class, -3, -3, 170, 79);
+    public static final FakeRVRecipeType<BasicFluidChemicalToFluidRecipe> FLUID_REPLICATOR = new FakeRVRecipeType<>(MoreMachineBlocks.FLUID_REPLICATOR.getId(), MoreMachineBlocks.FLUID_REPLICATOR, MoreMachineBlocks.FLUID_REPLICATOR, BasicFluidChemicalToFluidRecipe.class, -3, -3, 170, 79);
 
-    public static final FakeRVRecipeType<MMBasicChemicalChemicalToChemicalRecipe> CHEMICAL_REPLICATOR = new FakeRVRecipeType<>(MoreMachineBlocks.CHEMICAL_REPLICATOR, MMBasicChemicalChemicalToChemicalRecipe.class, -3, -3, 170, 79);
+    public static final FakeRVRecipeType<MMBasicChemicalChemicalToChemicalRecipe> CHEMICAL_REPLICATOR = new FakeRVRecipeType<>(MoreMachineBlocks.CHEMICAL_REPLICATOR.getId(), MoreMachineBlocks.CHEMICAL_REPLICATOR, MoreMachineBlocks.CHEMICAL_REPLICATOR, MMBasicChemicalChemicalToChemicalRecipe.class, -3, -3, 170, 79);
 
     @SuppressWarnings("unchecked")
     private static <T> Class<T> cls(Class<?> clazz) {

@@ -1,6 +1,8 @@
 package com.jerry.mekmm.common.recipe.impl;
 
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import java.util.List;
 import mekanism.api.recipes.book.InjectingBookCategory.InjectingBookInfo;
 import mekanism.api.recipes.book.InjectingBookCategory;
 import com.jerry.mekmm.api.recipes.basic.MMBasicItemStackChemicalToItemStackRecipe;
@@ -41,4 +43,8 @@ public class ReplicatorIRecipeSingle extends MMBasicItemStackChemicalToItemStack
         return "duplicator";
     }
 
+    @Override
+    public List<RecipeDisplay> display() {
+        return List.of();
+    }
 }

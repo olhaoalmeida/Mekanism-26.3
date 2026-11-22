@@ -6,6 +6,7 @@ import com.jerry.mekmm.common.tile.machine.TileEntityWirelessTransmissionStation
 import mekanism.common.inventory.container.tile.MekanismTileContainer;
 
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +27,7 @@ public class WirelessTransmissionStationConfigContainer extends MekanismTileCont
     }
 
     @Override
-    protected void addSlots() {
+    protected void addSlots(Player player) {
         // Don't add the tile's slots
     }
 

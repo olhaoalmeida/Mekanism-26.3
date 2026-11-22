@@ -177,7 +177,7 @@ public class TileEntityWashingFactory extends TileEntityChemicalToChemicalFactor
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, FluidChemicalToChemicalRecipe<?, ?>, InputRecipeCache.FluidChemical<FluidChemicalToChemicalRecipe<?, ?>>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, FluidChemicalToChemicalRecipe<?, ?>, InputRecipeCache.FluidChemical<FluidChemicalToChemicalRecipe<?, ?>>> getRecipeType() {
         return (IMekanismRecipeTypeProvider) MekanismRecipeType.WASHING;
     }
 

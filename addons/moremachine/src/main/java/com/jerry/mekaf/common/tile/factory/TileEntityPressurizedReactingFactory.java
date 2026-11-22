@@ -23,6 +23,7 @@ import mekanism.api.fluid.IFluidTank;
 import mekanism.api.inventory.IInventorySlot;
 import mekanism.api.math.MathUtils;
 import mekanism.api.radiation.IRadiationManager;
+import mekanism.common.lib.radiation.RadiationManager;
 import mekanism.api.recipes.PressurizedReactionRecipe;
 import mekanism.api.recipes.PressurizedReactionRecipe.PressurizedReactionRecipeOutput;
 import mekanism.api.recipes.cache.CachedRecipe;
@@ -162,7 +163,7 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
 
     @Override
     protected void addTanks(MekContainerHelper<IChemicalTank> builder, IContentsListener listener, IContentsListener updateSortingListener) {
-        builder.addContainer(inputChemicalTank = BasicChemicalTank.create(MAX_CHEMICAL * tier.processes, MekContainerHelper.radioactiveInputTankPredicate(() -> outputChemicalTank),
+        builder.addContainer(inputChemicalTank = BasicChemicalTank.create(MAX_CHEMICAL * tier.processes, MekContainerHelper.radioactiveInputTankPredicate(() -> outputChemicalTank, this::getLevel),
                 (chemicalType, automationType) -> containsRecipeCAB(ItemResource.EMPTY, inputFluidTank.resource(), chemicalType), this::containsRecipeC, ChemicalAttributeValidator.ALWAYS_ALLOW,
                 markAllMonitorsChanged(listener)));
         builder.addContainer(outputChemicalTank = BasicChemicalTank.output(MAX_CHEMICAL * tier.processes, markAllMonitorsChanged(listener)));
@@ -300,7 +301,7 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
         }
         // If there is no cached item input, or it doesn't match our fallback then it is an out of date cache, so we
         // ignore the fact that we have a cache
-        PressurizedReactionRecipe foundRecipe = findRecipe(process, fallbackInput, outputSlot, outputTank);
+        RecipeHolder<PressurizedReactionRecipe> foundRecipe = findRecipe(process, fallbackInput, outputSlot, outputTank);
         if (foundRecipe == null) {
             // We could not find any valid recipe for the given item that matches the items in the current output slots
             return null;
@@ -377,7 +378,7 @@ public class TileEntityPressurizedReactingFactory extends TileEntityAdvancedFact
     @Override
     public void dump() {
         inputFluidTank.setContents(FluidResource.EMPTY, 0, null);
-        if (!isRemote() && IRadiationManager.INSTANCE.isRadiationEnabled() && shouldDumpRadiation()) {
+        if (!isRemote() && RadiationManager.isGlobalRadiationEnabled() && shouldDumpRadiation()) {
             // If we are on a server and radiation is enabled dump all gas tanks with radioactive materials
             // Note: we handle clearing radioactive contents later in drop calculation due to when things are written to
             // NBT

@@ -12,6 +12,8 @@ import com.jerry.mekmm.common.recipe.impl.ReplicatorIRecipeSingle;
 import com.jerry.mekmm.common.registries.MoreMachineChemicals;
 import com.jerry.mekmm.common.util.ValidatorUtils;
 
+import com.jerry.mekmm.common.util.MoreMachineUtils;
+
 import mekanism.api.IContentsListener;
 import mekanism.api.chemical.BasicChemicalTank;
 import mekanism.api.chemical.Chemical;
@@ -128,7 +130,7 @@ public class TileEntityReplicatingFactory extends TileEntityMoreMachineItemToIte
     @Override
     protected @Nullable RecipeHolder<MMBasicItemStackChemicalToItemStackRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot) {
         MMBasicItemStackChemicalToItemStackRecipe recipe = getRecipe(fallbackInput.toStack(), chemicalTank.resource().toStack(chemicalTank.amountAsInt()));
-        return recipe != null && OUTPUT_CHECK.testType(recipe, fallbackInput, chemicalTank.resource(), outputSlot.resource()) ? recipe : null;
+        return recipe != null && OUTPUT_CHECK.testType(recipe, fallbackInput, chemicalTank.resource(), outputSlot.resource()) ? MoreMachineUtils.syntheticHolder(recipe) : null;
     }
 
     @Override
@@ -162,7 +164,8 @@ public class TileEntityReplicatingFactory extends TileEntityMoreMachineItemToIte
 
     @Override
     public @Nullable RecipeHolder<MMBasicItemStackChemicalToItemStackRecipe> getRecipe(int cacheIndex) {
-        return getRecipe(inputHandlers[cacheIndex].getInput(), chemicalInputHandler.getInput());
+        MMBasicItemStackChemicalToItemStackRecipe recipe = getRecipe(inputHandlers[cacheIndex].getInput(), chemicalInputHandler.getInput());
+        return recipe == null ? null : MoreMachineUtils.syntheticHolder(recipe);
     }
 
     @Override

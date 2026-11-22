@@ -157,6 +157,7 @@ public class TileEntityPlantingFactory extends TileEntityMoreMachineFactory<Plan
         inputHandlers = new IInputHandler[tier.processes];
         outputHandlers = new IOutputHandler[tier.processes];
         processInfoSlots = new ProcessInfo[tier.processes];
+        recipeContainers = new RecipeContainers[tier.processes];
         int baseX = tier == FactoryTier.BASIC ? 55 : tier == FactoryTier.ADVANCED ? 35 : tier == FactoryTier.ELITE ? 29 : 27;
         int baseXMult = tier == FactoryTier.BASIC ? 38 : tier == FactoryTier.ADVANCED ? 26 : 19;
         for (int i = 0; i < tier.processes; i++) {
@@ -180,6 +181,7 @@ public class TileEntityPlantingFactory extends TileEntityMoreMachineFactory<Plan
             outputHandlers[i] = OutputHelper.getOutputHandler(outputSlot, RecipeError.NOT_ENOUGH_OUTPUT_SPACE, secondaryOutputSlot,
                     TileEntityPlantingStation.NOT_ENOUGH_SPACE_SECONDARY_OUTPUT_ERROR);
             processInfoSlots[i] = new ProcessInfo(i, inputSlot, outputSlot, secondaryOutputSlot);
+            recipeContainers[i] = new RecipeContainers(inputSlot, java.util.List.of(outputSlot, secondaryOutputSlot));
         }
         builder.addContainer(chemicalSlot = ChemicalInventorySlot.fillOrConvert(chemicalTank, this::getLevel, listener, 7, 77));
     }
@@ -218,16 +220,7 @@ public class TileEntityPlantingFactory extends TileEntityMoreMachineFactory<Plan
         } else {
             cachedRecipe = PlantingNoPerTickUsageCacheRecipe.planting(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], chemicalInputHandler, outputHandlers[cacheIndex]);
         }
-        return cachedRecipe
-                // 设置错误更改
-                .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
-                .setCanHolderFunction(this::canFunction)
-                .setActive(active -> setActiveState(active, cacheIndex))
-                .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-                .setRequiredTicks(this::getTicksRequired)
-                .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(operatingTicks -> progress[cacheIndex] = operatingTicks)
-                .setBaselineMaxOperations(this::getOperationsPerTick);
+        return setCommonSettings(cachedRecipe, cacheIndex);
     }
 
     @Override
@@ -242,7 +235,7 @@ public class TileEntityPlantingFactory extends TileEntityMoreMachineFactory<Plan
     @Override
     protected @Nullable RecipeHolder<PlantingRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot) {
         ItemResource extra = secondaryOutputSlot == null ? ItemResource.EMPTY : secondaryOutputSlot.resource();
-        return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, chemicalTank.resource(), new PackedResource(outputSlot.resource(), extra), OUTPUT_CHECK);
+        return getRecipeType().getInputCache().findTypeBasedRecipeHolder(level, fallbackInput, chemicalTank.resource(), new PackedResource(outputSlot.resource(), extra), OUTPUT_CHECK);
     }
 
     @Override

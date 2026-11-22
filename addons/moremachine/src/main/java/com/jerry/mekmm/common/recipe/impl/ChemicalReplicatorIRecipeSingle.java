@@ -1,6 +1,8 @@
 package com.jerry.mekmm.common.recipe.impl;
 
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import java.util.List;
 import mekanism.api.recipes.book.ChemicalInfusingBookCategory.ChemicalInfusingBookInfo;
 import mekanism.api.recipes.book.ChemicalInfusingBookCategory;
 import com.jerry.mekmm.api.recipes.basic.MMBasicChemicalChemicalToChemicalRecipe;
@@ -40,4 +42,8 @@ public class ChemicalReplicatorIRecipeSingle extends MMBasicChemicalChemicalToCh
         return null;
     }
 
+    @Override
+    public List<RecipeDisplay> display() {
+        return List.of();
+    }
 }

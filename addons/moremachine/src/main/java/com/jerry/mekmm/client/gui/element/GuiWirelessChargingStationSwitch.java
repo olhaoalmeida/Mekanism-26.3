@@ -46,10 +46,10 @@ public class GuiWirelessChargingStationSwitch extends GuiTexturedElement {
     }
 
     @Override
-    public void renderForeground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
-        super.renderForeground(GuiGraphicsExtractor, mouseX, mouseY);
-        drawScaledScrollingString(GuiGraphicsExtractor, MekanismLang.ON.translate(), type.switchX, type.switchY, TextAlignment.CENTER, 0xFF101010, BUTTON_SIZE_X, 1, false, 0.6F);
-        drawScaledScrollingString(GuiGraphicsExtractor, MekanismLang.OFF.translate(), type.switchX, type.switchY + BUTTON_SIZE_Y + 1, TextAlignment.CENTER, 0xFF101010, BUTTON_SIZE_X, 1, false, 0.6F);
+    public void renderForeground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTicks) {
+        super.renderForeground(GuiGraphicsExtractor, mouseX, mouseY, partialTicks);
+        drawScaledScrollingString(GuiGraphicsExtractor, MekanismLang.ON.translate(), type.switchX, type.switchY, TextAlignment.CENTER, 0xFF101010, BUTTON_SIZE_X, 1, 0, false, 0.6F, 0L);
+        drawScaledScrollingString(GuiGraphicsExtractor, MekanismLang.OFF.translate(), type.switchX, type.switchY + BUTTON_SIZE_Y + 1, TextAlignment.CENTER, 0xFF101010, BUTTON_SIZE_X, 1, 0, false, 0.6F, 0L);
     }
 
     @Override

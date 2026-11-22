@@ -68,7 +68,7 @@ public class ConnectListButton extends MekanismButton {
         this.onPress = onPress;
         this.level = level;
         slot = addChild(new GuiSlot(SlotType.NORMAL, gui, relativeX + 2, relativeY + 2));
-        slotDisplay = addChild(new GuiSequencedSlotDisplay(gui, relativeX + 3, relativeY + 3, () -> renderStackSupplier.apply(getConnection())));
+        slotDisplay = addChild(new GuiSequencedSlotDisplay(gui, relativeX + 3, relativeY + 3, () -> new net.minecraft.world.item.crafting.display.SlotDisplay.Composite(renderStackSupplier.apply(getConnection()).stream().<net.minecraft.world.item.crafting.display.SlotDisplay>map(s -> new net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay(net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(s))).toList())));
         setButtonBackground(ButtonBackground.NONE);
     }
 
@@ -100,8 +100,8 @@ public class ConnectListButton extends MekanismButton {
     }
 
     @Override
-    public void renderForeground(@NonNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
-        super.renderForeground(guiGraphics, mouseX, mouseY);
+    public void renderForeground(@NonNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.renderForeground(guiGraphics, mouseX, mouseY, partialTicks);
         ConnectionConfig connection = getConnection();
         if (connection == null) {
             return;

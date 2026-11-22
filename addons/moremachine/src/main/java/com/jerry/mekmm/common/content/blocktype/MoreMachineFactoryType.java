@@ -39,6 +39,10 @@ public enum MoreMachineFactoryType implements IHasTranslationKey.IHasEnumNameTra
         this.baseBlock = baseBlock;
     }
 
+    public String getRegistryNameComponent() {
+        return registryNameComponent;
+    }
+
     public String getRegistryNameComponentCapitalized() {
         String name = getRegistryNameComponent();
         return name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1);

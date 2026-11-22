@@ -1,6 +1,9 @@
 package com.jerry.mekmm.common.resource;
 
 import mekanism.common.resource.IResource;
+import mekanism.common.resource.ResourceType;
+
+import net.minecraft.world.item.Item;
 
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
@@ -30,7 +33,7 @@ public enum MoreMachineBlockResourceInfo implements IResource {
     }
 
     MoreMachineBlockResourceInfo(String registrySuffix, float hardness, float resistance, MapColor mapColor, @Nullable NoteBlockInstrument instrument) {
-        this(registrySuffix, hardness, resistance, mapColor, instrument, true, false, PushReaction.NORMAL);
+        this(registrySuffix, hardness, resistance, mapColor, instrument, true, false, PushReaction.PUSH_PULL);
     }
 
     MoreMachineBlockResourceInfo(String registrySuffix, float hardness, float resistance, MapColor mapColor, @Nullable NoteBlockInstrument instrument,
@@ -48,6 +51,11 @@ public enum MoreMachineBlockResourceInfo implements IResource {
     @Override
     public String getRegistrySuffix() {
         return registrySuffix;
+    }
+
+    @Override
+    public Item.Properties modifyProperties(Item.Properties properties, @Nullable ResourceType resourceType) {
+        return properties;
     }
 
     public boolean burnsInFire() {

@@ -409,7 +409,7 @@ public abstract class TileEntityAdvancedFactoryBase<RECIPE extends MekanismRecip
 
 
     public float getScaledProgress(int i, int process) {
-        return (double) getProgress(process) * i / ticksRequired;
+        return (float) ((double) getProgress(process) * i / ticksRequired);
     }
 
     public void toggleSorting() {

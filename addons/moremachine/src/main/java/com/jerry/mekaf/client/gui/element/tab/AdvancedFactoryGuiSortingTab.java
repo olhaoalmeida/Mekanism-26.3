@@ -7,7 +7,6 @@ import com.jerry.mekmm.common.network.to_server.MoreMachinePacketGuiInteract;
 import mekanism.client.SpecialColors;
 import mekanism.client.gui.IGuiWrapper;
 import mekanism.client.gui.element.GuiInsetElement;
-import mekanism.client.render.MekanismRenderer;
 import mekanism.common.MekanismLang;
 import mekanism.common.network.PacketUtils;
 import mekanism.common.util.MekanismUtils;
@@ -32,8 +31,8 @@ public class AdvancedFactoryGuiSortingTab extends GuiInsetElement<TileEntityAdva
     }
 
     @Override
-    protected int getTabColor(GuiGraphicsExtractor guiGraphics) {
-        return MekanismRenderer.color(SpecialColors.TAB_FACTORY_SORT);
+    protected int getTabColor() {
+        return SpecialColors.TAB_FACTORY_SORT.argb();
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.jerry.mekmm.common.recipe.serializer.MoreMachineRecipeSerializer;
 import com.jerry.mekmm.common.recipe.serializer.PlantingRecipeSerializer;
 import com.jerry.mekmm.common.recipe.serializer.RecyclerRecipeSerializer;
 
+import mekanism.api.recipes.book.CrushingBookCategory.CrushingBookInfo;
 import mekanism.common.recipe.serializer.MekanismRecipeSerializer;
 
 import net.minecraft.core.registries.Registries;

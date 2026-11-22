@@ -37,7 +37,7 @@ public class GuiViewConnection extends GuiWindow {
     private final Level level;
 
     public static GuiViewConnection create(IGuiWrapper gui, TileEntityWirelessTransmissionStation tile, Level level, ConnectionConfig config) {
-        return new GuiViewConnection(gui, (gui.getXSize() - MINER_FILTER_WIDTH) / 2, 30, tile, level, config);
+        return new GuiViewConnection(gui, (gui.getImageWidth() - MINER_FILTER_WIDTH) / 2, 30, tile, level, config);
     }
 
     private GuiViewConnection(IGuiWrapper gui, int x, int y, TileEntityWirelessTransmissionStation tile, Level level, ConnectionConfig config) {
@@ -94,7 +94,7 @@ public class GuiViewConnection extends GuiWindow {
             }
             return close(element, mouseX, mouseY);
         }));
-        slotDisplay = addChild(new GuiSequencedSlotDisplay(gui(), relativeX + 8, relativeY + getSlotOffset() + 1, this::getRenderStacks));
+        slotDisplay = addChild(new GuiSequencedSlotDisplay(gui(), relativeX + 8, relativeY + getSlotOffset() + 1, () -> new net.minecraft.world.item.crafting.display.SlotDisplay.Composite(getRenderStacks().stream().<net.minecraft.world.item.crafting.display.SlotDisplay>map(s -> new net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay(net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(s))).toList())));
         slotDisplay.updateStackList();
     }
 
@@ -133,8 +133,8 @@ public class GuiViewConnection extends GuiWindow {
     }
 
     @Override
-    public void renderForeground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
-        super.renderForeground(GuiGraphicsExtractor, mouseX, mouseY);
+    public void renderForeground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTicks) {
+        super.renderForeground(GuiGraphicsExtractor, mouseX, mouseY, partialTicks);
         drawTitleText(GuiGraphicsExtractor, MoreMachineLang.VIEW_CONNECTION.translate(), 6);
     }
 }

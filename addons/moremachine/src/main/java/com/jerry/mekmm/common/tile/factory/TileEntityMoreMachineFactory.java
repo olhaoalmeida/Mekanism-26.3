@@ -103,6 +103,7 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
     protected final ErrorTracker errorTracker;
     private final boolean[] activeStates;
     protected ProcessInfo[] processInfoSlots;
+    protected RecipeContainers[] recipeContainers;
     /**
      * This Factory's tier.
      */
@@ -442,7 +443,7 @@ public abstract class TileEntityMoreMachineFactory<RECIPE extends MekanismRecipe
 
 
     public float getScaledProgress(int i, int process) {
-        return (double) getProgress(process) * i / ticksRequired;
+        return (float) getProgress(process) * i / ticksRequired;
     }
 
     public void toggleSorting() {

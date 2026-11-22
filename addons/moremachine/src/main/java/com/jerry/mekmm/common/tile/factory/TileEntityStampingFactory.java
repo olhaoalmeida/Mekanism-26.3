@@ -73,6 +73,9 @@ public class TileEntityStampingFactory extends TileEntityMoreMachineItemToItemFa
         super.addSlots(builder, listener, updateSortingListener);
         builder.addContainer(extraSlot = InputInventorySlot.at(this::containsRecipeB, markAllMonitorsChanged(listener), 7, 57));
         extraSlot.setSlotType(ContainerSlotType.EXTRA);
+        for (int i = 0; i < recipeContainers.length; i++) {
+            recipeContainers[i] = recipeContainers[i].withExtraInput(extraSlot);
+        }
     }
 
     @Nullable
@@ -108,7 +111,7 @@ public class TileEntityStampingFactory extends TileEntityMoreMachineItemToItemFa
     @Override
     protected RecipeHolder<StamperRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot) {
         // TODO: Give it something that is not empty when we don't have a stored secondary stack for getting the output?
-        return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, extraSlot.resource(), outputSlot.resource(), OUTPUT_CHECK);
+        return getRecipeType().getInputCache().findTypeBasedRecipeHolder(level, fallbackInput, extraSlot.resource(), outputSlot.resource(), OUTPUT_CHECK);
     }
 
     @NotNull

@@ -38,6 +38,11 @@ public enum MoreMachineResource implements IResource {
         return name;
     }
 
+    @Override
+    public Item.Properties modifyProperties(Item.Properties properties, @Nullable ResourceType resourceType) {
+        return properties;
+    }
+
     public TagKey<Item> getOreTag() {
         return oreTag.get();
     }

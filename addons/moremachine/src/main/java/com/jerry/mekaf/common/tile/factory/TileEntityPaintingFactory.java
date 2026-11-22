@@ -133,7 +133,7 @@ public class TileEntityPaintingFactory extends TileEntityItemToItemAdvancedFacto
 
     @Override
     protected @Nullable RecipeHolder<ItemStackChemicalToItemStackRecipe<?, ?>> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IInventorySlot outputSlot) {
-        return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, chemicalTank.resource(), outputSlot.resource(), OUTPUT_CHECK);
+        return getRecipeType().getInputCache().findTypeBasedRecipeHolder(level, fallbackInput, chemicalTank.resource(), outputSlot.resource(), OUTPUT_CHECK);
     }
 
     @Override
@@ -195,7 +195,6 @@ public class TileEntityPaintingFactory extends TileEntityItemToItemAdvancedFacto
                 .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
                 .setRequiredTicks(this::getTicksRequired)
                 .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(operatingTicks -> progress[cacheIndex] = operatingTicks)
                 .setBaselineMaxOperations(this::getOperationsPerTick);
     }
 

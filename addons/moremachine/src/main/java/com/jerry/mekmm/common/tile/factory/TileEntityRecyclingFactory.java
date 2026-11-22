@@ -71,6 +71,7 @@ public class TileEntityRecyclingFactory extends TileEntityMoreMachineFactory<Rec
         inputHandlers = new IInputHandler[tier.processes];
         outputHandlers = new IOutputHandler[tier.processes];
         processInfoSlots = new ProcessInfo[tier.processes];
+        recipeContainers = new RecipeContainers[tier.processes];
         int baseX = tier == FactoryTier.BASIC ? 55 : tier == FactoryTier.ADVANCED ? 35 : tier == FactoryTier.ELITE ? 29 : 27;
         int baseXMult = tier == FactoryTier.BASIC ? 38 : tier == FactoryTier.ADVANCED ? 26 : 19;
         for (int i = 0; i < tier.processes; i++) {
@@ -91,6 +92,7 @@ public class TileEntityRecyclingFactory extends TileEntityMoreMachineFactory<Rec
             inputHandlers[i] = InputHelper.getInputHandler(inputSlot, RecipeError.NOT_ENOUGH_INPUT);
             outputHandlers[i] = MoreMachineOutputHelper.getOutputHandler(outputSlot, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
             processInfoSlots[i] = new ProcessInfo(i, inputSlot, outputSlot, null);
+            recipeContainers[i] = new RecipeContainers(inputSlot, outputSlot);
         }
     }
 

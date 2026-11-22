@@ -90,13 +90,13 @@ public class GuiMoreMachineFactory extends GuiConfigurableTile<TileEntityMoreMac
         addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainerTyped(), tile::getLastUsage));
         if (tile.hasSecondaryResourceBar()) {
             if (tile instanceof TileEntityPlantingFactory factory) {
-                addRenderableWidget(new GuiChemicalBar(this, GuiChemicalBar.getProvider(factory.getChemicalTank(), tile.getChemicalTanks()), 7, 96,
+                addRenderableWidget(new GuiChemicalBar(this, mekanism.client.gui.element.bar.GuiTankBar.getProvider(factory.getChemicalTank(), tile.getChemicalTanks()), 7, 96,
                         getBarWidth(), 4, true))
                         .warning(WarningType.NO_MATCHING_RECIPE, tile.getWarningCheck(RecipeError.NOT_ENOUGH_SECONDARY_INPUT, 0));
                 dumpButton = addRenderableWidget(new GuiDumpButton(this, (TileEntityMoreMachineFactory<?> & IHasDumpButton) tile, getButtonX(), 96));
             }
             if (tile instanceof TileEntityReplicatingFactory factory) {
-                addRenderableWidget(new GuiChemicalBar(this, GuiChemicalBar.getProvider(factory.getChemicalTank(), tile.getChemicalTanks()), 7, 76,
+                addRenderableWidget(new GuiChemicalBar(this, mekanism.client.gui.element.bar.GuiTankBar.getProvider(factory.getChemicalTank(), tile.getChemicalTanks()), 7, 76,
                         getBarWidth(), 4, true))
                         .warning(WarningType.NO_MATCHING_RECIPE, tile.getWarningCheck(RecipeError.NOT_ENOUGH_SECONDARY_INPUT, 0));
                 dumpButton = addRenderableWidget(new GuiDumpButton(this, (TileEntityMoreMachineFactory<?> & IHasDumpButton) tile, getButtonX(), 76));

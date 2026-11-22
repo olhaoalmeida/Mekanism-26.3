@@ -168,7 +168,7 @@ public class TileEntityDissolvingFactory extends TileEntityItemToChemicalFactory
 
     @Override
     protected @Nullable RecipeHolder<ChemicalDissolutionRecipe> findRecipe(int process, @NotNull ItemResource fallbackInput, @NotNull IChemicalTank outputSlot) {
-        return getRecipeType().getInputCache().findTypeBasedRecipe(level, fallbackInput, chemicalTank.resource(), outputSlot.resource(), OUTPUT_CHECK);
+        return getRecipeType().getInputCache().findTypeBasedRecipeHolder(level, fallbackInput, chemicalTank.resource(), outputSlot.resource(), OUTPUT_CHECK);
     }
 
     @Override
@@ -188,7 +188,7 @@ public class TileEntityDissolvingFactory extends TileEntityItemToChemicalFactory
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public @NotNull IMekanismRecipeTypeProvider<?, ChemicalDissolutionRecipe, InputRecipeCache.ItemChemical<ChemicalDissolutionRecipe>> getRecipeType() {
+    public @NotNull IMekanismRecipeTypeProvider<?, ?, ?, ChemicalDissolutionRecipe, InputRecipeCache.ItemChemical<ChemicalDissolutionRecipe>> getRecipeType() {
         return (IMekanismRecipeTypeProvider) MekanismRecipeType.DISSOLUTION;
     }
 
@@ -219,7 +219,6 @@ public class TileEntityDissolvingFactory extends TileEntityItemToChemicalFactory
                 .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
                 .setRequiredTicks(this::getTicksRequired)
                 .setOnFinish(this::markForSave)
-                .setOperatingTicksChanged(operatingTicks -> progress[cacheIndex] = operatingTicks)
                 .setBaselineMaxOperations(this::getOperationsPerTick);
     }
 

@@ -136,7 +136,7 @@ public class TileEntityChemicalReplicator extends TileEntityProgressMachine<MMBa
 
         firstInputHandler = InputHelper.getInputHandler(inputTank, RecipeError.NOT_ENOUGH_INPUT);
         outputHandler = OutputHelper.getOutputHandler(outputTank, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
-        secondaryInputHandler = InputHelper.getInputHandler(uuTank);
+        secondaryInputHandler = InputHelper.getInputHandler(uuTank, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
     }
 
     @NotNull

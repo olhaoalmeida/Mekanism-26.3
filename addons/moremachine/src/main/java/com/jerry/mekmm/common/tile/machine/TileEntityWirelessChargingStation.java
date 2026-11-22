@@ -22,7 +22,6 @@ import mekanism.common.integration.computer.ComputerException;
 import mekanism.common.integration.computer.SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper;
 import mekanism.common.integration.computer.annotation.ComputerMethod;
 import mekanism.common.integration.computer.annotation.WrappingComputerMethod;
-import mekanism.common.integration.curios.CuriosIntegration;
 import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.slot.SlotOverlay;
 import mekanism.common.inventory.container.sync.SyncableBoolean;
@@ -170,7 +169,7 @@ public class TileEntityWirelessChargingStation extends TileEntityConfigurableMac
 
     private void chargeCurios(Player player, long toCharge) {
         if (Mekanism.hooks.curios.isLoaded()) {
-            ResourceHandler<ItemResource> handler = CuriosIntegration.getCuriosInventory(player);
+            ResourceHandler<ItemResource> handler = Mekanism.hooks.getCuriosInventory(player);
             if (handler == null) {
                 return;
             }

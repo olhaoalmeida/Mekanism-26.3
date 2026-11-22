@@ -79,8 +79,8 @@ public class TileEntityLargeWindGenerator extends TileEntityMoreMachineGenerator
 
     @Override
     public void resyncMasterToBounding() {
-        if (level instanceof ServerLevel) {
-            MoreMachineBounding.LARGE_WIND_GENERATOR.syncMasterPosition(level, worldPosition, getBlockState());
+        if (level instanceof ServerLevel serverLevel) {
+            MoreMachineBounding.LARGE_WIND_GENERATOR.syncMasterPosition(serverLevel, worldPosition, getBlockState());
         }
     }
 
