@@ -4,6 +4,7 @@ import net.minecraft.world.level.block.Block;
 
 import net.minecraft.world.item.Item.Properties;
 
+import com.jerry.meklm.api.tier.ILargeChemicalTankTier;
 import com.jerry.meklm.common.tile.prefab.TileEntityLargeChemicalTank;
 
 import mekanism.api.RelativeSide;
@@ -27,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class ItemBlockLargeChemicalTank<TILE extends TileEntityLargeChemicalTank<?>> extends ItemBlockTooltip {
+public abstract class ItemBlockLargeChemicalTank<TILE extends TileEntityLargeChemicalTank<?>> extends ItemBlockTooltip {
 
     public static final LightConfigInfo ITEM = Util.make(() -> {
         Map<RelativeSide, DataType> sideConfig = new EnumMap<>(RelativeSide.class);
@@ -49,10 +50,12 @@ public class ItemBlockLargeChemicalTank<TILE extends TileEntityLargeChemicalTank
     });
 
     public ItemBlockLargeChemicalTank(BlockTileModel<TILE, Machine<TILE>> block, Properties properties) {
-        super(block, true, properties
+        super(block, properties
                 .component(MekanismDataComponents.DUMP_MODE, TileEntityChemicalTank.GasMode.IDLE)
                 .component(MekanismDataComponents.SIDE_CONFIG, SIDE_CONFIG));
     }
+
+    public abstract ILargeChemicalTankTier getTier();
 
     @Override
     public boolean isBarVisible(@NotNull ItemStack stack) {
@@ -62,12 +65,12 @@ public class ItemBlockLargeChemicalTank<TILE extends TileEntityLargeChemicalTank
             // but we may as well short circuit it here
             return false;
         }
-        return StorageUtils.isBarVisible(stack);
+        return ContainerType.CHEMICAL.isBarVisible(stack);
     }
 
     @Override
     public int getBarWidth(@NotNull ItemStack stack) {
-        return StorageUtils.getBarWidth(stack);
+        return ContainerType.CHEMICAL.getBarWidth(stack);
     }
 
     @Override

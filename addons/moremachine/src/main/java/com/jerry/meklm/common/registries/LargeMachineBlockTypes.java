@@ -28,6 +28,8 @@ import mekanism.common.util.ChemicalUtils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import org.jspecify.annotations.Nullable;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.function.Supplier;
@@ -84,7 +86,7 @@ public class LargeMachineBlockTypes {
             .withBounding(new HandleBoundingBlock() {
 
                 @Override
-                public <DATA> boolean handle(Level level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<Level, BlockPos, DATA> consumer) {
+                public <LEVEL extends LevelReader, DATA extends @Nullable Object> boolean handle(LEVEL level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<LEVEL, BlockPos, DATA> consumer) {
                     BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
                     for (int x = -1; x <= 1; x++) {
                         for (int y = 0; y <= 1; y++) {
@@ -109,7 +111,7 @@ public class LargeMachineBlockTypes {
             .createMachine(() -> LargeMachineTileEntityTypes.LARGE_SOLAR_NEUTRON_ACTIVATOR, MekanismLang.DESCRIPTION_SOLAR_NEUTRON_ACTIVATOR)
             .withGui(() -> LargeMachineContainerTypes.LARGE_SOLAR_NEUTRON_ACTIVATOR)
             .without(AttributeParticleFX.class)
-            .withSupportedUpgrades(Upgrade.SPEED, Upgrade.MUFFLING)
+            .with(AttributeUpgradeSupport.MUFFLING_ONLY) // TODO(26.3 port): speed upgrade tag support
             .withCustomShape(LargeMachineBlockShapes.LARGE_SOLAR_NEUTRON_ACTIVATOR)
             .with(AttributeCustomSelectionBox.JSON)
             .withSideConfig(TransmissionType.CHEMICAL, TransmissionType.ITEM)

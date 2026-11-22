@@ -384,7 +384,7 @@ public class TileEntitySolarHeatGenerator extends TileEntityMoreMachineGenerator
             coolantConversionEfficiency = 0;
             return CoolantConversion.NONE;
         }
-        ChemicalResource heatedCoolant = coolantType.heat();
+        ChemicalResource heatedCoolant = ChemicalResource.of(coolantType.otherVariant());
         if (!superheatedCoolantTank.isEmpty() && !superheatedCoolantTank.resource().equals(heatedCoolant)) {
             coolantConversionEfficiency = 0;
             return CoolantConversion.NONE;
@@ -918,5 +918,21 @@ public class TileEntitySolarHeatGenerator extends TileEntityMoreMachineGenerator
         container.track(SyncableDouble.create(this::getLastTransferLoss, value -> lastTransferLoss = value));
         container.track(SyncableDouble.create(this::getLastEnvironmentLoss, value -> lastEnvironmentLoss = value));
         container.track(SyncableDouble.create(this::getSolarHeatTemperature, this::setClientTemperature));
+    }
+
+    public float getAngle() {
+        return angle;
+    }
+
+    public double getCoolantConversionEfficiency() {
+        return coolantConversionEfficiency;
+    }
+
+    public double getLastTransferLoss() {
+        return lastTransferLoss;
+    }
+
+    public double getLastEnvironmentLoss() {
+        return lastEnvironmentLoss;
     }
 }

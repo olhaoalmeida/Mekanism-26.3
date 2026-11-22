@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 public class RenderLargeWindGeneratorItem implements SpecialModelRenderer<LargeWindGeneratorRotationRenderState> {
 
     private static final int SPEED = 16;
-    private static int lastTicksUpdated = 0;
+    private static long lastTicksUpdated = 0;
     private static int angle = 0;
     private final ModelLargeWindGenerator windGenerator;
     private static final LargeWindGeneratorRotationRenderState ZERO_ANGLE = new LargeWindGeneratorRotationRenderState(0);
@@ -48,8 +48,9 @@ public class RenderLargeWindGeneratorItem implements SpecialModelRenderer<LargeW
 
     @Override
     public void getExtents(Consumer<Vector3fc> output) {
-        windGenerator.setupAnim(ZERO_ANGLE);
-        windGenerator.root().getExtentsForGui(new PoseStack(), output);
+        // TODO(26.3 port): ModelPart extents are no longer available; use unit cube extents
+        output.accept(new org.joml.Vector3f(0, 0, 0));
+        output.accept(new org.joml.Vector3f(1, 1, 1));
     }
 
     @Override
@@ -62,7 +63,7 @@ public class RenderLargeWindGeneratorItem implements SpecialModelRenderer<LargeW
                 // If the dimension is blacklisted, don't try to tick it at all
                 tickingNormally = false;
             } else {
-                int ticks = Minecraft.getInstance().levelRenderer.getTicks();
+                long ticks = Minecraft.getInstance().gameRenderer.gameRenderState().levelRenderState.gameTime;
                 if (lastTicksUpdated != ticks) {
                     angle = (angle + SPEED) % 360;
                     lastTicksUpdated = ticks;

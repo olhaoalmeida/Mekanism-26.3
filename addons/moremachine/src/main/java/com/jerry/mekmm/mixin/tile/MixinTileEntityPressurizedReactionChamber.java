@@ -7,7 +7,7 @@ import com.jerry.mekmm.common.util.MoreMachineUtils;
 import mekanism.api.chemical.IChemicalTank;
 import mekanism.api.recipes.PressurizedReactionRecipe;
 import mekanism.api.recipes.cache.CachedRecipe;
-import mekanism.common.capabilities.energy.PRCEnergyContainer;
+import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.common.capabilities.fluid.BasicFluidTank;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
@@ -34,7 +34,7 @@ public abstract class MixinTileEntityPressurizedReactionChamber extends TileEnti
                                                                 ItemFluidChemicalRecipeLookupHandler<PressurizedReactionRecipe> {
 
     @Shadow
-    private PRCEnergyContainer energyContainer;
+    private MachineEnergyContainer<TileEntityPressurizedReactionChamber> energyContainer;
     @Shadow
     public BasicFluidTank inputFluidTank;
     @Shadow
@@ -60,7 +60,7 @@ public abstract class MixinTileEntityPressurizedReactionChamber extends TileEnti
 
     @Override
     public @Nullable PRCUpgradeData getUpgradeData(Provider provider) {
-        return new PRCUpgradeData(provider, redstone, getControlType(), energyContainer, getOperatingTicks(), energySlot,
+        return new PRCUpgradeData(provider, redstone, getControlType(), energyContainer, recipeCacheLookupMonitor, energySlot,
                 inputGasTank, inputFluidTank, inputSlot, outputSlot, outputGasTank, getComponents(), problemPath());
     }
 }

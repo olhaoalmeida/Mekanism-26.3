@@ -2,7 +2,7 @@ package com.jerry.meklm.common.capabilities.holder.chemical;
 
 import mekanism.api.AutomationType;
 import mekanism.api.RelativeSide;
-import mekanism.api.chemical.ChemicalStack;
+import mekanism.api.chemical.ChemicalResource;
 import mekanism.api.chemical.IChemicalTank;
 import mekanism.common.capabilities.holder.container.IContainerHolder;
 import mekanism.common.lib.radiation.RadiationManager;
@@ -26,13 +26,13 @@ public class AdjustableChemicalTankHelper {
         this.slotHolder = slotHolder;
     }
 
-    public static BiPredicate<ChemicalStack, @NotNull AutomationType> radioactiveInputTankPredicate(Supplier<IChemicalTank> outputTank) {
+    public static BiPredicate<ChemicalResource, @NotNull AutomationType> radioactiveInputTankPredicate(Supplier<IChemicalTank> outputTank) {
         // Allow extracting out of the input gas tank if it isn't external OR the output tank is empty AND the input is
         // radioactive
         // Note: This only is the case if radiation is enabled as otherwise things like gauge droppers can work as the
         // way to remove radioactive contents
         return (type, automationType) -> automationType != AutomationType.EXTERNAL ||
-                (outputTank.get().isEmpty() && type.getChemical().isRadioactive() && RadiationManager.isGlobalRadiationEnabled());
+                (outputTank.get().isEmpty() && type.isRadioactive(null) && RadiationManager.isGlobalRadiationEnabled());
     }
 
     public static AdjustableChemicalTankHelper forSide(Supplier<Direction> facingSupplier) {

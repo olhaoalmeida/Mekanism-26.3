@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.List;
 
 @Mixin(value = TileEntityNutritionalLiquifier.class, remap = false)
-public abstract class MixinTileEntityNutritionalLiquifier extends TileEntityProgressMachine<BasicItemStackToFluidOptionalItemRecipe> {
+public abstract class MixinTileEntityNutritionalLiquifier extends TileEntityProgressMachine<ItemStackToFluidOptionalItemRecipe<mekanism.api.recipes.book.LiquificationBookCategory, mekanism.api.recipes.book.LiquificationBookCategory.LiquificationBookInfo>> {
 
     @Shadow
     private MachineEnergyContainer<TileEntityNutritionalLiquifier> energyContainer;
@@ -53,7 +53,7 @@ public abstract class MixinTileEntityNutritionalLiquifier extends TileEntityProg
 
     @Override
     public @Nullable NutritionLiquifyingUpgradeData getUpgradeData(Provider provider) {
-        return new NutritionLiquifyingUpgradeData(provider, redstone, getControlType(), energyContainer, getOperatingTicks(),
+        return new NutritionLiquifyingUpgradeData(provider, redstone, getControlType(), energyContainer, recipeCacheLookupMonitor,
                 energySlot, inputSlot, outputSlot, fluidTank, getComponents(), problemPath());
     }
 }

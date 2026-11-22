@@ -7,6 +7,7 @@ import mekanism.client.gui.GuiMekanismTile;
 import mekanism.client.gui.element.GuiInnerScreen;
 import mekanism.client.gui.element.GuiSideHolder;
 import mekanism.client.gui.element.bar.GuiChemicalBar;
+import mekanism.client.gui.element.bar.GuiTankBar;
 import mekanism.client.gui.element.button.GuiGasMode;
 import mekanism.client.gui.element.tab.GuiWarningTab;
 import mekanism.common.MekanismLang;
@@ -34,7 +35,7 @@ public class GuiLargeChemicalTank extends GuiMekanismTile<TileEntityLargeChemica
     protected void addGuiElements() {
         addRenderableWidget(GuiSideHolder.armorHolder(this));
         super.addGuiElements();
-        addRenderableWidget(new GuiChemicalBar(this, GuiChemicalBar.getProvider(tile.getChemicalTank(), tile.getChemicalTanks()), 42, 16, 116, 10, true));
+        addRenderableWidget(new GuiChemicalBar(this, GuiTankBar.getProvider(tile.getChemicalTank(), tile.getChemicalTanks()), 42, 16, 116, 10, true));
         addRenderableWidget(new GuiInnerScreen(this, 42, 37, 118, 28, () -> {
             List<Component> ret = new ArrayList<>();
             IChemicalTank tank = tile.getChemicalTank();
@@ -42,7 +43,7 @@ public class GuiLargeChemicalTank extends GuiMekanismTile<TileEntityLargeChemica
                 ret.add(MekanismLang.CHEMICAL.translate(MekanismLang.NONE));
                 ret.add(MekanismLang.GENERIC_FRACTION.translate(0, TextUtils.format(tile.getTier().getStorage())));
             } else {
-                ret.add(MekanismLang.CHEMICAL.translate(tank.asStack()));
+                ret.add(MekanismLang.CHEMICAL.translate(tank.resource()));
                 ret.add(MekanismLang.GENERIC_FRACTION.translate(TextUtils.format(tank.amountAsLong()), TextUtils.format(tank.capacityAsLong(tank.resource()))));
             }
             return ret;

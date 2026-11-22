@@ -24,7 +24,8 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +33,7 @@ import java.util.function.Supplier;
 
 public class GuiLargeAntiprotonicNucleosynthesizer extends GuiConfigurableTile<TileEntityLargeAntiprotonicNucleosynthesizer, MekanismTileContainer<TileEntityLargeAntiprotonicNucleosynthesizer>> {
 
-    private static final Vec3 from = new Vec3(47, 50, 0), to = new Vec3(147, 50, 0);
+    private static final Vector3fc from = new Vector3f(47, 50, 0), to = new Vector3f(147, 50, 0);
     private static final BoltEffect.BoltRenderInfo boltRenderInfo = new BoltEffect.BoltRenderInfo().color(Color.rgbad(0.45F, 0.45F, 0.5F, 1));
 
     private final BoltRenderer bolt = new BoltRenderer();
@@ -53,7 +54,8 @@ public class GuiLargeAntiprotonicNucleosynthesizer extends GuiConfigurableTile<T
     @Override
     protected void addGuiElements() {
         super.addGuiElements();
-        screen = addRenderableWidget(new GuiInnerScreen(this, 45, 18, 104, 68).recipeViewerCategory(tile));
+        screen = addRenderableWidget(new GuiInnerScreen(this, 45, 18, 104, 68));
+        screen.recipeViewerCategory(tile);
         addRenderableWidget(new GuiEnergyTab(this, () -> java.util.List.of(MekanismLang.USING.translate(EnergyDisplay.of(tile.getEnergyUsed())),
                 MekanismLang.NEEDED.translate(EnergyDisplay.of(tile.getEnergyContainer().getNeededAsLong())))));
         addRenderableWidget(new GuiChemicalGauge(() -> tile.gasTank, tile::getChemicalTanks, GaugeType.SMALL_MED, this, 5, 18))

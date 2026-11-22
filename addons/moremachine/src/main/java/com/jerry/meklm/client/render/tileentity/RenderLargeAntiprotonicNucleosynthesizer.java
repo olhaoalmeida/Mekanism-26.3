@@ -6,11 +6,13 @@ import com.jerry.meklm.common.tile.machine.TileEntityLargeAntiprotonicNucleosynt
 import com.jerry.mekmm.common.base.MoreMachineProfilerConstants;
 
 import mekanism.api.text.EnumColor;
-import mekanism.client.model.ModelEnergyCore;
+import mekanism.client.model.MekanismModelCache;
 import mekanism.client.render.tileentity.MekanismTileEntityRenderer;
 import mekanism.client.render.tileentity.RenderEnergyCube;
 
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
@@ -29,11 +31,8 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class RenderLargeAntiprotonicNucleosynthesizer extends MekanismTileEntityRenderer<@NotNull TileEntityLargeAntiprotonicNucleosynthesizer, LargeAntiprotonicNucleosynthesizerRenderState> {
 
-    private final ModelEnergyCore core;
-
     public RenderLargeAntiprotonicNucleosynthesizer(Context context) {
-        super(context);
-        core = new ModelEnergyCore(context.entityModelSet());
+        super();
     }
 
     @Override
@@ -64,19 +63,15 @@ public class RenderLargeAntiprotonicNucleosynthesizer extends MekanismTileEntity
         }
         matrix.scale(0.5F, 0.5F, 0.5F);
         matrix.rotateDegrees(Axis.YP, scaledTicks);
-        matrix.mulPose(RenderEnergyCube.coreVec.rotationDegrees(36F + scaledTicks));
-        core.collect(EnumColor.PURPLE.getPackedColor(), matrix, nodeCollector, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, false);
+        matrix.rotateDegrees(RenderEnergyCube.coreVec, 36F + scaledTicks);
+        nodeCollector.submitBlockModel(matrix, Sheets.translucentBlockItemSheet(), MekanismModelCache.INSTANCE.ENERGY_CORE.getBakedModel(),
+                new int[]{EnumColor.PURPLE.getPackedColor()}, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, EntityRenderState.NO_OUTLINE);
         matrix.popPose();
     }
 
     @Override
     public boolean shouldRender(TileEntityLargeAntiprotonicNucleosynthesizer blockEntity, Vec3 cameraPos) {
         return blockEntity.getActive() && super.shouldRender(blockEntity, cameraPos);
-    }
-
-    @Override
-    protected String getProfilerSection() {
-        return MoreMachineProfilerConstants.LARGE_ANTIPROTONIC_NUCLEOSYNTHESIZER;
     }
 
     public static class LargeAntiprotonicNucleosynthesizerRenderState extends BlockEntityRenderState {

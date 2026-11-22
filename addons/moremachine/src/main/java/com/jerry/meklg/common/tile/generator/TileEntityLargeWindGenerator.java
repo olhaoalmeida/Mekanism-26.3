@@ -433,4 +433,12 @@ public class TileEntityLargeWindGenerator extends TileEntityMoreMachineGenerator
             return ((long) chunkX & 0xFFFFFFFFL) | (((long) chunkZ & 0xFFFFFFFFL) << 32);
         }
     }
+
+    public float getAngle() {
+        return angle;
+    }
+
+    public double getCurrentMultiplier() {
+        return currentMultiplier;
+    }
 }

@@ -110,7 +110,10 @@ public class TileEntityLargeHeatGenerator extends TileEntityMoreMachineGenerator
         // Divide the burn time by 20 as that is the ratio of how much a bucket of lava would burn for
         // TODO: Eventually we may want to grab the 20 dynamically in case some mod is changing the burn time of a lava
         // bucket
-        builder.addContainer(fuelSlot = FluidFuelInventorySlot.forFuel(lavaTank, stack -> level == null ? 0 : stack.toStack().getBurnTime(null, level.fuelValues()) / 20,
+        builder.addContainer(fuelSlot = FluidFuelInventorySlot.forFuel(lavaTank, (serverLevel, be, itemType) ->
+                        net.neoforged.neoforge.fluids.FluidType.BUCKET_VOLUME * mekanism.common.util.MekanismUtils.getBurnTime(serverLevel, be, itemType) /
+                        mekanism.common.util.MekanismUtils.getBurnTime(serverLevel, be, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.LAVA_BUCKET)),
+                itemType -> itemType.has(net.minecraft.core.component.DataComponents.COOKING_FUEL),
                 Fluids.LAVA.builtInRegistryHolder(), listener, 17, 35), RelativeSide.FRONT, RelativeSide.LEFT, RelativeSide.BACK, RelativeSide.TOP, RelativeSide.BOTTOM);
         builder.addContainer(energySlot = EnergyInventorySlot.drain(getEnergyContainer(), listener, 143, 35), RelativeSide.RIGHT);
         return builder.build();
@@ -133,7 +136,7 @@ public class TileEntityLargeHeatGenerator extends TileEntityMoreMachineGenerator
         boolean sendUpdatePacket = super.onUpdateServer(level);
         try (Transaction transaction = Transaction.openRoot()) {
             energySlot.drainContainerIntoSlot(transaction);
-            fuelSlot.fillOrBurn(transaction);
+            fuelSlot.fillOrBurn(level, this, transaction);
             long prev = getEnergyContainer().getAmountAsLong();
             heatCapacitor.handleHeat(getBoost(), transaction);
             FluidResource lavaResource = lavaTank.resource();
@@ -298,7 +301,7 @@ public class TileEntityLargeHeatGenerator extends TileEntityMoreMachineGenerator
     }
 
     @Override
-    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel) {
+    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel, @org.jspecify.annotations.Nullable net.minecraft.world.level.redstone.Orientation orientation) {
         if (oldLevel > 0) {
             if (newLevel == 0) {
                 numPowering--;

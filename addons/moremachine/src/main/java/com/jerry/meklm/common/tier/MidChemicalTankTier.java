@@ -28,6 +28,14 @@ public enum MidChemicalTankTier implements StringRepresentable, ILargeChemicalTa
     private CachedLongValue storageReference;
     private CachedLongValue outputReference;
 
+    public long getBaseStorage() {
+        return baseStorage;
+    }
+
+    public long getBaseOutput() {
+        return baseOutput;
+    }
+
     MidChemicalTankTier(BaseTier tier, long s, long o) {
         baseStorage = s;
         baseOutput = o;

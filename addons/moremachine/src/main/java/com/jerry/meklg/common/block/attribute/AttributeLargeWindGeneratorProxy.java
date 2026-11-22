@@ -83,7 +83,7 @@ public class AttributeLargeWindGeneratorProxy extends AttributeHasBounding {
     }
 
     @Override
-    public void syncMasterPosition(Level world, BlockPos orig, BlockState state) {
+    public void syncMasterPosition(net.minecraft.server.level.ServerLevel world, BlockPos orig, BlockState state) {
         if (!world.isClientSide()) {
             Direction facing = Attribute.getFacing(state);
             if (facing == null || !facing.getAxis().isHorizontal()) {
@@ -129,11 +129,6 @@ public class AttributeLargeWindGeneratorProxy extends AttributeHasBounding {
             stats.removed = removeStaleProxyBlocks(world, orig, expectedLocations);
             logStats("sync", world, orig, stats);
         }
-    }
-
-    @Override
-    public <DATA> boolean handle(Level level, BlockPos pos, BlockState state, DATA data, TriBooleanFunction<Level, BlockPos, DATA> predicate) {
-        return super.handle(level, pos, state, data, predicate);
     }
 
     private BlockState createProxyState(PlacementData data, BlockPos boundingLocation) {

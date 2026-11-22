@@ -13,6 +13,7 @@ import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.FluidInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
 import mekanism.common.recipe.lookup.IDoubleRecipeLookupHandler.FluidChemicalRecipeLookupHandler;
+import mekanism.common.recipe.lookup.monitor.ProgressRecipeCacheLookupMonitor;
 import mekanism.common.tile.machine.TileEntityChemicalWasher;
 import mekanism.common.tile.prefab.TileEntityRecipeMachine;
 
@@ -30,8 +31,9 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.List;
 
 @Mixin(value = TileEntityChemicalWasher.class, remap = false)
-public abstract class MixinTileEntityChemicalWasher extends TileEntityRecipeMachine<FluidChemicalToChemicalRecipe> implements
-                                                    FluidChemicalRecipeLookupHandler<FluidChemicalToChemicalRecipe> {
+public abstract class MixinTileEntityChemicalWasher extends TileEntityRecipeMachine<FluidChemicalToChemicalRecipe<mekanism.api.recipes.book.WashingBookCategory, mekanism.api.recipes.book.WashingBookCategory.WashingBookInfo>,
+                                                    mekanism.common.recipe.lookup.monitor.RecipeCacheLookupMonitor<FluidChemicalToChemicalRecipe<mekanism.api.recipes.book.WashingBookCategory, mekanism.api.recipes.book.WashingBookCategory.WashingBookInfo>>> implements
+                                                    FluidChemicalRecipeLookupHandler<FluidChemicalToChemicalRecipe<mekanism.api.recipes.book.WashingBookCategory, mekanism.api.recipes.book.WashingBookCategory.WashingBookInfo>> {
 
     @Shadow
     private MachineEnergyContainer<TileEntityChemicalWasher> energyContainer;
@@ -60,7 +62,8 @@ public abstract class MixinTileEntityChemicalWasher extends TileEntityRecipeMach
 
     @Override
     public @Nullable FluidChemicalToChemicalUpgradeData getUpgradeData(Provider provider) {
-        return new FluidChemicalToChemicalUpgradeData(provider, redstone, getControlType(), energyContainer, 0, 0,
-                energySlot, fluidSlot, fluidOutputSlot, inputTank, fluidTank, outputTank, getComponents(), problemPath());
+        return new FluidChemicalToChemicalUpgradeData(provider, redstone, getControlType(), energyContainer,
+                new ProgressRecipeCacheLookupMonitor<?>[0], new long[0],
+                energySlot, fluidSlot, fluidOutputSlot, List.of(inputTank), fluidTank, List.of(outputTank), false, getComponents(), problemPath());
     }
 }

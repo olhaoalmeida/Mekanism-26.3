@@ -51,8 +51,8 @@ public class GuiLargeWindGenerator extends GuiMekanismTile<TileEntityLargeWindGe
         addRenderableWidget(new GuiEnergyTab(this, () -> List.of(
                 GeneratorsLang.PRODUCING_AMOUNT.translate(tile.getActive() ? EnergyDisplay.of(tile.getCurrentGeneration()) : EnergyDisplay.ZERO))));
         addRenderableWidget(new GuiVerticalPowerBar(this, tile.getEnergyContainer(), 164, 15));
-        addRenderableWidget(new GuiStateTexture(this, 18, 35, tile::getActive, MekanismGenerators.rl(ResourceType.GUI.getPrefix() + "wind_on.png"),
-                MekanismGenerators.rl(ResourceType.GUI.getPrefix() + "wind_off.png")));
+        addRenderableWidget(new GuiStateTexture(this, 18, 35, tile::getActive, MekanismGenerators.rl("state/wind_on"),
+                MekanismGenerators.rl("state/wind_off")));
     }
 
     @Override

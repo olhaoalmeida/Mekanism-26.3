@@ -52,6 +52,6 @@ public abstract class MixinTileEntityChemicalCrystallizer extends TileEntityProg
     @Override
     public @Nullable ChemicalToItemUpgradeData getUpgradeData(Provider provider) {
         return new ChemicalToItemUpgradeData(provider, redstone, getControlType(), energyContainer,
-                getOperatingTicks(), energySlot, inputTank, outputSlot, getComponents(), problemPath());
+                recipeCacheLookupMonitor, energySlot, inputTank, outputSlot, getComponents(), problemPath());
     }
 }

@@ -10,6 +10,7 @@ import mekanism.api.recipes.cache.CachedRecipe;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.recipe.lookup.ISingleRecipeLookupHandler.ChemicalRecipeLookupHandler;
+import mekanism.common.recipe.lookup.monitor.ProgressRecipeCacheLookupMonitor;
 import mekanism.common.tile.interfaces.IBoundingBlock;
 import mekanism.common.tile.machine.TileEntityIsotopicCentrifuge;
 import mekanism.common.tile.prefab.TileEntityRecipeMachine;
@@ -28,7 +29,8 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.List;
 
 @Mixin(value = TileEntityIsotopicCentrifuge.class, remap = false)
-public abstract class MixinTileEntityIsotopicCentrifuge extends TileEntityRecipeMachine<ChemicalToChemicalRecipe> implements IBoundingBlock, ChemicalRecipeLookupHandler<ChemicalToChemicalRecipe> {
+public abstract class MixinTileEntityIsotopicCentrifuge extends TileEntityRecipeMachine<ChemicalToChemicalRecipe<mekanism.api.recipes.book.CentrifugingBookCategory, mekanism.api.recipes.book.CentrifugingBookCategory.CentrifugingBookInfo>,
+        mekanism.common.recipe.lookup.monitor.RecipeCacheLookupMonitor<ChemicalToChemicalRecipe<mekanism.api.recipes.book.CentrifugingBookCategory, mekanism.api.recipes.book.CentrifugingBookCategory.CentrifugingBookInfo>>> implements IBoundingBlock, ChemicalRecipeLookupHandler<ChemicalToChemicalRecipe<mekanism.api.recipes.book.CentrifugingBookCategory, mekanism.api.recipes.book.CentrifugingBookCategory.CentrifugingBookInfo>> {
 
     @Shadow
     private MachineEnergyContainer<TileEntityIsotopicCentrifuge> energyContainer;
@@ -52,6 +54,6 @@ public abstract class MixinTileEntityIsotopicCentrifuge extends TileEntityRecipe
     @Override
     public @Nullable ChemicalToChemicalUpgradeData getUpgradeData(Provider provider) {
         return new ChemicalToChemicalUpgradeData(provider, redstone, getControlType(), energyContainer,
-                0, energySlot, inputTank, outputTank, getComponents(), problemPath());
+                new ProgressRecipeCacheLookupMonitor<?>[0], energySlot, List.of(inputTank), List.of(outputTank), false, getComponents(), problemPath());
     }
 }

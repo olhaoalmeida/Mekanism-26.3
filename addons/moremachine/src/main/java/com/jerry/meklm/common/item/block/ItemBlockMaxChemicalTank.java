@@ -33,12 +33,5 @@ public class ItemBlockMaxChemicalTank extends ItemBlockLargeChemicalTank<TileEnt
         return Attribute.getTierNN(getBlock(), MaxChemicalTankTier.class);
     }
 
-    @Override
-    @Deprecated
-    public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull TooltipDisplay tooltipDisplay, @NotNull Consumer<Component> tooltipAdder, @NotNull TooltipFlag flag) {
-        MaxChemicalTankTier tier = getTier();
-        StorageUtils.addStoredSubstance(ItemAccessUtils.sideEffectFreeAccess(stack), tooltipAdder, false);
-        tooltipAdder.accept(MekanismLang.CAPACITY_MB.translateColored(EnumColor.INDIGO, EnumColor.GRAY, TextUtils.format(tier.getStorage())));
-        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
-    }
+    // TODO(26.3 port): appendHoverText removed; stored-substance/capacity tooltip needs a TooltipProvider component
 }

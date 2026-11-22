@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.List;
 
 @Mixin(value = TileEntityChemicalOxidizer.class, remap = false)
-public abstract class MixinTileEntityChemicalOxidizer extends TileEntityProgressMachine<ItemStackToChemicalRecipe> implements ISingleRecipeLookupHandler.ItemRecipeLookupHandler<ItemStackToChemicalRecipe> {
+public abstract class MixinTileEntityChemicalOxidizer extends TileEntityProgressMachine<ItemStackToChemicalRecipe<mekanism.api.recipes.book.OxidizingBookCategory, mekanism.api.recipes.book.OxidizingBookCategory.OxidizingBookInfo>> implements ISingleRecipeLookupHandler.ItemRecipeLookupHandler<ItemStackToChemicalRecipe<mekanism.api.recipes.book.OxidizingBookCategory, mekanism.api.recipes.book.OxidizingBookCategory.OxidizingBookInfo>> {
 
     @Shadow
     private MachineEnergyContainer<TileEntityChemicalOxidizer> energyContainer;
@@ -52,6 +52,6 @@ public abstract class MixinTileEntityChemicalOxidizer extends TileEntityProgress
     @Override
     public @Nullable ItemToChemicalUpgradeData getUpgradeData(Provider provider) {
         return new ItemToChemicalUpgradeData(provider, redstone, getControlType(), energyContainer,
-                getOperatingTicks(), energySlot, inputSlot, gasTank, getComponents(), problemPath());
+                recipeCacheLookupMonitor, energySlot, inputSlot, gasTank, getComponents(), problemPath());
     }
 }

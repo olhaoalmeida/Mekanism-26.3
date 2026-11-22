@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.List;
 
 @Mixin(value = TileEntityPaintingMachine.class, remap = false)
-public abstract class MixinTileEntityPaintingMachine extends TileEntityProgressMachine<ItemStackChemicalToItemStackRecipe> implements ConstantUsageRecipeLookupHandler, ItemChemicalRecipeLookupHandler<ItemStackChemicalToItemStackRecipe> {
+public abstract class MixinTileEntityPaintingMachine extends TileEntityProgressMachine<ItemStackChemicalToItemStackRecipe<mekanism.api.recipes.book.PaintingBookCategory, mekanism.api.recipes.book.PaintingBookCategory.PaintingBookInfo>> implements ConstantUsageRecipeLookupHandler, ItemChemicalRecipeLookupHandler<ItemStackChemicalToItemStackRecipe<mekanism.api.recipes.book.PaintingBookCategory, mekanism.api.recipes.book.PaintingBookCategory.PaintingBookInfo>> {
 
     @Shadow
     private int usedSoFar;
@@ -59,7 +59,7 @@ public abstract class MixinTileEntityPaintingMachine extends TileEntityProgressM
 
     @Override
     public @Nullable AdvancedMachineUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new AdvancedMachineUpgradeData(provider, redstone, getControlType(), energyContainer, getOperatingTicks(),
+        return new AdvancedMachineUpgradeData(provider, redstone, getControlType(), energyContainer, recipeCacheLookupMonitor,
                 usedSoFar, pigmentTank, pigmentInputSlot, energySlot, inputSlot, outputSlot, getComponents(), problemPath());
     }
 }

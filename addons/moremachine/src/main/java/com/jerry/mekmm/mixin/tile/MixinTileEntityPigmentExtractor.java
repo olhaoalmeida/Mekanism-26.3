@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.List;
 
 @Mixin(value = TileEntityPigmentExtractor.class, remap = false)
-public abstract class MixinTileEntityPigmentExtractor extends TileEntityProgressMachine<ItemStackToChemicalRecipe> implements ItemRecipeLookupHandler<ItemStackToChemicalRecipe> {
+public abstract class MixinTileEntityPigmentExtractor extends TileEntityProgressMachine<ItemStackToChemicalRecipe<mekanism.api.recipes.book.PigmentExtractingBookCategory, mekanism.api.recipes.book.PigmentExtractingBookCategory.PigmentExtractingBookInfo>> implements ItemRecipeLookupHandler<ItemStackToChemicalRecipe<mekanism.api.recipes.book.PigmentExtractingBookCategory, mekanism.api.recipes.book.PigmentExtractingBookCategory.PigmentExtractingBookInfo>> {
 
     @Shadow
     private MachineEnergyContainer<TileEntityPigmentExtractor> energyContainer;
@@ -52,6 +52,6 @@ public abstract class MixinTileEntityPigmentExtractor extends TileEntityProgress
     @Override
     public @Nullable ItemToChemicalUpgradeData getUpgradeData(Provider provider) {
         return new ItemToChemicalUpgradeData(provider, redstone, getControlType(), energyContainer,
-                getOperatingTicks(), energySlot, inputSlot, pigmentTank, getComponents(), problemPath());
+                recipeCacheLookupMonitor, energySlot, inputSlot, pigmentTank, getComponents(), problemPath());
     }
 }

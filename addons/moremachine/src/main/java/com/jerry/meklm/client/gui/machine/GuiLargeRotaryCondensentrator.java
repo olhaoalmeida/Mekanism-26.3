@@ -81,8 +81,8 @@ public class GuiLargeRotaryCondensentrator extends GuiMekanismTile<TileEntityLar
         }, ProgressType.LARGE_LEFT, this, 64, 39).recipeViewerCategories(RecipeViewerRecipeType.DECONDENSENTRATING))
                 .warning(WarningType.INPUT_DOESNT_PRODUCE_OUTPUT, tile.getWarningCheck(RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT));
         addRenderableWidget(new ToggleButton(this, 4, 4, tile::getMode,
-                (element, _, _) -> PacketUtils.sendToServer(new PacketGuiInteract(GuiInteraction.NEXT_MODE, ((GuiLargeRotaryCondensentrator) element.gui()).tile))))
-                .setTooltip(MekanismLang.CONDENSENTRATOR_TOGGLE);
+                (element, _, _) -> PacketUtils.sendToServer(new PacketGuiInteract(GuiInteraction.NEXT_MODE, ((GuiLargeRotaryCondensentrator) element.gui()).tile)),
+                MekanismLang.CONDENSENTRATOR_TOGGLE));
     }
 
     @Override

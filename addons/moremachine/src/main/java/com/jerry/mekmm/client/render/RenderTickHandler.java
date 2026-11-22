@@ -3,11 +3,12 @@ package com.jerry.mekmm.client.render;
 import com.jerry.mekmm.client.renderer.MoreMachineRenderType;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
@@ -17,51 +18,44 @@ import org.joml.Matrix4f;
 public class RenderTickHandler {
 
     @SubscribeEvent
-    public void renderWorld(RenderLevelStageEvent.AfterTranslucentBlocks event) {
+    public void submitCustomGeometry(SubmitCustomGeometryEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
+        LevelRenderState levelState = event.getLevelRenderState();
         PoseStack poseStack = event.getPoseStack();
-        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
-        Vec3 cameraPos = mc.gameRenderer.getMainCamera().position();
-        long gameTime = mc.level.getGameTime();
+        SubmitNodeCollector nodeCollector = event.getSubmitNodeCollector();
+        Vec3 cameraPos = levelState.cameraRenderState.pos;
+        long gameTime = levelState.gameTime;
 
-        poseStack.pushPose();
         for (BlockPos pos : BlockHighlightManager.getInstance().getHighlightedPositions()) {
             BlockHighlightManager.HighlightData data = BlockHighlightManager.getInstance().getHighlightData(pos);
             if (data != null) {
-                renderHighlight(poseStack, bufferSource, pos, cameraPos, data, gameTime);
+                poseStack.pushPose();
+                poseStack.translate(pos.getX() - cameraPos.x, pos.getY() - cameraPos.y, pos.getZ() - cameraPos.z);
+                float alpha = data.getAlpha(gameTime);
+                nodeCollector.submitCustomGeometry(poseStack, MoreMachineRenderType.LINES_NO_DEPTH,
+                        (pose, consumer) -> renderLineBox(pose, consumer, data.getRed(), data.getGreen(), data.getBlue(), alpha));
+                poseStack.popPose();
             }
         }
-        poseStack.popPose();
-        bufferSource.endBatch(MoreMachineRenderType.LINES_NO_DEPTH);
     }
 
-    private static void renderHighlight(PoseStack poseStack, MultiBufferSource bufferSource, BlockPos pos, Vec3 cameraPos, BlockHighlightManager.HighlightData data, long gameTime) {
-        poseStack.pushPose();
-        poseStack.translate(pos.getX() - cameraPos.x, pos.getY() - cameraPos.y, pos.getZ() - cameraPos.z);
-        VertexConsumer consumer = bufferSource.getBuffer(MoreMachineRenderType.LINES_NO_DEPTH);
-        float alpha = data.getAlpha(gameTime);
-        renderLineBox(poseStack, consumer, data.getRed(), data.getGreen(), data.getBlue(), alpha);
-        poseStack.popPose();
+    private static void renderLineBox(Pose pose, VertexConsumer consumer, float red, float green, float blue, float alpha) {
+        line(pose, consumer, 0, 0, 0, 1, 0, 0, red, green, blue, alpha);
+        line(pose, consumer, 1, 0, 0, 1, 0, 1, red, green, blue, alpha);
+        line(pose, consumer, 1, 0, 1, 0, 0, 1, red, green, blue, alpha);
+        line(pose, consumer, 0, 0, 1, 0, 0, 0, red, green, blue, alpha);
+        line(pose, consumer, 0, 1, 0, 1, 1, 0, red, green, blue, alpha);
+        line(pose, consumer, 1, 1, 0, 1, 1, 1, red, green, blue, alpha);
+        line(pose, consumer, 1, 1, 1, 0, 1, 1, red, green, blue, alpha);
+        line(pose, consumer, 0, 1, 1, 0, 1, 0, red, green, blue, alpha);
+        line(pose, consumer, 0, 0, 0, 0, 1, 0, red, green, blue, alpha);
+        line(pose, consumer, 1, 0, 0, 1, 1, 0, red, green, blue, alpha);
+        line(pose, consumer, 1, 0, 1, 1, 1, 1, red, green, blue, alpha);
+        line(pose, consumer, 0, 0, 1, 0, 1, 1, red, green, blue, alpha);
     }
 
-    private static void renderLineBox(PoseStack poseStack, VertexConsumer consumer, float red, float green, float blue, float alpha) {
-        line(poseStack, consumer, 0, 0, 0, 1, 0, 0, red, green, blue, alpha);
-        line(poseStack, consumer, 1, 0, 0, 1, 0, 1, red, green, blue, alpha);
-        line(poseStack, consumer, 1, 0, 1, 0, 0, 1, red, green, blue, alpha);
-        line(poseStack, consumer, 0, 0, 1, 0, 0, 0, red, green, blue, alpha);
-        line(poseStack, consumer, 0, 1, 0, 1, 1, 0, red, green, blue, alpha);
-        line(poseStack, consumer, 1, 1, 0, 1, 1, 1, red, green, blue, alpha);
-        line(poseStack, consumer, 1, 1, 1, 0, 1, 1, red, green, blue, alpha);
-        line(poseStack, consumer, 0, 1, 1, 0, 1, 0, red, green, blue, alpha);
-        line(poseStack, consumer, 0, 0, 0, 0, 1, 0, red, green, blue, alpha);
-        line(poseStack, consumer, 1, 0, 0, 1, 1, 0, red, green, blue, alpha);
-        line(poseStack, consumer, 1, 0, 1, 1, 1, 1, red, green, blue, alpha);
-        line(poseStack, consumer, 0, 0, 1, 0, 1, 1, red, green, blue, alpha);
-    }
-
-    private static void line(PoseStack poseStack, VertexConsumer consumer, float x1, float y1, float z1, float x2, float y2, float z2, float red, float green, float blue, float alpha) {
-        Pose pose = poseStack.last();
+    private static void line(Pose pose, VertexConsumer consumer, float x1, float y1, float z1, float x2, float y2, float z2, float red, float green, float blue, float alpha) {
         Matrix4f matrix = pose.pose();
         float normalX = x2 - x1;
         float normalY = y2 - y1;

@@ -178,7 +178,7 @@ public class TileEntityLargeGasGenerator extends TileEntityMoreMachineGenerator 
     }
 
     @Override
-    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel) {
+    public void onBoundingBlockPowerChange(BlockPos boundingPos, int oldLevel, int newLevel, @org.jspecify.annotations.Nullable net.minecraft.world.level.redstone.Orientation orientation) {
         if (oldLevel > 0) {
             if (newLevel == 0) {
                 numPowering--;

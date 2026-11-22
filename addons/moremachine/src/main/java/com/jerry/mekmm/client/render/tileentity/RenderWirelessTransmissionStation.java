@@ -34,7 +34,6 @@ import java.util.Collection;
 public class RenderWirelessTransmissionStation extends MekanismTileEntityRenderer<TileEntityWirelessTransmissionStation, WirelessTransmissionStationRenderState> {
 
     public RenderWirelessTransmissionStation(Context context) {
-        super(context);
     }
 
     /**
@@ -87,11 +86,6 @@ public class RenderWirelessTransmissionStation extends MekanismTileEntityRendere
             case ITEM -> new ColorRGB(0.0f, 1.0f, 0.0f);        // 绿色 - 物品
             case HEAT -> new ColorRGB(1.0f, 0.5f, 0.0f);        // 橙色 - 热量
         };
-    }
-
-    @Override
-    protected String getProfilerSection() {
-        return "wirelessTransmissionStation";
     }
 
     @Override

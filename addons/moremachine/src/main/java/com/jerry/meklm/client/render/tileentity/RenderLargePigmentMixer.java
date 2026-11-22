@@ -5,7 +5,7 @@ import com.jerry.meklm.common.tile.machine.TileEntityLargePigmentMixer;
 import com.jerry.mekmm.common.base.MoreMachineProfilerConstants;
 
 import mekanism.client.render.RenderTickHandler;
-import mekanism.client.render.lib.Outlines.Line;
+import mekanism.client.render.outline.Outlines.Line;
 import mekanism.client.render.outline.IWireFrameRenderer;
 import mekanism.client.render.tileentity.MekanismTileEntityRenderer;
 import mekanism.common.block.attribute.Attribute;
@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Con
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,6 +29,8 @@ import com.mojang.math.Axis;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @NullMarked
@@ -42,7 +45,7 @@ public class RenderLargePigmentMixer extends MekanismTileEntityRenderer<TileEnti
     }
 
     public RenderLargePigmentMixer(Context context) {
-        super(context);
+        super();
     }
 
     @Override
@@ -68,13 +71,9 @@ public class RenderLargePigmentMixer extends MekanismTileEntityRenderer<TileEnti
     }
 
     @Override
-    public void renderWireFrame(BlockEntity tile, BlockState blockState, float partialTick, PoseStack poseStack, VertexConsumer buffer, boolean isHighContrast) {
-        if (tile instanceof TileEntityLargePigmentMixer mixer) {
-            setupRenderer(mixer.getDirection(), (tile.getLevel().getGameTime() + partialTick) * SHAFT_SPEED % 360, poseStack);
-            Pose pose = poseStack.last();
-            RenderTickHandler.renderVertexWireFrame(lines, buffer, pose.pose(), pose.normal(), isHighContrast);
-            poseStack.popPose();
-        }
+    public Collection<Line> applyTransformAndGetFrame(BlockEntity tile, PoseStack poseStack, LevelRenderState levelRenderState) {
+        // TODO(26.3 port): no shaft model is rendered by this BER so there is no wireframe to extract
+        return lines == null ? Collections.emptyList() : lines;
     }
 
     @Override
@@ -101,11 +100,6 @@ public class RenderLargePigmentMixer extends MekanismTileEntityRenderer<TileEnti
     @Override
     public AABB getRenderBoundingBox(TileEntityLargePigmentMixer tile) {
         return new AABB(tile.getBlockPos().above(2));
-    }
-
-    @Override
-    protected String getProfilerSection() {
-        return MoreMachineProfilerConstants.LARGE_PIGMENT_MIXER;
     }
 
     public static class LargePigmentMixerRenderState extends BlockEntityRenderState {

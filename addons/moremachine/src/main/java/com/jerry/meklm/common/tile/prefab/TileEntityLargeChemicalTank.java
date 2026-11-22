@@ -193,6 +193,14 @@ public class TileEntityLargeChemicalTank<TIER extends ILargeChemicalTankTier> ex
         return type == ContainerType.CHEMICAL;
     }
 
+    public IChemicalTank getChemicalTank() {
+        return chemicalTank;
+    }
+
+    public TIER getTier() {
+        return tier;
+    }
+
     @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerChemicalTankWrapper.class,
                             methodNames = { "getStored", "getCapacity", "getNeeded",
                                     "getFilledPercentage" },

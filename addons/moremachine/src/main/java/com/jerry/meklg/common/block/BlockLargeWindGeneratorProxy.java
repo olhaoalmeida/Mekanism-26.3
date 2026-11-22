@@ -71,7 +71,7 @@ public class BlockLargeWindGeneratorProxy extends Block implements IStateFluidLo
         super(BlockStateHelper.applyLightLevelAdjustments(properties.dynamicShape()
                 .noOcclusion()
                 .isViewBlocking(BlockStateHelper.NEVER_VIEW_BLOCKING)
-                .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK)));
+                .pushReaction(net.minecraft.world.level.material.PushReaction.IMMOVEABLE)));
         registerDefaultState(BlockStateHelper.getDefaultState(stateDefinition.any()
                 .setValue(OFFSET_X, encodeHorizontalOffset(0))
                 .setValue(OFFSET_Y, 0)

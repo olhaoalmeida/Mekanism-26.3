@@ -35,29 +35,8 @@ public class RenderLargeWindGenerator extends MekanismTileEntityRenderer<TileEnt
     private final ModelLargeWindGenerator model;
 
     public RenderLargeWindGenerator(Context context) {
-        super(context);
+        super();
         model = new ModelLargeWindGenerator(context.entityModelSet());
-    }
-
-    @Override
-    public void renderWireFrame(BlockEntity tile, BlockState blockState, float partialTick, PoseStack poseStack, VertexConsumer buffer, boolean isHighContrast) {
-        if (tile instanceof TileEntityLargeWindGenerator generator) {
-            poseStack.pushPose();
-            poseStack.translate(0.5, 1.5, 0.5);
-            MekanismRenderer.rotate(poseStack, generator.getDirection(), 0, 180, 90, 270);
-            poseStack.rotateDegrees(Axis.ZP, 180);
-            float angle = generator.getAngle();
-            if (generator.getActive() && partialTick > 0) {
-                angle = (angle + generator.getHeightSpeedRatio() * partialTick) % 360;
-            }
-            model.renderWireFrame(poseStack, buffer, new LargeWindGeneratorRotationRenderState(angle), isHighContrast);
-            poseStack.popPose();
-        }
-    }
-
-    @Override
-    protected String getProfilerSection() {
-        return MoreMachineProfilerConstants.LARGE_WIND_GENERATOR;
     }
 
     @Override

@@ -22,7 +22,8 @@ public class LargeGeneratorBlockShapes {
     public static final Map<Direction, VoxelShape> LARGE_GAS_BURNING_GENERATOR;
     public static final Map<Direction, VoxelShape> LARGE_WIND_GENERATOR;
     public static final Map<Direction, VoxelShape> SOLAR_HEAT_GENERATOR;
-    private static final Map<BlockPos, VoxelShape>[] LARGE_WIND_GENERATOR_PARTS = new Map[EnumUtils.HORIZONTAL_DIRECTIONS.length];
+    private static final Direction[] HORIZONTAL_DIRS = {Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
+    private static final Map<BlockPos, VoxelShape>[] LARGE_WIND_GENERATOR_PARTS = new Map[HORIZONTAL_DIRS.length];
 
     static {
         VoxelShape largeGenerator = box(-16, 0, -16, 32, 48, 32);
@@ -72,8 +73,8 @@ public class LargeGeneratorBlockShapes {
     }
 
     private static void setSplitShapes(VoxelShape shape, Map<BlockPos, VoxelShape>[] dest) {
-        for (Direction side : EnumUtils.HORIZONTAL_DIRECTIONS) {
-            dest[side.ordinal() - 2] = splitShape(VoxelShapeUtils.rotateHorizontal(shape, side));
+        for (Direction side : HORIZONTAL_DIRS) {
+            dest[side.ordinal() - 2] = splitShape(Shapes.rotateHorizontal(shape).get(side));
         }
     }
 

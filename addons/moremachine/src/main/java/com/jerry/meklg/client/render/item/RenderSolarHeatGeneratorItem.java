@@ -37,8 +37,9 @@ public class RenderSolarHeatGeneratorItem implements SpecialModelRenderer<SolarH
 
     @Override
     public void getExtents(Consumer<Vector3fc> output) {
-        solarHeatGenerator.setupAnim(ZERO_ANGLE);
-        solarHeatGenerator.root().getExtentsForGui(new PoseStack(), output);
+        // TODO(26.3 port): ModelPart extents are no longer available; use unit cube extents
+        output.accept(new org.joml.Vector3f(0, 0, 0));
+        output.accept(new org.joml.Vector3f(1, 1, 1));
     }
 
     @Override

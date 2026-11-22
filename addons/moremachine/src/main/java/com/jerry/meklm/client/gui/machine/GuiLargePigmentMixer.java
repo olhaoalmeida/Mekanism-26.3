@@ -2,7 +2,10 @@ package com.jerry.meklm.client.gui.machine;
 
 import com.jerry.meklm.common.tile.machine.TileEntityLargePigmentMixer;
 
-import mekanism.api.chemical.ChemicalStack;
+import mekanism.api.chemical.ChemicalResource;
+import mekanism.api.chemical.ChemicalStackTemplate;
+import mekanism.api.recipes.book.PigmentMixingBookCategory;
+import mekanism.api.recipes.book.PigmentMixingBookCategory.PigmentMixingBookInfo;
 import mekanism.api.recipes.ChemicalChemicalToChemicalRecipe;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.client.gui.GuiConfigurableTile;
@@ -22,6 +25,7 @@ import mekanism.common.util.text.EnergyDisplay;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -69,7 +73,7 @@ public class GuiLargePigmentMixer extends GuiConfigurableTile<TileEntityLargePig
 
         @Override
         public int getColorFrom() {
-            return tile == null ? 0xFFFFFFFF : getColor(tile.leftInputTank.resource().getChemicalColorRepresentation());
+            return tile == null ? 0xFFFFFFFF : getColor(tile.leftInputTank.resource().value().colorRepresentation());
         }
     }
 
@@ -77,13 +81,13 @@ public class GuiLargePigmentMixer extends GuiConfigurableTile<TileEntityLargePig
 
         @Override
         public int getColorFrom() {
-            return tile == null ? 0xFFFFFFFF : getColor(tile.rightInputTank.resource().getChemicalColorRepresentation());
+            return tile == null ? 0xFFFFFFFF : getColor(tile.rightInputTank.resource().value().colorRepresentation());
         }
     }
 
     private abstract class PigmentColorDetails implements ColorDetails {
 
-        private WeakReference<ChemicalChemicalToChemicalRecipe> cachedRecipe;
+        private WeakReference<ChemicalChemicalToChemicalRecipe<PigmentMixingBookCategory, PigmentMixingBookInfo>> cachedRecipe;
 
         @Override
         public abstract int getColorFrom();
@@ -97,9 +101,9 @@ public class GuiLargePigmentMixer extends GuiConfigurableTile<TileEntityLargePig
             if (tile.outputTank.isEmpty()) {
                 // If the pigment tank is empty, try looking up the recipe and grabbing the color from it
                 if (!tile.leftInputTank.isEmpty() && !tile.rightInputTank.isEmpty()) {
-                    ChemicalStack leftInput = new ChemicalStack(tile.leftInputTank.resource().typeHolder(), tile.leftInputTank.amountAsInt());
-                    ChemicalStack rightInput = new ChemicalStack(tile.rightInputTank.resource().typeHolder(), tile.rightInputTank.amountAsInt());
-                    ChemicalChemicalToChemicalRecipe recipe;
+                    ChemicalResource leftInput = tile.leftInputTank.resource();
+                    ChemicalResource rightInput = tile.rightInputTank.resource();
+                    ChemicalChemicalToChemicalRecipe<PigmentMixingBookCategory, PigmentMixingBookInfo> recipe;
                     if (cachedRecipe == null) {
                         recipe = getRecipeAndCache();
                     } else {
@@ -109,25 +113,26 @@ public class GuiLargePigmentMixer extends GuiConfigurableTile<TileEntityLargePig
                         }
                     }
                     if (recipe != null) {
-                        return getColor(recipe.getOutput(leftInput, rightInput).chemical().value().getColorRepresentation());
+                        ChemicalStackTemplate output = recipe.getOutput(leftInput.toStack(tile.leftInputTank.amountAsInt()), rightInput.toStack(tile.rightInputTank.amountAsInt()));
+                        return getColor(output.typeHolder().value().colorRepresentation());
                     }
                 }
                 return 0xFFFFFFFF;
             }
-            return getColor(tile.outputTank.resource().getChemicalColorRepresentation());
+            return getColor(tile.outputTank.resource().value().colorRepresentation());
         }
 
-        private ChemicalChemicalToChemicalRecipe getRecipeAndCache() {
-            ChemicalChemicalToChemicalRecipe recipe = tile.getRecipe(0);
-            if (recipe == null) {
+        private ChemicalChemicalToChemicalRecipe<PigmentMixingBookCategory, PigmentMixingBookInfo> getRecipeAndCache() {
+            RecipeHolder<ChemicalChemicalToChemicalRecipe<PigmentMixingBookCategory, PigmentMixingBookInfo>> recipeHolder = tile.getRecipe(0);
+            if (recipeHolder == null) {
                 cachedRecipe = null;
             } else {
-                cachedRecipe = new WeakReference<>(recipe);
+                cachedRecipe = new WeakReference<>(recipeHolder.value());
             }
-            return recipe;
+            return recipeHolder == null ? null : recipeHolder.value();
         }
 
-        private boolean isValid(ChemicalChemicalToChemicalRecipe recipe, ChemicalStack leftInput, ChemicalStack rightInput) {
+        private boolean isValid(ChemicalChemicalToChemicalRecipe<PigmentMixingBookCategory, PigmentMixingBookInfo> recipe, ChemicalResource leftInput, ChemicalResource rightInput) {
             return (recipe.getLeftInput().testType(leftInput) && recipe.getRightInput().testType(rightInput)) ||
                     (recipe.getLeftInput().testType(rightInput) && recipe.getRightInput().testType(leftInput));
         }

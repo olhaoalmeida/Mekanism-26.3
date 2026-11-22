@@ -35,20 +35,8 @@ public class RenderSolarHeatGenerator extends MekanismTileEntityRenderer<TileEnt
     private final ModelSolarHeatGenerator model;
 
     public RenderSolarHeatGenerator(Context context) {
-        super(context);
+        super();
         model = new ModelSolarHeatGenerator(context.entityModelSet());
-    }
-
-    @Override
-    public void renderWireFrame(BlockEntity tile, BlockState blockState, float partialTick, PoseStack poseStack, VertexConsumer buffer, boolean isHighContrast) {
-        if (tile instanceof TileEntitySolarHeatGenerator solarHeatGenerator) {
-            poseStack.pushPose();
-            poseStack.translate(0.5, 1.5, 0.5);
-            MekanismRenderer.rotate(poseStack, solarHeatGenerator.getDirection(), 0, 180, 90, 270);
-            poseStack.rotateDegrees(Axis.ZP, 180);
-            model.renderWireFrame(poseStack, buffer, new SolarHeatGeneratorRotationRenderState(solarHeatGenerator.getAngle()), getPanelVisibility(solarHeatGenerator), isHighContrast);
-            poseStack.popPose();
-        }
     }
 
     @Override
@@ -76,11 +64,6 @@ public class RenderSolarHeatGenerator extends MekanismTileEntityRenderer<TileEnt
         for (int slot = 0; slot < state.panels.length; slot++) {
             state.panels[slot] = tile.shouldRenderPanel(slot);
         }
-    }
-
-    @Override
-    protected String getProfilerSection() {
-        return MoreMachineProfilerConstants.SOLAR_HEAT_GENERATOR;
     }
 
     @Override
