@@ -1,0 +1,15 @@
+70:[21:08:40] [main/INFO] [ne.ne.fm.lo.mo.lo.InDevFolderLocator/CORE]: Got mod coordinates mekmm%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/build/classes/java/main:mekmm%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/build/resources/main:mekmm%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/build/classes/java/client:mekmm%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/build/resources/client:mekmm%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/build/classes/java/test:mekmm%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/build/resources/test:mekmm%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/build/classes/java/extra:mekmm%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/build/resources/extra:mekmm%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/build/classes/java/clientExtra:mekmm%%/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/build/resources/clientExtra from env
+79:		Mekanism: MoreMachine 2.0.0 (mekmm)
+83:[21:08:41] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/home/runner/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.17.4+mixin.0.8.7/5f66cc9f59b8efaa942155a3d5a30599bf6640dd/sponge-mixin-0.17.4+mixin.0.8.7.jar Service=FML Env=SERVER
+91: - mekmm (composite(folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/build/classes/java/main), folder(/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/moremachine/build/resources/main)))
+93: - mixinextras.neoforge (jar(/home/runner/.gradle/caches/modules-2/files-2.1/net.neoforged/neoforge/26.3.0.110/6806e70566b6aab685d29f480e0072c76ad22df2/neoforge-26.3.0.110-universal.jar > mixinextras-neoforge-0.5.5.jar))
+97:[21:08:42] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).
+118:[21:08:48] [main/WARN] [ne.ne.ne.se.lo.ServerModLoader/LOADING]: Mod %s uses the deprecated `logoFile` property; change to `bannerFile` and/or (for square icons) `iconFile` [[mekmm]]
+119:[21:08:48] [main/ERROR] [minecraft/Settings]: Failed to load properties from file: server.properties
+120:java.nio.file.NoSuchFileException: server.properties
+121:	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92) ~[?:?] {}
+122:	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106) ~[?:?] {}
+123:	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111) ~[?:?] {}
+143:[21:08:53] [main/WARN] [minecraft/RecipeManager]: Recipe mekmm:presser/reflector can't be placed due to empty ingredients and will be ignored
+158:[21:08:56] [Server thread/INFO] [minecraft/DedicatedServer]: Done (2.514s)! For help, type "help"
+163:[21:08:56] [Server thread/ERROR] [me.co.Mekanism/]: Incomplete recipe detected: ResourceKey[minecraft:recipe / mekmm:presser/reflector]
