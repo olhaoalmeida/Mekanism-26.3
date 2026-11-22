@@ -13,7 +13,7 @@ jobs:
         run: ./gradlew assemble --no-daemon --console=plain > mek.log 2>&1 || (tail -50 mek.log; exit 1)
       - name: build MoreMachine
         working-directory: addons/moremachine
-        run: chmod +x gradlew && ./gradlew build -x spotlessCheck -x spotlessApply --no-daemon --continue --console=plain > ../../mm.log 2>&1 || echo FAILED > ../../failed.flag
+        run: chmod +x gradlew && ./gradlew jar -x spotlessCheck -x spotlessApply --no-daemon --continue --console=plain > ../../mm.log 2>&1 || echo FAILED > ../../failed.flag
       - name: publish log
         if: always()
         run: |
