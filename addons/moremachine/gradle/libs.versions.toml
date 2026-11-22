@@ -1,6 +1,6 @@
 [versions]
 minecraft = "26.3"
-neoForge = "26.3.0.67-beta"
+neoForge = "26.3.0.110"
 loader = "4"
 spotless = "8.4.0"
 modDevGradle = "2.0.148"
