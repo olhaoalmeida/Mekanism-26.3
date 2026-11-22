@@ -1,0 +1,2 @@
+addons/moremachine/build/moddev/artifacts/minecraft-patched-26.3.0.67-beta.jar
+addons/moremachine/build/libs/mekmm-26.3-2.0.0.jar
