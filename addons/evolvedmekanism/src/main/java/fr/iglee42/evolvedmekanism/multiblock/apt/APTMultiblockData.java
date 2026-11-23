@@ -7,7 +7,7 @@ import mekanism.api.AutomationType;
 import mekanism.api.SerializationConstants;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.chemical.IChemicalTank;
-import mekanism.api.chemical.attribute.ChemicalAttributeValidator;
+import Nonemekanism.api.chemical.ChemicalAttributeValidator;
 import mekanism.api.energy.IEnergyContainer;
 import mekanism.api.recipes.ItemStackChemicalToItemStackRecipe;
 import mekanism.common.capabilities.chemical.VariableCapacityChemicalTank;

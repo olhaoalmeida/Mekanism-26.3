@@ -1,7 +1,7 @@
 package fr.iglee42.evolvedmekanism.utils;
 
 import mekanism.api.RelativeSide;
-import mekanism.common.attachments.component.AttachedSideConfig;
+import Nonemekanism.common.component.component.AttachedSideConfig;
 import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.tile.component.config.DataType;
 import net.minecraft.Util;

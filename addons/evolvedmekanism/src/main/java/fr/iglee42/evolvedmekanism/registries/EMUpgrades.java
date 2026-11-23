@@ -1,6 +1,6 @@
 package fr.iglee42.evolvedmekanism.registries;
 
-import mekanism.api.Upgrade;
+import Nonemekanism.api.upgrade.Upgrade;
 
 public class EMUpgrades {
 

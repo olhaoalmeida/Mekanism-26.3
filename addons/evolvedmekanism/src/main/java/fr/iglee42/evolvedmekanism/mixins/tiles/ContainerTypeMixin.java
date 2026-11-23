@@ -1,7 +1,7 @@
 package fr.iglee42.evolvedmekanism.mixins.tiles;
 
 import fr.iglee42.evolvedmekanism.utils.EMDataHandlerUtils;
-import mekanism.common.attachments.containers.ContainerType;
+import Nonemekanism.common.component.containers.type.ContainerType;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

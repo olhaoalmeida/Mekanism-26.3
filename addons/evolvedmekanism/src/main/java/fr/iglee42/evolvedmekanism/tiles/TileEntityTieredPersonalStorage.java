@@ -10,7 +10,7 @@ import mekanism.api.inventory.IInventorySlot;
 import mekanism.api.providers.IBlockProvider;
 import mekanism.api.security.ISecurityUtils;
 import mekanism.api.security.SecurityMode;
-import mekanism.common.attachments.containers.ContainerType;
+import Nonemekanism.common.component.containers.type.ContainerType;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
 import mekanism.common.lib.inventory.personalstorage.AbstractPersonalStorageItemInventory;

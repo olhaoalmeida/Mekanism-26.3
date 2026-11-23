@@ -13,7 +13,7 @@ import fr.iglee42.emgenerators.tile.TileEntityTieredWindGenerator;
 import fr.iglee42.evolvedmekanism.EvolvedMekanismLang;
 import fr.iglee42.evolvedmekanism.registries.EMTileEntityTypes;
 import fr.iglee42.evolvedmekanism.registries.EMUpgrades;
-import mekanism.api.Upgrade;
+import Nonemekanism.api.upgrade.Upgrade;
 import mekanism.api.text.ILangEntry;
 import mekanism.common.block.attribute.*;
 import mekanism.common.block.attribute.AttributeCustomSelectionBox;

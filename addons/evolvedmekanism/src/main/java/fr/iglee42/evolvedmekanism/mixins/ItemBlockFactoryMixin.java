@@ -1,7 +1,7 @@
 package fr.iglee42.evolvedmekanism.mixins;
 
 import fr.iglee42.evolvedmekanism.registries.EMFactoryType;
-import mekanism.common.attachments.component.AttachedSideConfig;
+import Nonemekanism.common.component.component.AttachedSideConfig;
 import mekanism.common.block.attribute.Attribute;
 import mekanism.common.block.attribute.AttributeFactoryType;
 import mekanism.common.block.prefab.BlockFactoryMachine;

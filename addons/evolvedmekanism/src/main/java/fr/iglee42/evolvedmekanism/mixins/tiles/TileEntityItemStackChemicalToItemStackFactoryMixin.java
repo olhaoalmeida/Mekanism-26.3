@@ -5,7 +5,7 @@ import fr.iglee42.evolvedmekanism.tiers.EMFactoryTier;
 import mekanism.api.IContentsListener;
 import mekanism.api.chemical.IChemicalTank;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
-import mekanism.common.inventory.slot.chemical.ChemicalInventorySlot;
+import Nonemekanism.common.inventory.slot.ChemicalInventorySlot;
 import mekanism.common.tile.factory.TileEntityItemStackChemicalToItemStackFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

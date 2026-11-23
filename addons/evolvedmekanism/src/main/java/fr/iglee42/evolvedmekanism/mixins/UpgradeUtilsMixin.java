@@ -4,7 +4,7 @@ import fr.iglee42.emgenerators.registries.EMGenItems;
 import fr.iglee42.evolvedmekanism.registries.EMItems;
 import fr.iglee42.evolvedmekanism.registries.EMUpgrades;
 import fr.iglee42.evolvedmekanism.utils.ModsCompats;
-import mekanism.api.Upgrade;
+import Nonemekanism.api.upgrade.Upgrade;
 import mekanism.common.util.UpgradeUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;

@@ -2,7 +2,7 @@ package fr.iglee42.emgenerators.registries;
 
 import fr.iglee42.evolvedmekanism.EvolvedMekanism;
 import fr.iglee42.evolvedmekanism.registries.EMUpgrades;
-import mekanism.api.Upgrade;
+import Nonemekanism.api.upgrade.Upgrade;
 import mekanism.api.text.TextComponentUtil;
 import mekanism.api.tier.AlloyTier;
 import mekanism.api.tier.BaseTier;

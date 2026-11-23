@@ -1,6 +1,6 @@
 package fr.iglee42.evolvedmekanism.mixins;
 
-import mekanism.api.Upgrade;
+import Nonemekanism.api.upgrade.Upgrade;
 import mekanism.common.util.EnumUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

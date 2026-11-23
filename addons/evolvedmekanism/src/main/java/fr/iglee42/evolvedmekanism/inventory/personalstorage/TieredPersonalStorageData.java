@@ -5,7 +5,7 @@ import fr.iglee42.evolvedmekanism.tiers.PersonalStorageTier;
 import mekanism.api.SerializationConstants;
 import mekanism.api.annotations.NothingNullByDefault;
 import mekanism.api.inventory.IInventorySlot;
-import mekanism.common.attachments.containers.ContainerType;
+import Nonemekanism.common.component.containers.type.ContainerType;
 import mekanism.common.lib.MekanismSavedData;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

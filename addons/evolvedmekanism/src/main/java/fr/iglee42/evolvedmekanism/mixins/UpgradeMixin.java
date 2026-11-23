@@ -5,7 +5,7 @@ import com.mojang.serialization.Codec;
 import fr.iglee42.evolvedmekanism.EvolvedMekanismLang;
 import fr.iglee42.evolvedmekanism.registries.EMUpgrades;
 import io.netty.buffer.ByteBuf;
-import mekanism.api.Upgrade;
+import Nonemekanism.api.upgrade.Upgrade;
 import mekanism.api.text.EnumColor;
 import mekanism.api.text.ILangEntry;
 import net.minecraft.network.codec.ByteBufCodecs;

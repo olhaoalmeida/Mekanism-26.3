@@ -10,7 +10,7 @@ import mekanism.api.IContentsListener;
 import mekanism.api.chemical.IChemicalHandler;
 import mekanism.api.text.EnumColor;
 import mekanism.common.MekanismLang;
-import mekanism.common.attachments.containers.ContainerType;
+import Nonemekanism.common.component.containers.type.ContainerType;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.common.capabilities.holder.chemical.IChemicalTankHolder;

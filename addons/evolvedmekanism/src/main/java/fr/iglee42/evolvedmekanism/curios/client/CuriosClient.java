@@ -12,7 +12,7 @@ import mekanism.api.gear.IHUDElement.HUDColor;
 import mekanism.api.gear.IModuleHelper;
 import mekanism.api.radiation.IRadiationManager;
 import mekanism.api.text.EnumColor;
-import mekanism.client.render.MekanismCurioRenderer;
+import Nonemekanism.client.integration.curios.MekanismCurioRenderer;
 import mekanism.client.render.armor.ISpecialGear;
 import mekanism.common.MekanismLang;
 import mekanism.common.lib.radiation.ClientRadiation;

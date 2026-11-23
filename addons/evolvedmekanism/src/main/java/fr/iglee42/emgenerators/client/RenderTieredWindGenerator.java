@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import fr.iglee42.emgenerators.tile.TileEntityTieredWindGenerator;
 import mekanism.client.render.MekanismRenderer;
-import mekanism.client.render.tileentity.IWireFrameRenderer;
+import Nonemekanism.client.render.outline.IWireFrameRenderer;
 import mekanism.client.render.tileentity.ModelTileEntityRenderer;
 import mekanism.generators.client.model.ModelWindGenerator;
 import mekanism.generators.common.GeneratorsProfilerConstants;

@@ -31,7 +31,7 @@ import mekanism.client.recipe_viewer.emi.recipe.ItemStackToFluidEmiRecipe;
 import mekanism.client.recipe_viewer.emi.recipe.MekanismEmiRecipe;
 import mekanism.client.recipe_viewer.type.IRecipeViewerRecipeType;
 import mekanism.client.recipe_viewer.type.RecipeViewerRecipeType;
-import mekanism.common.attachments.containers.ContainerType;
+import Nonemekanism.common.component.containers.type.ContainerType;
 import mekanism.common.block.BlockOre;
 import mekanism.common.block.attribute.Attribute;
 import mekanism.common.block.attribute.AttributeFactoryType;
