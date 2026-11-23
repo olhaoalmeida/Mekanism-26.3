@@ -1,0 +1,20 @@
+dependencies {
+    compileOnly(libs.jetbrains.annotations)
+
+    // Mekanism 26.3 (built from the parent repository, see ../../build/libs)
+    def mekLibs = rootProject.file('../../build/libs')
+    compileOnly(files(
+        "$mekLibs/Mekanism-26.3-10.8.0.homebaked.jar",
+        "$mekLibs/MekanismAdditions-26.3-10.8.0.homebaked.jar",
+        "$mekLibs/MekanismGenerators-26.3-10.8.0.homebaked.jar",
+        "$mekLibs/MekanismTools-26.3-10.8.0.homebaked.jar"))
+    localRuntime(files(
+        "$mekLibs/Mekanism-26.3-10.8.0.homebaked.jar",
+        "$mekLibs/MekanismAdditions-26.3-10.8.0.homebaked.jar",
+        "$mekLibs/MekanismGenerators-26.3-10.8.0.homebaked.jar",
+        "$mekLibs/MekanismTools-26.3-10.8.0.homebaked.jar"))
+
+    // JEI (API only)
+    compileOnly("mezz.jei:jei-26.3-common-api:31.17.0.109")
+    compileOnly("mezz.jei:jei-26.3-neoforge-api:31.17.0.109")
+}

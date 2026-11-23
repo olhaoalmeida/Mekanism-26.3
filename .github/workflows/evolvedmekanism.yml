@@ -1,0 +1,24 @@
+name: evolvedmekanism
+on: workflow_dispatch
+permissions: { contents: write }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 25 }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: build Mekanism
+        run: ./gradlew assemble --no-daemon --console=plain > mek.log 2>&1 || (tail -50 mek.log; exit 1)
+      - name: build EvolvedMekanism
+        working-directory: addons/evolvedmekanism
+        run: chmod +x gradlew && ./gradlew jar -x spotlessCheck -x spotlessApply --no-daemon --continue --console=plain > ../../evo.log 2>&1 || echo FAILED > ../../failed.flag
+      - name: publish log
+        if: always()
+        run: |
+          mkdir -p out && cp evo.log out/ || true
+          grep -E "error:|FAILED|BUILD|What went wrong" -A2 evo.log | head -400 > out/errors.txt || true
+          grep -c "error:" evo.log > out/count.txt || true
+          find addons/evolvedmekanism/build -name '*.jar' > out/jars.txt || true
+          cd out && git init -q && git checkout -q -b ci-evo && git add -A && git -c user.name=ci -c user.email=ci@x commit -qm log && git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} ci-evo
