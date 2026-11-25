@@ -6,15 +6,21 @@ import fr.iglee42.evolvedmekanism.recipes.MeltingRecipe;
 import fr.iglee42.evolvedmekanism.recipeviewers.EMRecipeViewersTypes;
 import fr.iglee42.evolvedmekanism.registries.EMBlocks;
 import fr.iglee42.evolvedmekanism.registries.EMRecipeType;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import mekanism.api.IContentsListener;
-import mekanism.api.RelativeSide;
-import mekanism.api.fluid.IExtendedFluidTank;
+import mekanism.api.fluid.IFluidTank;
 import mekanism.api.heat.HeatAPI;
+import mekanism.api.heat.IHeatCapacitor;
 import mekanism.api.inventory.IInventorySlot;
-import mekanism.api.recipes.ItemStackToFluidRecipe;
+import mekanism.api.upgrade.Upgrade;
+import mekanism.api.upgrade.UpgradeIds;
+import mekanism.common.integration.computer.annotation.ComputerMethod;
+import mekanism.api.recipes.book.LiquificationBookCategory;
+import mekanism.api.recipes.book.LiquificationBookCategory.LiquificationBookInfo;
 import mekanism.api.recipes.cache.CachedRecipe;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
-import mekanism.api.recipes.cache.OneInputCachedRecipe;
 import mekanism.api.recipes.inputs.IInputHandler;
 import mekanism.api.recipes.inputs.InputHelper;
 import mekanism.api.recipes.outputs.IOutputHandler;
@@ -24,18 +30,18 @@ import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.common.capabilities.fluid.BasicFluidTank;
 import mekanism.common.capabilities.heat.BasicHeatCapacitor;
 import mekanism.common.capabilities.heat.CachedAmbientTemperature;
-import mekanism.common.capabilities.holder.fluid.FluidTankHelper;
-import mekanism.common.capabilities.holder.fluid.IFluidTankHolder;
-import mekanism.common.capabilities.holder.heat.HeatCapacitorHelper;
-import mekanism.common.capabilities.holder.heat.IHeatCapacitorHolder;
-import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
-import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
-import mekanism.common.integration.computer.SpecialComputerMethodWrapper;
-import mekanism.common.integration.computer.SpecialComputerMethodWrapper.ComputerChemicalTankWrapper;
+import mekanism.common.capabilities.holder.container.IContainerHolder;
+import mekanism.common.capabilities.holder.container.MekContainerHelper;
+import mekanism.common.capabilities.holder.single.ISingleContainerHolder;
+import mekanism.common.capabilities.holder.single.SingleConfigHolder;
+import mekanism.common.integration.computer.SpecialComputerMethodWrapper.ComputerFluidTankWrapper;
+import mekanism.common.integration.computer.SpecialComputerMethodWrapper.ComputerHeatCapacitorWrapper;
 import mekanism.common.integration.computer.SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper;
 import mekanism.common.integration.computer.annotation.SyntheticComputerMethod;
 import mekanism.common.integration.computer.annotation.WrappingComputerMethod;
+import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.slot.SlotOverlay;
+import mekanism.common.inventory.container.sync.SyncableInt;
 import mekanism.common.inventory.container.sync.dynamic.ContainerSync;
 import mekanism.common.inventory.slot.FluidInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
@@ -45,24 +51,31 @@ import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.recipe.IMekanismRecipeTypeProvider;
 import mekanism.common.recipe.lookup.ISingleRecipeLookupHandler.ItemRecipeLookupHandler;
 import mekanism.common.recipe.lookup.cache.InputRecipeCache.SingleItem;
-import mekanism.common.tile.component.TileComponentEjector;
+import mekanism.common.recipe.lookup.monitor.ProgressRecipeCacheLookupMonitor;
+import mekanism.common.util.UpgradeUtils;
 import mekanism.common.tile.component.config.ConfigInfo;
 import mekanism.common.tile.component.config.DataType;
 import mekanism.common.tile.component.config.slot.InventorySlotInfo;
-import mekanism.common.tile.prefab.TileEntityProgressMachine;
+import mekanism.common.tile.interfaces.IMultiTickProcessing;
+import mekanism.common.tile.prefab.TileEntityRecipeMachine;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.fluids.FluidStackTemplate;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
+import org.jetbrains.annotations.UnknownNullability;
+import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-public class TileEntityMelter extends TileEntityProgressMachine<MeltingRecipe> implements ItemRecipeLookupHandler<MeltingRecipe> {
+public class TileEntityMelter extends TileEntityRecipeMachine<MeltingRecipe, ProgressRecipeCacheLookupMonitor<MeltingRecipe>>
+      implements ItemRecipeLookupHandler<MeltingRecipe>, IMultiTickProcessing {
 
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
           RecipeError.NOT_ENOUGH_INPUT,
@@ -75,19 +88,28 @@ public class TileEntityMelter extends TileEntityProgressMachine<MeltingRecipe> i
 
     private double biomeAmbientTemp;
 
-    @WrappingComputerMethod(wrapper = ComputerChemicalTankWrapper.class, methodNames = {"getOutput", "getOutputCapacity", "getOutputNeeded", "getOutputFilledPercentage"}, docPlaceholder = "output tank")
-    public IExtendedFluidTank fluidTank;
-    @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerHeatCapacitorWrapper.class, methodNames = "getTemperature", docPlaceholder = "generator")
+    @UnknownNullability//Initialized via getInitialFluidTanks
+    @WrappingComputerMethod(wrapper = ComputerFluidTankWrapper.class, methodNames = {"getOutput", "getOutputCapacity", "getOutputNeeded", "getOutputFilledPercentage"}, docPlaceholder = "output tank")
+    public BasicFluidTank fluidTank;
+    @UnknownNullability//Initialized via getInitialHeatCapacitor
+    @WrappingComputerMethod(wrapper = ComputerHeatCapacitorWrapper.class, methodNames = "getTemperature", docPlaceholder = "generator")
     BasicHeatCapacitor heatCapacitor;
 
-    private final IOutputHandler<@NotNull FluidStack> outputHandler;
-    private final IInputHandler<@NotNull ItemStack> inputHandler;
+    private final IOutputHandler<FluidStackTemplate> outputHandler;
+    private final IInputHandler<Item, ItemStack> inputHandler;
+    private final RecipeContainers recipeContainers;
 
-    private MachineEnergyContainer<TileEntityMelter> energyContainer;
+    private final int baseTicksRequired = 100;
+    public int ticksRequired = baseTicksRequired;
+    private int operationsPerTick = 1;
+
+    @UnknownNullability//Initialized via getInitialInventory
     @WrappingComputerMethod(wrapper = ComputerIInventorySlotWrapper.class, methodNames = "getInput", docPlaceholder = "input slot")
     InputInventorySlot inputSlot;
+    @UnknownNullability//Initialized via getInitialInventory
     @WrappingComputerMethod(wrapper = ComputerIInventorySlotWrapper.class, methodNames = "getContainerFillItem", docPlaceholder = "fillable container slot")
     FluidInventorySlot containerFillSlot;
+    @UnknownNullability//Initialized via getInitialInventory
     @WrappingComputerMethod(wrapper = ComputerIInventorySlotWrapper.class, methodNames = "getOutputItem", docPlaceholder = "filled container output slot")
     OutputInventorySlot outputSlot;
 
@@ -96,8 +118,8 @@ public class TileEntityMelter extends TileEntityProgressMachine<MeltingRecipe> i
     public double lastEnvironmentLoss;
 
     public TileEntityMelter(BlockPos pos, BlockState state) {
-        super(EMBlocks.MELTER, pos, state, TRACKED_ERROR_TYPES, 100);
-        List<IInventorySlot> inputSlots = List.of(inputSlot,containerFillSlot);
+        super(EMBlocks.MELTER, pos, state, TRACKED_ERROR_TYPES);
+        List<IInventorySlot> inputSlots = List.of(inputSlot, containerFillSlot);
         List<IInventorySlot> outputSlots = Collections.singletonList(outputSlot);
         ConfigInfo itemConfig = configComponent.getConfig(TransmissionType.ITEM);
         if (itemConfig != null) {
@@ -107,101 +129,149 @@ public class TileEntityMelter extends TileEntityProgressMachine<MeltingRecipe> i
             ioSlots.addAll(outputSlots);
             itemConfig.addSlotInfo(DataType.INPUT_OUTPUT, new InventorySlotInfo(true, true, ioSlots));
         }
-        configComponent.setupOutputConfig(TransmissionType.FLUID, fluidTank, RelativeSide.RIGHT);
-        configComponent.setupInputConfig(TransmissionType.HEAT,heatCapacitor);
+        configComponent.setupOutputConfig(TransmissionType.FLUID, fluidTank);
+        configComponent.setupInputConfig(TransmissionType.HEAT, heatCapacitor);
 
-        ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(configComponent, TransmissionType.FLUID);
 
         inputHandler = InputHelper.getInputHandler(inputSlot, RecipeError.NOT_ENOUGH_INPUT);
         outputHandler = OutputHelper.getOutputHandler(fluidTank, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
+        recipeContainers = new RecipeContainers(inputSlot, fluidTank);
     }
 
     @Override
-    protected @Nullable IFluidTankHolder getInitialFluidTanks(IContentsListener listener, IContentsListener recipeCacheListener,IContentsListener unpause) {
-        FluidTankHelper builder = FluidTankHelper.forSideWithConfig(this);
-        builder.addTank( fluidTank = BasicFluidTank.output(MAX_FLUID,unpause));
+    protected boolean hasItemOutput() {
+        return false;
+    }
+
+    @Override
+    protected ProgressRecipeCacheLookupMonitor<MeltingRecipe> createNewCacheMonitor() {
+        return new ProgressRecipeCacheLookupMonitor<>(this, hasItemOutput());
+    }
+
+    public float getScaledProgress() {
+        return getRecipeProgress() / (float) getTicksRequired();
+    }
+
+    @ComputerMethod
+    public int getRecipeProgress() {
+        return recipeCacheLookupMonitor.getSavedOperatingTicks(0);
+    }
+
+    @Override
+    public int getTicksRequired() {
+        return ticksRequired;
+    }
+
+    @Override
+    public int getOperationsPerTick() {
+        return operationsPerTick;
+    }
+
+    @Override
+    public void recalculateUpgrades(HolderGetter<Upgrade> upgrades, Holder<Upgrade> upgrade, int totalInstalled) {
+        if (upgrade.is(UpgradeIds.SPEED)) {
+            ticksRequired = UpgradeUtils.getTicks(baseTicksRequired, upgrade, totalInstalled);
+            operationsPerTick = UpgradeUtils.getOperationsPerTick(baseTicksRequired, 1, upgrade, totalInstalled);
+        }
+        super.recalculateUpgrades(upgrades, upgrade, totalInstalled);
+    }
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(recipeCacheLookupMonitor.operatingTicksAsSyncable());
+        container.track(SyncableInt.create(this::getTicksRequired, value -> ticksRequired = value));
+    }
+
+    @Override
+    protected @Nullable IContainerHolder<IFluidTank> getInitialFluidTanks(IContentsListener listener, IContentsListener recipeCacheListener, IContentsListener recipeCacheUnpauseListener) {
+        MekContainerHelper<IFluidTank> builder = MekContainerHelper.forSideWithFluidConfig(this);
+        builder.addContainer(fluidTank = BasicFluidTank.output(MAX_FLUID, recipeCacheUnpauseListener));
         return builder.build();
     }
 
-
     @Override
-    protected @Nullable IHeatCapacitorHolder getInitialHeatCapacitors(IContentsListener listener, IContentsListener recipeCacheListener,IContentsListener unpause, CachedAmbientTemperature ambientTemperature) {
-        HeatCapacitorHelper builder = HeatCapacitorHelper.forSide(this::getDirection);
-        builder.addCapacitor(heatCapacitor = BasicHeatCapacitor.create(10, 5, 100, ambientTemperature, listener));
-        return builder.build();
+    protected @Nullable ISingleContainerHolder<IHeatCapacitor> getInitialHeatCapacitor(IContentsListener listener, IContentsListener recipeCacheListener,
+          IContentsListener recipeCacheUnpauseListener, CachedAmbientTemperature ambientTemperature) {
+        heatCapacitor = BasicHeatCapacitor.create(10, 5, 100, ambientTemperature, listener);
+        return SingleConfigHolder.heat(heatCapacitor, this);
     }
 
-    @NotNull
     @Override
-    protected IInventorySlotHolder getInitialInventory(IContentsListener listener, IContentsListener recipeCacheListener,IContentsListener unpause) {
-        InventorySlotHelper builder = InventorySlotHelper.forSideWithConfig(this);
-        builder.addSlot(inputSlot = InputInventorySlot.at(this::containsRecipe, recipeCacheListener, 26, 36))
+    protected IContainerHolder<IInventorySlot> getInitialInventory(IContentsListener listener, IContentsListener recipeCacheListener, IContentsListener recipeCacheUnpauseListener) {
+        MekContainerHelper<IInventorySlot> builder = MekContainerHelper.forSideWithItemConfig(this);
+        builder.addContainer(inputSlot = InputInventorySlot.at(this::containsRecipe, recipeCacheListener, 26, 36))
               .tracksWarnings(slot -> slot.warning(WarningType.NO_MATCHING_RECIPE, getWarningCheck(RecipeError.NOT_ENOUGH_INPUT)));
-        builder.addSlot(containerFillSlot = FluidInventorySlot.drain(fluidTank, listener, 155, 25));
-        builder.addSlot(outputSlot = OutputInventorySlot.at(listener, 155, 56));
+        builder.addContainer(containerFillSlot = FluidInventorySlot.drain(fluidTank, listener, 155, 25));
+        builder.addContainer(outputSlot = OutputInventorySlot.at(recipeCacheUnpauseListener, 155, 56));
         containerFillSlot.setSlotOverlay(SlotOverlay.PLUS);
         return builder.build();
     }
 
     @Override
-    protected boolean onUpdateServer() {
-        boolean send = super.onUpdateServer();
-        biomeAmbientTemp = HeatAPI.getAmbientTemp(level,getBlockPos());
-        containerFillSlot.drainTank(outputSlot);
-        recipeCacheLookupMonitor.updateAndProcess();
-        lastEnvironmentLoss = simulateEnvironment();
-        // update temperature
-        updateHeatCapacitors(null);
-        //After we update the heat capacitors, update our temperature multiplier
-        // Note: We use the ambient temperature without taking our biome into account as we want to have a consistent multiplier
+    protected boolean onUpdateServer(ServerLevel level) {
+        boolean send = super.onUpdateServer(level);
+        biomeAmbientTemp = HeatAPI.getAmbientTemp(level, getBlockPos());
+        containerFillSlot.drainTankIntoSlot(outputSlot, null);
+        recipeCacheLookupMonitor.updateAndProcess(level);
+        try (Transaction transaction = Transaction.openRoot()) {
+            // update temperature
+            lastEnvironmentLoss = simulate(transaction).environmentTransfer();
+            transaction.commit();
+        }
         return send;
     }
 
-    @NotNull
     @Override
-    public IMekanismRecipeTypeProvider<SingleRecipeInput, MeltingRecipe, SingleItem<MeltingRecipe>> getRecipeType() {
+    public IMekanismRecipeTypeProvider<SingleRecipeInput, LiquificationBookCategory, LiquificationBookInfo, MeltingRecipe, SingleItem<MeltingRecipe>> getRecipeType() {
         return EMRecipeType.MELTING;
     }
 
     @Nullable
     @Override
-    public MeltingRecipe getRecipe(int cacheIndex) {
+    public RecipeHolder<MeltingRecipe> getRecipe(int cacheIndex) {
         return findFirstRecipe(inputHandler);
     }
 
-    @NotNull
     @Override
-    public CachedRecipe<MeltingRecipe> createNewCachedRecipe(@NotNull MeltingRecipe recipe, int cacheIndex) {
-        return EMInputRecipeCache.itemToFluid(recipe, recheckAllRecipeErrors, inputHandler, outputHandler)
-              .setErrorsChanged(this::onErrorsChanged)
+    public CachedRecipe<MeltingRecipe> createNewCachedRecipe(MeltingRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        //Note: The melter is powered by heat, so unlike other progress machines it has no energy requirements
+        return setCommonSettings(EMInputRecipeCache.itemToFluid(recipe, recheckAllRecipeErrors, inputHandler, outputHandler))
               .setCanHolderFunction(() -> this.canFunction() && hasMachineEnoughHeat())
-              .setActive(this::setActive)
               .setRequiredTicks(this::getTicksRequired)
-              .setOnFinish(this::markForSave)
-              .setOperatingTicksChanged(this::setOperatingTicks);
+              .setBaselineMaxOperations(this::getOperationsPerTick);
     }
 
+    @Override
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return recipeContainers;
+    }
+
+    /**
+     * The melter is heat powered and has no energy container.
+     */
+    @Nullable
     public MachineEnergyContainer<TileEntityMelter> getEnergyContainer() {
-        return energyContainer;
+        return null;
     }
 
-    public boolean hasMachineEnoughHeat(){
+    public boolean hasMachineEnoughHeat() {
         return heatCapacitor.getTemperature() > 1273;
     }
 
     @Override
-    public double simulateEnvironment() {
-        double currentTemperature = getTemperature(0);
+    public double simulateEnvironment(TransactionContext transaction) {
+        double currentTemperature = heatCapacitor.getTemperature();
         double heatCapacity = heatCapacitor.getHeatCapacity();
         if (Math.abs(currentTemperature - biomeAmbientTemp) < 0.001) {
-            heatCapacitor.handleHeat(biomeAmbientTemp * heatCapacity - heatCapacitor.getHeat());
+            heatCapacitor.handleHeat(biomeAmbientTemp * heatCapacity - heatCapacitor.getHeat(), transaction);
         } else {
             double incr = EMConfig.general.melterHeatDissipation.get() * Math.sqrt(Math.abs(currentTemperature - biomeAmbientTemp));
             if (currentTemperature > biomeAmbientTemp) {
                 incr = -incr;
             }
-            heatCapacitor.handleHeat(heatCapacity * incr);
+            heatCapacitor.handleHeat(heatCapacity * incr, transaction);
             if (incr < 0) {
                 return -incr;
             }

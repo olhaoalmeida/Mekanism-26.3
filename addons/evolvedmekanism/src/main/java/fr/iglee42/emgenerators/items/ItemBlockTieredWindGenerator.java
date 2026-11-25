@@ -8,7 +8,7 @@ import mekanism.common.item.block.ItemBlockTooltip;
 import mekanism.generators.common.content.blocktype.Generator;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemBlockTieredWindGenerator extends ItemBlockTooltip<BlockTile.BlockTileModel<TileEntityTieredWindGenerator, Generator<TileEntityTieredWindGenerator>>> {
+public class ItemBlockTieredWindGenerator extends ItemBlockTooltip {
 
     public ItemBlockTieredWindGenerator(BlockTile.BlockTileModel<TileEntityTieredWindGenerator, Generator<TileEntityTieredWindGenerator>> block, Properties props) {
         super(block, props);

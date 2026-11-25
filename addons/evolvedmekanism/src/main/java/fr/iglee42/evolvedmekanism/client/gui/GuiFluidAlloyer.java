@@ -14,7 +14,7 @@ import mekanism.client.gui.element.progress.GuiProgress;
 import mekanism.client.gui.element.progress.ProgressType;
 import mekanism.common.inventory.container.tile.MekanismTileContainer;
 import mekanism.common.inventory.warning.WarningTracker.WarningType;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -22,8 +22,7 @@ import org.jetbrains.annotations.NotNull;
 public class GuiFluidAlloyer extends GuiConfigurableTile<TileEntityFluidAlloyer, MekanismTileContainer<TileEntityFluidAlloyer>> {
 
     public GuiFluidAlloyer(MekanismTileContainer<TileEntityFluidAlloyer> container, Inventory inv, Component title) {
-        super(container, inv, title);
-        imageHeight += 32;
+        super(container, inv, title, DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT + 32);
         inventoryLabelY = imageHeight - 94;
         dynamicSlots = true;
     }
@@ -31,25 +30,25 @@ public class GuiFluidAlloyer extends GuiConfigurableTile<TileEntityFluidAlloyer,
     @Override
     protected void addGuiElements() {
         super.addGuiElements();
-        addRenderableWidget(new GuiVerticalPowerBar(this, tile.getEnergyContainer(), 164, 15))
+        addRenderableWidget(new GuiVerticalPowerBar(this, tile.energyContainer(), 164, 15))
                 .warning(WarningType.NOT_ENOUGH_ENERGY, tile.getWarningCheck(RecipeError.NOT_ENOUGH_ENERGY));
-        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getActive));
-        addRenderableWidget(new GuiFluidGauge(() -> tile.inputTank, () -> tile.getFluidTanks(null), GaugeType.STANDARD.with(DataType.INPUT), this, 7, 16))
+        addRenderableWidget(new GuiEnergyTab(this, tile.energyContainer(), tile::getActive));
+        addRenderableWidget(new GuiFluidGauge(() -> tile.inputTank, tile::getFluidTanks, GaugeType.STANDARD.with(DataType.INPUT), this, 7, 16))
                 .warning(WarningType.NO_MATCHING_RECIPE, tile.getWarningCheck(RecipeError.NOT_ENOUGH_INPUT));
-        addRenderableWidget(new GuiFluidGauge(() -> tile.extraTank, () -> tile.getFluidTanks(null), GaugeType.get(GaugeInfo.YELLOW, GaugeOverlay.STANDARD), this, 29, 16))
+        addRenderableWidget(new GuiFluidGauge(() -> tile.extraTank, tile::getFluidTanks, GaugeType.get(GaugeInfo.YELLOW, GaugeOverlay.STANDARD), this, 29, 16))
                 .warning(WarningType.NO_MATCHING_RECIPE, tile.getWarningCheck(RecipeError.NOT_ENOUGH_SECONDARY_INPUT));
-        addRenderableWidget(new GuiFluidGauge(() -> tile.tertiaryTank, () -> tile.getFluidTanks(null), GaugeType.STANDARD.with(DataType.INPUT_2), this, 51, 16))
+        addRenderableWidget(new GuiFluidGauge(() -> tile.tertiaryTank, tile::getFluidTanks, GaugeType.STANDARD.with(DataType.INPUT_2), this, 51, 16))
                 .warning(WarningType.NO_MATCHING_RECIPE, tile.getWarningCheck(RecipeError.NOT_ENOUGH_SECONDARY_INPUT));
-        addRenderableWidget(new GuiFluidGauge(() -> tile.outputTank, () -> tile.getFluidTanks(null), GaugeType.STANDARD.with(DataType.OUTPUT), this, 131, 16))
+        addRenderableWidget(new GuiFluidGauge(() -> tile.outputTank, tile::getFluidTanks, GaugeType.STANDARD.with(DataType.OUTPUT), this, 131, 16))
                 .warning(WarningType.NO_SPACE_IN_OUTPUT, tile.getWarningCheck(RecipeError.NOT_ENOUGH_OUTPUT_SPACE));
         addRenderableWidget(new GuiProgress(tile::getScaledProgress, ProgressType.LARGE_RIGHT, this, 76, 42).recipeViewerCategory(tile))
                 .warning(WarningType.INPUT_DOESNT_PRODUCE_OUTPUT, tile.getWarningCheck(RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT));
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void drawForegroundText(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         renderTitleText(guiGraphics);
         renderInventoryText(guiGraphics);
-        super.drawForegroundText(guiGraphics, mouseX, mouseY);
+        super.drawForegroundText(guiGraphics, mouseX, mouseY, partialTicks);
     }
 }

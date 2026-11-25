@@ -3,7 +3,6 @@ package fr.iglee42.evolvedmekanism.modules;
 import java.util.function.Consumer;
 
 import fr.iglee42.evolvedmekanism.EvolvedMekanism;
-import mekanism.api.annotations.ParametersAreNotNullByDefault;
 import mekanism.api.gear.ICustomModule;
 import mekanism.api.gear.IHUDElement;
 import mekanism.api.gear.IModule;
@@ -14,17 +13,16 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.lib.Color;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-@ParametersAreNotNullByDefault
 public record ModuleAdvancedVisionEnhancementUnit(boolean fogEnabled, Color fogColor) implements ICustomModule<ModuleAdvancedVisionEnhancementUnit> {
 
-    private static final ResourceLocation icon = MekanismUtils.getResource(ResourceType.GUI_HUD, "vision_enhancement_unit.png");
+    private static final Identifier icon = MekanismUtils.getResource(ResourceType.GUI_HUD, "vision_enhancement_unit.png");
 
-    public static final ResourceLocation FOG = EvolvedMekanism.rl("fog");
-    public static final ResourceLocation FOG_COLOR = EvolvedMekanism.rl("fog_color");
+    public static final Identifier FOG = EvolvedMekanism.rl("fog");
+    public static final Identifier FOG_COLOR = EvolvedMekanism.rl("fog_color");
 
     public ModuleAdvancedVisionEnhancementUnit(IModule<ModuleAdvancedVisionEnhancementUnit> module) {
         this(module.getBooleanConfigOrFalse(FOG), Color.rgb(module.<Integer>getConfigOrThrow(FOG_COLOR).get()));

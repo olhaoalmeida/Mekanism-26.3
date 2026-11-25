@@ -6,7 +6,7 @@ import mekanism.client.gui.GuiMekanismTile;
 import mekanism.common.inventory.container.tile.MekanismTileContainer;
 import mekanism.common.tile.TileEntityPersonalStorage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -14,19 +14,17 @@ import org.jetbrains.annotations.NotNull;
 public class GuiTieredPersonalStorageTile extends GuiMekanismTile<TileEntityTieredPersonalStorage, TieredPersonalStorageContainer> {
 
     public GuiTieredPersonalStorageTile(TieredPersonalStorageContainer container, Inventory inv, Component title) {
-        super(container, inv, title);
-        imageHeight += 56;
-        imageHeight += (container.getTileEntity().getTier().rows - 6 ) * 18;
-        imageWidth += (container.getTileEntity().getTier().columns - 9 ) * 18;
+        super(container, inv, title, DEFAULT_IMAGE_WIDTH + (container.getTileEntity().getTier().columns - 9) * 18,
+              DEFAULT_IMAGE_HEIGHT + 56 + (container.getTileEntity().getTier().rows - 6) * 18);
         inventoryLabelY = imageHeight - 94;
         inventoryLabelX = imageWidth / 2 - Minecraft.getInstance().font.width(playerInventoryTitle) / 2;
         dynamicSlots = true;
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void drawForegroundText(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         renderTitleText(guiGraphics);
         renderInventoryText(guiGraphics);
-        super.drawForegroundText(guiGraphics, mouseX, mouseY);
+        super.drawForegroundText(guiGraphics, mouseX, mouseY, partialTicks);
     }
 }

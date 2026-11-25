@@ -8,7 +8,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.material.Fluid;
@@ -19,7 +19,7 @@ public final class MoltenAvailability {
     }
 
     public static boolean isObtainable(HolderLookup.Provider registries, Fluid fluid) {
-        ResourceLocation id = BuiltInRegistries.FLUID.getKey(fluid);
+        Identifier id = BuiltInRegistries.FLUID.getKey(fluid);
         if (id == null) {
             return true;
         }
@@ -37,7 +37,7 @@ public final class MoltenAvailability {
     }
 
     public static boolean bucketObtainable(Holder<Item> bucket, HolderLookup.Provider registries) {
-        ResourceLocation id = bucket.unwrapKey().map(ResourceKey::location).orElse(null);
+        Identifier id = bucket.unwrapKey().map(ResourceKey::location).orElse(null);
         if (id == null || !id.getPath().endsWith("_bucket")) {
             return true;
         }
@@ -45,7 +45,7 @@ public final class MoltenAvailability {
         if (!fluidPath.startsWith("molten_")) {
             return true;
         }
-        ResourceKey<Fluid> fluidKey = ResourceKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath(id.getNamespace(), fluidPath));
+        ResourceKey<Fluid> fluidKey = ResourceKey.create(Registries.FLUID, Identifier.fromNamespaceAndPath(id.getNamespace(), fluidPath));
         return registries.lookupOrThrow(Registries.FLUID).get(fluidKey)
                 .map(holder -> isObtainable(registries, holder.value()))
                 .orElse(true);
@@ -55,7 +55,7 @@ public final class MoltenAvailability {
         return switch (material) {
             case "clay", "slime", "nether_star" -> true;
             case "ender" -> tagHasItems(items, EMDatagenTags.cItem("ender_pearls"));
-            case "pink_slime" -> itemExists(items, ResourceLocation.fromNamespaceAndPath("industrialforegoing", "pink_slime"));
+            case "pink_slime" -> itemExists(items, Identifier.fromNamespaceAndPath("industrialforegoing", "pink_slime"));
             default -> false;
         };
     }
@@ -64,7 +64,7 @@ public final class MoltenAvailability {
         return items.get(tag).filter(set -> set.size() > 0).isPresent();
     }
 
-    private static boolean itemExists(HolderLookup.RegistryLookup<Item> items, ResourceLocation id) {
+    private static boolean itemExists(HolderLookup.RegistryLookup<Item> items, Identifier id) {
         return items.get(ResourceKey.create(Registries.ITEM, id)).isPresent();
     }
 }

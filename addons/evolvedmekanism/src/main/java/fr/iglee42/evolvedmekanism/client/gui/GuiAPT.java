@@ -4,7 +4,6 @@ import fr.iglee42.evolvedmekanism.client.bars.GuiCustomDynamicHorizontalRateBar;
 import fr.iglee42.evolvedmekanism.config.EMConfig;
 import fr.iglee42.evolvedmekanism.multiblock.apt.APTMultiblockData;
 import fr.iglee42.evolvedmekanism.multiblock.apt.TileEntityAPTCasing;
-import fr.iglee42.evolvedmekanism.recipeviewers.EMRecipeViewersTypes;
 import mekanism.client.gui.GuiMekanismTile;
 import mekanism.client.gui.element.GuiInnerScreen;
 import mekanism.client.gui.element.bar.GuiBar.IBarInfoHandler;
@@ -16,7 +15,7 @@ import mekanism.common.MekanismLang;
 import mekanism.common.inventory.container.tile.MekanismTileContainer;
 import mekanism.common.util.text.EnergyDisplay;
 import mekanism.common.util.text.TextUtils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -27,9 +26,8 @@ import java.util.List;
 public class GuiAPT extends GuiMekanismTile<TileEntityAPTCasing, MekanismTileContainer<TileEntityAPTCasing>> {
 
     public GuiAPT(MekanismTileContainer<TileEntityAPTCasing> container, Inventory inv, Component title) {
-        super(container, inv, title);
+        super(container, inv, title, DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT + 16);
         dynamicSlots = true;
-        imageHeight += 16;
         inventoryLabelY = imageHeight - 92;
     }
 
@@ -40,7 +38,7 @@ public class GuiAPT extends GuiMekanismTile<TileEntityAPTCasing, MekanismTileCon
             long using = tile.getMultiblock().progress > 0 ? EMConfig.general.aptEnergyConsumption.getOrDefault() : 0;
             return List.of(MekanismLang.USING.translate(EnergyDisplay.of(using)));
         }));
-        addRenderableWidget(new GuiChemicalGauge(() -> tile.getMultiblock().inputTank, () -> tile.getMultiblock().getChemicalTanks(null), GaugeType.STANDARD, this, 7, 17));
+        addRenderableWidget(new GuiChemicalGauge(() -> tile.getMultiblock().inputTank, () -> tile.getMultiblock().getChemicalTanks(), GaugeType.STANDARD, this, 7, 17));
         addRenderableWidget(new GuiCustomDynamicHorizontalRateBar(this, new IBarInfoHandler() {
             @Override
             public Component getTooltip() {
@@ -63,14 +61,14 @@ public class GuiAPT extends GuiMekanismTile<TileEntityAPTCasing, MekanismTileCon
                 list.add(MekanismLang.USING.translate(EnergyDisplay.of(EMConfig.general.aptEnergyConsumption.getOrDefault())));
             }
             return list;
-        }).recipeViewerCategories(EMRecipeViewersTypes.APT));
+        })/* TODO(26.3 port): .recipeViewerCategories(EMRecipeViewersTypes.APT) once recipeviewers is ported */);
 
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void drawForegroundText(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         renderTitleText(guiGraphics);
         renderInventoryText(guiGraphics);
-        super.drawForegroundText(guiGraphics, mouseX, mouseY);
+        super.drawForegroundText(guiGraphics, mouseX, mouseY, partialTicks);
     }
 }

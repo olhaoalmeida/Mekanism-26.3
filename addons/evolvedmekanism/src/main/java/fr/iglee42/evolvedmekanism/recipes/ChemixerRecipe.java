@@ -1,78 +1,108 @@
 package fr.iglee42.evolvedmekanism.recipes;
 
+import fr.iglee42.evolvedmekanism.EvolvedMekanism;
 import fr.iglee42.evolvedmekanism.recipes.vanilla_input.BiItemChemicalRecipeInput;
-import mekanism.api.annotations.NothingNullByDefault;
+import fr.iglee42.evolvedmekanism.registries.EMRecipeType;
+import java.util.List;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.recipes.MekanismRecipe;
+import mekanism.api.recipes.book.InjectingBookCategory;
+import mekanism.api.recipes.book.InjectingBookCategory.InjectingBookInfo;
+import mekanism.api.recipes.display.recipe.InjectingRecipeDisplay;
 import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.PlacementInfo;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.TriPredicate;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+/**
+ * Main Input: ItemStack
+ * <br>
+ * Secondary Input: ItemStack
+ * <br>
+ * Chemical Input: Chemical
+ * <br>
+ * Output: ItemStack
+ *
+ * @apiNote Chemixers can process this recipe type.
+ */
+@NullMarked
+public abstract class ChemixerRecipe extends MekanismRecipe<BiItemChemicalRecipeInput, InjectingBookCategory, InjectingBookInfo> implements TriPredicate<ItemStack, ItemStack, ChemicalStack> {
 
-@NothingNullByDefault
-public abstract class ChemixerRecipe extends MekanismRecipe<BiItemChemicalRecipeInput> implements TriPredicate<@NotNull ItemStack, @NotNull ItemStack, @NotNull ChemicalStack> {
+    private static final Holder<Item> STATION = DeferredHolder.create(Registries.ITEM, Identifier.fromNamespaceAndPath(EvolvedMekanism.MODID, "chemixer"));
 
-    private final ItemStackIngredient inputMain;
-    private final ItemStackIngredient inputExtra;
-    private final ChemicalStackIngredient inputGas;
-    private final ItemStack outputItem;
-
-    public ChemixerRecipe(ItemStackIngredient inputMain, ItemStackIngredient inputExtra, ChemicalStackIngredient inputGas, ItemStack outputItem) {
-        this.inputMain = Objects.requireNonNull(inputMain, "Item input cannot be null.");
-        this.inputExtra = Objects.requireNonNull(inputExtra, "Extra input cannot be null.");
-        this.inputGas = Objects.requireNonNull(inputGas, "Gas input cannot be null.");
-        Objects.requireNonNull(outputItem, "Item output cannot be null.");
-        this.outputItem = outputItem.copy();
+    protected ChemixerRecipe(Recipe.CommonInfo commonInfo, InjectingBookInfo bookInfo) {
+        super(commonInfo, bookInfo, 0F);
     }
 
-    public ItemStackIngredient getInputMain() {
-        return inputMain;
-    }
+    public abstract ItemStackIngredient getInputMain();
 
-    public ItemStackIngredient getInputExtra() {
-        return inputExtra;
-    }
+    public abstract ItemStackIngredient getInputExtra();
 
-    public ChemicalStackIngredient getInputGas() {
-        return inputGas;
-    }
-
+    public abstract ChemicalStackIngredient getInputGas();
 
     @Override
     public boolean test(ItemStack solid, ItemStack extra, ChemicalStack gas) {
-        return this.inputMain.test(solid) && this.inputExtra.test(extra) && this.inputGas.test(gas);
+        return getInputMain().test(solid) && getInputExtra().test(extra) && getInputGas().test(gas);
     }
 
     @Contract(value = "_, _, _ -> new", pure = true)
-    public ItemStack getOutput(@NotNull ItemStack input, @NotNull ItemStack extra, @NotNull ChemicalStack gas) {
-        return outputItem.copy();
-    }
+    public abstract ItemStackTemplate getOutput(ItemStack input, ItemStack extra, ChemicalStack gas);
 
-    public ItemStack getOutputRaw(){
-        return outputItem.copy();
-    }
+    public abstract List<ItemStackTemplate> getOutputDefinition();
+
+    public abstract SlotDisplay getOutputDisplay();
 
     @Override
-    public boolean isIncomplete() {
-        return inputMain.hasNoMatchingInstances() || inputExtra.hasNoMatchingInstances() || inputGas.hasNoMatchingInstances();
-    }
-
-    public List<ItemStack> getOutputDefinition() {
-        return Collections.singletonList(outputItem);
+    public ItemStack assemble(BiItemChemicalRecipeInput input) {
+        if (!isIncomplete() && test(input.item(), input.extra(), input.chemical())) {
+            return getOutput(input.item(), input.extra(), input.chemical()).create();
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
     public boolean matches(BiItemChemicalRecipeInput input, Level level) {
-        //Don't match incomplete recipes or ones that don't match
-        return !isIncomplete() && test(input.item(),input.extra(),input.chemical());
+        return !isIncomplete() && test(input.item(), input.extra(), input.chemical());
     }
 
+    public boolean isIncomplete() {
+        return getInputMain().hasNoMatchingInstances() || getInputExtra().hasNoMatchingInstances() || getInputGas().hasNoMatchingInstances();
+    }
+
+    @Override
+    public void logMissingTags() {
+        getInputMain().logMissingTags();
+        getInputExtra().logMissingTags();
+        getInputGas().logMissingTags();
+    }
+
+    @Override
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public RecipeType<ChemixerRecipe> getType() {
+        return EMRecipeType.CHEMIXING.value();
+    }
+
+    @Override
+    public List<RecipeDisplay> display() {
+        return List.of(new InjectingRecipeDisplay(getInputMain().display(), getInputGas().display(), false, experience(), getOutputDisplay(),
+              new SlotDisplay.ItemSlotDisplay(STATION)));
+    }
 }

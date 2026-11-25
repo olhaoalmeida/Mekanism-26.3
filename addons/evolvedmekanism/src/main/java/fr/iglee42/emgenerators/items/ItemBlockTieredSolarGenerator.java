@@ -8,7 +8,7 @@ import mekanism.common.item.block.ItemBlockTooltip;
 import mekanism.generators.common.content.blocktype.Generator;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemBlockTieredSolarGenerator extends ItemBlockTooltip<BlockTile.BlockTileModel<TileEntityTieredAdvancedSolarGenerator, Generator<TileEntityTieredAdvancedSolarGenerator>>> {
+public class ItemBlockTieredSolarGenerator extends ItemBlockTooltip {
 
     public ItemBlockTieredSolarGenerator(BlockTile.BlockTileModel<TileEntityTieredAdvancedSolarGenerator, Generator<TileEntityTieredAdvancedSolarGenerator>> block,Properties props) {
         super(block,props);

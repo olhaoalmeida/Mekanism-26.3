@@ -6,7 +6,6 @@ import fr.iglee42.evolvedmekanism.inventory.personalstorage.TieredPersonalStorag
 import fr.iglee42.evolvedmekanism.inventory.personalstorage.TieredPersonalStorageManager;
 import fr.iglee42.evolvedmekanism.items.ItemBlockTieredPersonalStorage;
 import fr.iglee42.evolvedmekanism.registries.EMLootFunctions;
-import mekanism.api.annotations.ParametersAreNotNullByDefault;
 import mekanism.api.inventory.IInventorySlot;
 import mekanism.common.lib.inventory.personalstorage.ClientSidePersonalStorageInventory;
 import mekanism.common.lib.inventory.personalstorage.PersonalStorageManager;
@@ -28,7 +27,6 @@ import java.util.Set;
  * Loot function which copies the Personal Storage inventory to the saved data and adds an inv id to the stack
  */
 @MethodsReturnNonnullByDefault
-@ParametersAreNotNullByDefault
 public class PersonalTieredStorageContentsLootFunction implements LootItemFunction {
 
     public static final PersonalTieredStorageContentsLootFunction INSTANCE = new PersonalTieredStorageContentsLootFunction();

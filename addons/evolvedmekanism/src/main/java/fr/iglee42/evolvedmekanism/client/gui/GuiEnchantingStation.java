@@ -12,6 +12,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.neoforged.neoforge.network.PacketDistributor;
 import mekanism.client.gui.GuiMekanismTile;
 import mekanism.client.gui.element.bar.GuiChemicalBar;
+import mekanism.client.gui.element.bar.GuiTankBar;
 import mekanism.client.gui.element.bar.GuiVerticalPowerBar;
 import mekanism.client.gui.element.button.MekanismButton;
 import mekanism.client.gui.element.button.MekanismImageButton;
@@ -20,6 +21,7 @@ import mekanism.client.gui.element.progress.GuiProgress;
 import mekanism.client.gui.element.progress.ProgressType;
 import mekanism.client.gui.element.scroll.GuiModuleScrollList;
 import mekanism.client.gui.element.tab.GuiEnergyTab;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismLang;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.common.inventory.container.tile.MekanismTileContainer;
@@ -28,7 +30,7 @@ import mekanism.common.network.PacketUtils;
 import mekanism.common.network.to_server.PacketRemoveModule;
 import mekanism.common.tile.TileEntityModificationStation;
 import mekanism.common.util.MekanismUtils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -43,47 +45,46 @@ public class GuiEnchantingStation extends GuiMekanismTile<TileEntityEnchantingSt
     private MekanismButton minusButton;
 
     public GuiEnchantingStation(MekanismTileContainer<TileEntityEnchantingStation> container, Inventory inv, Component title) {
-        super(container, inv, title);
+        super(container, inv, title, DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT + 64);
         dynamicSlots = true;
-        imageHeight += 64;
         inventoryLabelY = imageHeight - 92;
     }
 
     @Override
     protected void addGuiElements() {
         super.addGuiElements();
-        addRenderableWidget(new GuiVerticalPowerBar(this, tile.getEnergyContainer(), 156, 40))
+        addRenderableWidget(new GuiVerticalPowerBar(this, tile.energyContainer(), 156, 40))
               .warning(WarningType.NOT_ENOUGH_ENERGY, () -> {
-                  MachineEnergyContainer<TileEntityEnchantingStation> energyContainer = tile.getEnergyContainer();
+                  MachineEnergyContainer<TileEntityEnchantingStation> energyContainer = tile.energyContainer();
                   return energyContainer.getEnergyPerTick() > energyContainer.getEnergy();
               });
-        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::usedEnergy));
+        addRenderableWidget(new GuiEnergyTab(this, tile.energyContainer(), tile::usedEnergy));
         addRenderableWidget(new GuiProgress(tile::getScaledProgress, ProgressType.LARGE_RIGHT, this, 65, 123));
         enchantmentList = addRenderableWidget(new GuiEnchantmentsScrollList(this, 28, 20, 74, () -> tile.containerSlot.getStack().copy()));
 
-        setButton = addRenderableWidget(new TranslationButton(this, 28, 96, 86, 17, EvolvedMekanismLang.BUTTON_APPLY_ENCHANTMENTS, (element, mouseX, mouseY) -> {
+        setButton = addRenderableWidget(new TranslationButton(this, 28, 96, 86, 17, EvolvedMekanismLang.BUTTON_APPLY_ENCHANTMENTS, (element, event, isDoubleClick) -> {
             GuiEnchantingStation gui = (GuiEnchantingStation) element.gui();
             if (gui.enchantmentList.hasChanges()) {
-                PacketDistributor.sendToServer(new PacketApplyEnchantments(gui.tile.getBlockPos(), new HashMap<>(gui.enchantmentList.getPendingLevels())));
+                PacketUtils.sendToServer(new PacketApplyEnchantments(gui.tile.getBlockPos(), new HashMap<>(gui.enchantmentList.getPendingLevels())));
             }
             return true;
         }));
 
-        plusButton = addRenderableWidget(new MekanismImageButton(this, 114, 96, 17, 17, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_BUTTON, "up.png"), (element, mouseX, mouseY) -> {
-            ((GuiEnchantingStation) element.gui()).enchantmentList.stepSelected(1, hasShiftDown());
+        plusButton = addRenderableWidget(new MekanismImageButton(this, 114, 96, 17, 17, Mekanism.rl("button/up"), (element, event, isDoubleClick) -> {
+            ((GuiEnchantingStation) element.gui()).enchantmentList.stepSelected(1, event.hasShiftDown());
             return true;
         }));
 
-        minusButton = addRenderableWidget(new MekanismImageButton(this, 131, 96, 17, 17, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_BUTTON, "down.png"), (element, mouseX, mouseY) -> {
-            ((GuiEnchantingStation) element.gui()).enchantmentList.stepSelected(-1, hasShiftDown());
+        minusButton = addRenderableWidget(new MekanismImageButton(this, 131, 96, 17, 17, Mekanism.rl("button/down"), (element, event, isDoubleClick) -> {
+            ((GuiEnchantingStation) element.gui()).enchantmentList.stepSelected(-1, event.hasShiftDown());
             return true;
         }));
-        addRenderableWidget(new GuiChemicalBar(this, GuiChemicalBar.getProvider(tile.getChemicalTank(), tile.getChemicalTanks(null)), 35,117 ,16,16, false));
+        addRenderableWidget(new GuiChemicalBar(this, GuiTankBar.getProvider(tile.getChemicalTank(), tile.getChemicalTanks()), 35,117 ,16,16, false));
     }
 
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void drawForegroundText(@NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         long chemicalCost = tile.calculateChemicalCost(enchantmentList.getPendingLevels());
         setButton.active = enchantmentList.hasChanges() && tile.operatingTicks == 0 && chemicalCost <= tile.getChemicalTank().getStored();
         if (setButton.active) {
@@ -97,6 +98,6 @@ public class GuiEnchantingStation extends GuiMekanismTile<TileEntityEnchantingSt
         minusButton.active = enchantmentList.canChangeSelected(-1);
         renderTitleTextWithOffset(guiGraphics, 24);
         renderInventoryText(guiGraphics);
-        super.drawForegroundText(guiGraphics, mouseX, mouseY);
+        super.drawForegroundText(guiGraphics, mouseX, mouseY, partialTicks);
     }
 }

@@ -1,6 +1,6 @@
 package fr.iglee42.evolvedmekanism.recipes.vanilla_input;
 
-import mekanism.api.annotations.NothingNullByDefault;
+import org.jspecify.annotations.NullMarked;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.recipes.vanilla_input.ItemChemicalRecipeInput;
 import net.minecraft.world.item.ItemStack;
@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
  *
  * @since 10.6.0
  */
-@NothingNullByDefault
+@NullMarked
 public record BiItemChemicalRecipeInput(ItemStack item, ItemStack extra, ChemicalStack chemical) implements ItemChemicalRecipeInput {
 
     @Override
@@ -56,9 +56,9 @@ public record BiItemChemicalRecipeInput(ItemStack item, ItemStack extra, Chemica
     public int hashCode() {
         int hash = chemical.hashCode();
         hash = 31 * hash + ItemStack.hashItemAndComponents(item);
-        hash = 31 + hash + item.getCount();
+        hash = 31 + hash + item.count();
         hash = 31 * hash + ItemStack.hashItemAndComponents(extra);
-        hash = 31 + hash + extra.getCount();
+        hash = 31 + hash + extra.count();
         return hash;
     }
 }

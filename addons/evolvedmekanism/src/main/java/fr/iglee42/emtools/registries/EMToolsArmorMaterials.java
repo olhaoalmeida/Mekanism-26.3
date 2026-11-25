@@ -10,7 +10,7 @@ import fr.iglee42.evolvedmekanism.EvolvedMekanism;
 import mekanism.common.util.EnumUtils;
 import mekanism.tools.common.material.BaseMekanismMaterial;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -28,7 +28,7 @@ public class EMToolsArmorMaterials {
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> REFINED_REDSTONE = ARMOR_MATERIALS.register("refined_redstone", name -> createMaterial(name, EvolvedMekanismToolsConfig.materials.refinedRedstone));
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> NOCTIS_ROZULI = ARMOR_MATERIALS.register("noctis_rozuli", name -> createMaterial(name, EvolvedMekanismToolsConfig.materials.noctisRozuli));
 
-    private static ArmorMaterial createMaterial(ResourceLocation name, BaseMekanismMaterial material) {
+    private static ArmorMaterial createMaterial(Identifier name, BaseMekanismMaterial material) {
         EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
         for (ArmorItem.Type type : EnumUtils.ARMOR_TYPES) {
             int providedDefense = material.getDefense(type);

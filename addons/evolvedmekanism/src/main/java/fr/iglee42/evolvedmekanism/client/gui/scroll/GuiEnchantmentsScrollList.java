@@ -11,24 +11,20 @@ import java.util.function.Supplier;
 import mekanism.client.gui.IGuiWrapper;
 import mekanism.client.gui.element.GuiElementHolder;
 import mekanism.client.gui.element.scroll.GuiInstallableScrollList;
-import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jetbrains.annotations.Nullable;
 
 
 public class GuiEnchantmentsScrollList extends GuiInstallableScrollList<Pair<Holder<Enchantment>, Integer>> {
-
-    private static final ResourceLocation MODULE_SELECTION = MekanismUtils.getResource(ResourceType.GUI, "module_selection.png");
 
     private final Supplier<ItemStack> itemSupplier;
     private ItemStack currentItem = ItemStack.EMPTY;
@@ -40,7 +36,7 @@ public class GuiEnchantmentsScrollList extends GuiInstallableScrollList<Pair<Hol
     private Holder<Enchantment> selectedEnchantment;
 
     public GuiEnchantmentsScrollList(IGuiWrapper gui, int x, int y, int height, Supplier<ItemStack> itemSupplier) {
-        super(gui, x, y, height, GuiElementHolder.HOLDER, GuiElementHolder.HOLDER_SIZE, MODULE_SELECTION, 112, 36);
+        super(gui, x, y, 120, height, GuiElementHolder.HOLDER);
         this.itemSupplier = itemSupplier;
         updateItemAndList(itemSupplier.get());
     }
@@ -175,11 +171,11 @@ public class GuiEnchantmentsScrollList extends GuiInstallableScrollList<Pair<Hol
     }
 
     @Override
-    protected void drawName(GuiGraphics guiGraphics, Pair<Holder<Enchantment>, Integer> enchantment, int y) {
+    protected void drawName(GuiGraphicsExtractor guiGraphics, Pair<Holder<Enchantment>, Integer> enchantment, int y) {
         boolean enabled = enchantment.getSecond() > 0;
         boolean blocked = isBlocked(enchantment.getFirst());
         boolean curse = EMEnchantmentHelper.isCurse(enchantment.getFirst());
-        int color = curse ? (enabled ? 0xFF5555 : 0xAA4444) : (blocked ? 0x5E1D1D : (enabled ? titleTextColor() : 0x7F7F7F));
+        int color = curse ? (enabled ? 0xFFFF5555 : 0xFFAA4444) : (blocked ? 0xFF5E1D1D : (enabled ? titleTextColor() : 0xFF7F7F7F));
         Component name = enabled ? Enchantment.getFullname(enchantment.getFirst(), enchantment.getSecond()).copy().withStyle(ChatFormatting.RESET)
                 : enchantment.getFirst().value().description().copy().withStyle(ChatFormatting.RESET);
         drawNameText(guiGraphics, y, name, color, 0.7F);
@@ -187,13 +183,17 @@ public class GuiEnchantmentsScrollList extends GuiInstallableScrollList<Pair<Hol
 
     @Override
     protected ItemStack getRenderStack(Pair<Holder<Enchantment>, Integer> enchantment) {
-        return EnchantedBookItem.createForEnchantment(new EnchantmentInstance(enchantment.getFirst(), Math.max(1, enchantment.getSecond())));
+        ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
+        ItemEnchantments.Mutable enchantments = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+        enchantments.set(enchantment.getFirst(), Math.max(1, enchantment.getSecond()));
+        book.set(DataComponents.STORED_ENCHANTMENTS, enchantments.toImmutable());
+        return book;
     }
 
     @Override
-    public void renderForeground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    public void renderForeground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         recheckItem();
-        super.renderForeground(guiGraphics, mouseX, mouseY);
+        super.renderForeground(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     @Override

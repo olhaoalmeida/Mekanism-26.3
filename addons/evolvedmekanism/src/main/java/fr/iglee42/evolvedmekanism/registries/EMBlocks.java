@@ -32,20 +32,25 @@ import fr.iglee42.evolvedmekanism.utils.EMVanillaMekanism;
 import mekanism.api.gear.IModuleHelper;
 import mekanism.api.tier.AlloyTier;
 import mekanism.api.tier.ITier;
-import Nonemekanism.common.component.FilterAware;
-import Nonemekanism.common.component.component.AttachedEjector;
-import Nonemekanism.common.component.component.AttachedSideConfig;
-import Nonemekanism.common.component.containers.type.ContainerType;
-import Nonemekanism.common.component.containers.chemical.ChemicalTanksBuilder;
-import Nonemekanism.common.component.containers.chemical.ComponentBackedChemicalTankTank;
-import Nonemekanism.common.component.containers.fluid.ComponentBackedFluidTankFluidTank;
-import Nonemekanism.common.component.containers.fluid.FluidTanksBuilder;
-import mekanism.common.attachments.containers.heat.HeatCapacitorsBuilder;
-import Nonemekanism.common.component.containers.item.ComponentBackedBinInventorySlot;
-import Nonemekanism.common.component.containers.item.ItemSlotsBuilder;
+import mekanism.common.component.FilterAware;
+import mekanism.common.component.component.AttachedEjector;
+import mekanism.common.component.component.AttachedSideConfig;
+import mekanism.common.component.containers.type.ContainerType;
+import mekanism.common.component.containers.chemical.ChemicalTanksBuilder;
+import mekanism.common.component.containers.chemical.ComponentBackedChemicalTankTank;
+import mekanism.common.component.containers.fluid.ComponentBackedFluidTankFluidTank;
+import mekanism.common.component.containers.fluid.FluidTanksBuilder;
+import mekanism.common.component.containers.heat.HeatCapacitorBuilder;
+import mekanism.common.component.containers.item.ComponentBackedBinInventorySlot;
+import mekanism.common.component.containers.item.ItemSlotsBuilder;
 import mekanism.common.block.BlockEnergyCube;
 import mekanism.common.block.BlockOre;
+import mekanism.common.block.attribute.AttributeFactoryType;
 import mekanism.common.block.attribute.AttributeTier;
+import mekanism.common.recipe.IMekanismRecipeTypeProvider;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.util.Unit;
 import mekanism.common.block.basic.BlockBin;
 import mekanism.common.block.basic.BlockFluidTank;
 import mekanism.common.block.interfaces.IHasDescription;
@@ -56,9 +61,7 @@ import mekanism.common.block.prefab.BlockTile;
 import mekanism.common.block.prefab.BlockTile.BlockTileModel;
 import mekanism.common.block.transmitter.*;
 import mekanism.common.content.blocktype.*;
-import mekanism.common.content.gear.IModuleItem;
 import mekanism.common.item.block.*;
-import mekanism.common.item.block.machine.ItemBlockFactory;
 import mekanism.common.item.block.machine.ItemBlockFluidTank;
 import mekanism.common.item.block.machine.ItemBlockLaserTractorBeam;
 import mekanism.common.item.block.transmitter.*;
@@ -108,7 +111,7 @@ public class EMBlocks {
     public static final BlockDeferredRegister BLOCKS = new BlockDeferredRegister(EvolvedMekanism.MODID);
     public static final DeferredRegister<Block> BLOCKS_NO_ITEMS = DeferredRegister.createBlocks(EvolvedMekanism.MODID);
 
-    private static final Table<FactoryTier, FactoryType, BlockRegistryObject<BlockFactory<?>, ItemBlockFactory>> FACTORIES = HashBasedTable.create();
+    private static final Table<FactoryTier, FactoryType, BlockRegistryObject<BlockFactory<?>, ItemBlockTooltip>> FACTORIES = HashBasedTable.create();
     public static final Map<EMOreType, EMOreBlockType> ORES = new LinkedHashMap<>();
 
     static {
@@ -130,25 +133,26 @@ public class EMBlocks {
 
         EMOreType ore = EMOreType.NOCTIS_ROZULI;
         String name = ore.getResource().getRegistrySuffix() + "_ore";
-        BlockRegistryObject<EMBlockOre, ItemBlockTooltip<EMBlockOre>> stoneOre = registerBlock(name, () -> new EMBlockOre(ore));
-        BlockRegistryObject<EMBlockOre, ItemBlockTooltip<EMBlockOre>> deepslateOre = BLOCKS.register("deepslate_" + name,
-                () -> new EMBlockOre(ore, BlockBehaviour.Properties.ofLegacyCopy(stoneOre.value()).mapColor(MapColor.DEEPSLATE)
+        BlockRegistryObject<EMBlockOre, ItemBlockTooltip> stoneOre = registerBlock(name, properties -> new EMBlockOre(ore, EMBlockOre.defaultProperties(properties)));
+        BlockRegistryObject<EMBlockOre, ItemBlockTooltip> deepslateOre = BLOCKS.register("deepslate_" + name, () -> BlockBehaviour.Properties.ofLegacyCopy(stoneOre.value()),
+                properties -> new EMBlockOre(ore, properties.mapColor(MapColor.DEEPSLATE)
                         .strength(4.5F, 3).sound(SoundType.DEEPSLATE)), ItemBlockTooltip::new);
-        BLOCKS_NO_ITEMS.register(name+"_natural", () -> new BlockNoctisRozuliOre(ore));
+        BLOCKS_NO_ITEMS.register(name+"_natural", key -> new BlockNoctisRozuliOre(ore, EMBlockOre.defaultProperties(BlockBehaviour.Properties.of().setId(key))));
         BLOCKS_NO_ITEMS.register("deepslate_" + name + "_natural",
-                () -> new BlockNoctisRozuliOre(ore, BlockBehaviour.Properties.ofLegacyCopy(stoneOre.value()).mapColor(MapColor.DEEPSLATE)
+                key -> new BlockNoctisRozuliOre(ore, BlockBehaviour.Properties.ofLegacyCopy(stoneOre.value()).setId(key).mapColor(MapColor.DEEPSLATE)
                         .strength(4.5F, 3).sound(SoundType.DEEPSLATE)));
 
 
         ORES.put(ore,new EMOreBlockType(stoneOre, deepslateOre));
     }
-    public static final BlockRegistryObject<BlockBasicMultiblock<TileEntityAPTCasing>, ItemBlockTooltip<BlockBasicMultiblock<TileEntityAPTCasing>>> APT_CASING = registerBlock("apt_casing", () -> new BlockBasicMultiblock<>(EMBlockTypes.APT_CASING, properties -> properties.mapColor(MapColor.COLOR_MAGENTA)), Rarity.EPIC);
-    public static final BlockRegistryObject<BlockBasicMultiblock<TileEntityAPTPort>, ItemBlockTooltip<BlockBasicMultiblock<TileEntityAPTPort>>> APT_PORT = registerBlock("apt_port", () -> new BlockBasicMultiblock<>(EMBlockTypes.APT_PORT, properties -> properties.mapColor(MapColor.COLOR_MAGENTA)), Rarity.EPIC);
-    public static final BlockRegistryObject<BlockTile<TileEntitySuperchargingElement, BlockTypeTile<TileEntitySuperchargingElement>>, ItemBlockTooltip<BlockTile<TileEntitySuperchargingElement, BlockTypeTile<TileEntitySuperchargingElement>>>> SUPERCHARGING_ELEMENT = registerBlock("supercharging_element", () -> new BlockTile<>(EMBlockTypes.SUPERCHARGING_ELEMENT, properties -> properties.mapColor(MapColor.COLOR_MAGENTA)));
+    public static final BlockRegistryObject<BlockBasicMultiblock<TileEntityAPTCasing>, ItemBlockTooltip> APT_CASING = registerBlock("apt_casing", properties -> new BlockBasicMultiblock<>(EMBlockTypes.APT_CASING, BlockBasicMultiblock.defaultProperties(properties).mapColor(MapColor.COLOR_MAGENTA)), Rarity.EPIC);
+    public static final BlockRegistryObject<BlockBasicMultiblock<TileEntityAPTPort>, ItemBlockTooltip> APT_PORT = registerBlock("apt_port", properties -> new BlockBasicMultiblock<>(EMBlockTypes.APT_PORT, BlockBasicMultiblock.defaultProperties(properties).mapColor(MapColor.COLOR_MAGENTA)), Rarity.EPIC);
+    public static final BlockRegistryObject<BlockTile<TileEntitySuperchargingElement, BlockTypeTile<TileEntitySuperchargingElement>>, ItemBlockTooltip> SUPERCHARGING_ELEMENT = registerBlock("supercharging_element", properties -> new BlockTile<>(EMBlockTypes.SUPERCHARGING_ELEMENT, BlockTile.defaultProperties(properties).mapColor(MapColor.COLOR_MAGENTA)));
 
 
-    public static final BlockRegistryObject<BlockFactoryMachine<TileEntityAlloyer, Machine.FactoryMachine<TileEntityAlloyer>>, ItemBlockTooltip<BlockFactoryMachine<TileEntityAlloyer, Machine.FactoryMachine<TileEntityAlloyer>>>> ALLOYER = BLOCKS.register("alloyer", () -> new BlockFactoryMachine<>(EMBlockTypes.ALLOYER, properties -> properties.mapColor(BlockResourceInfo.STEEL.getMapColor())),
-            (block, properties) -> new ItemBlockTooltip<>(block, true, properties
+    public static final BlockRegistryObject<BlockFactoryMachine<TileEntityAlloyer, Machine.FactoryMachine<TileEntityAlloyer>>, ItemBlockTooltip> ALLOYER = BLOCKS.register("alloyer", properties -> new BlockFactoryMachine<>(EMBlockTypes.ALLOYER, BlockTile.defaultProperties(properties).mapColor(BlockResourceInfo.STEEL.getMapColor())),
+            (block, properties) -> new ItemBlockTooltip(block, properties
+                    .component(MekanismDataComponents.DETAILS, Unit.INSTANCE)
                     .component(MekanismDataComponents.EJECTOR, AttachedEjector.DEFAULT)
                     .component(MekanismDataComponents.SIDE_CONFIG, AttachedSideConfig.EXTRA_MACHINE)
             )
@@ -161,8 +165,9 @@ public class EMBlocks {
             .build()
     ));
 
-    public static final BlockRegistryObject<BlockFactoryMachine<TileEntityFluidCombiner, Machine.FactoryMachine<TileEntityFluidCombiner>>, ItemBlockTooltip<BlockFactoryMachine<TileEntityFluidCombiner, Machine.FactoryMachine<TileEntityFluidCombiner>>>> FLUID_COMBINER = BLOCKS.register("fluid_combiner", () -> new BlockFactoryMachine<>(EMBlockTypes.FLUID_COMBINER, properties -> properties.mapColor(BlockResourceInfo.STEEL.getMapColor())),
-            (block, properties) -> new ItemBlockTooltip<>(block, true, properties
+    public static final BlockRegistryObject<BlockFactoryMachine<TileEntityFluidCombiner, Machine.FactoryMachine<TileEntityFluidCombiner>>, ItemBlockTooltip> FLUID_COMBINER = BLOCKS.register("fluid_combiner", properties -> new BlockFactoryMachine<>(EMBlockTypes.FLUID_COMBINER, BlockTile.defaultProperties(properties).mapColor(BlockResourceInfo.STEEL.getMapColor())),
+            (block, properties) -> new ItemBlockTooltip(block, properties
+                    .component(MekanismDataComponents.DETAILS, Unit.INSTANCE)
                     .component(MekanismDataComponents.EJECTOR, AttachedEjector.DEFAULT)
                     .component(MekanismDataComponents.SIDE_CONFIG, EMAttachedSideConfig.FLUID_COMBINER_MACHINE)
             )
@@ -180,8 +185,9 @@ public class EMBlocks {
                     .addEnergy()
                     .build()));
 
-    public static final BlockRegistryObject<BlockFactoryMachine<TileEntityFluidAlloyer, Machine.FactoryMachine<TileEntityFluidAlloyer>>, ItemBlockTooltip<BlockFactoryMachine<TileEntityFluidAlloyer, Machine.FactoryMachine<TileEntityFluidAlloyer>>>> FLUID_ALLOYER = BLOCKS.register("fluid_alloyer", () -> new BlockFactoryMachine<>(EMBlockTypes.FLUID_ALLOYER, properties -> properties.mapColor(BlockResourceInfo.STEEL.getMapColor())),
-            (block, properties) -> new ItemBlockTooltip<>(block, true, properties
+    public static final BlockRegistryObject<BlockFactoryMachine<TileEntityFluidAlloyer, Machine.FactoryMachine<TileEntityFluidAlloyer>>, ItemBlockTooltip> FLUID_ALLOYER = BLOCKS.register("fluid_alloyer", properties -> new BlockFactoryMachine<>(EMBlockTypes.FLUID_ALLOYER, BlockTile.defaultProperties(properties).mapColor(BlockResourceInfo.STEEL.getMapColor())),
+            (block, properties) -> new ItemBlockTooltip(block, properties
+                    .component(MekanismDataComponents.DETAILS, Unit.INSTANCE)
                     .component(MekanismDataComponents.EJECTOR, AttachedEjector.DEFAULT)
                     .component(MekanismDataComponents.SIDE_CONFIG, EMAttachedSideConfig.FLUID_ALLOYER_MACHINE)
             )
@@ -201,9 +207,10 @@ public class EMBlocks {
                     .addEnergy()
                     .build()));
 
-    public static final BlockRegistryObject<BlockTileModel<TileEntityChemixer, Machine<TileEntityChemixer>>, ItemBlockTooltip<BlockTileModel<TileEntityChemixer, Machine<TileEntityChemixer>>>> CHEMIXER =
-            BLOCKS.register("chemixer", () -> new BlockTileModel<>(EMBlockTypes.CHEMIXER, properties -> properties.mapColor(BlockResourceInfo.STEEL.getMapColor())),
-                    (block, properties) -> new ItemBlockTooltip<>(block, true, properties
+    public static final BlockRegistryObject<BlockTileModel<TileEntityChemixer, Machine<TileEntityChemixer>>, ItemBlockTooltip> CHEMIXER =
+            BLOCKS.register("chemixer", properties -> new BlockTileModel<>(EMBlockTypes.CHEMIXER, BlockTile.defaultProperties(properties).mapColor(BlockResourceInfo.STEEL.getMapColor())),
+                    (block, properties) -> new ItemBlockTooltip(block, properties
+                    .component(MekanismDataComponents.DETAILS, Unit.INSTANCE)
                             .component(MekanismDataComponents.EJECTOR, AttachedEjector.DEFAULT)
                             .component(MekanismDataComponents.SIDE_CONFIG, EMAttachedSideConfig.CHEMIXER_MACHINE)
                     )).forItemHolder(holder -> holder
@@ -218,16 +225,17 @@ public class EMBlocks {
                             .build()
                     )
             );
-    public static final BlockRegistryObject<BlockTileModel<TileEntityMelter, Machine<TileEntityMelter>>,  ItemBlockTooltip<BlockTileModel<TileEntityMelter, Machine<TileEntityMelter>>>> MELTER =
-            BLOCKS.register("thermalizer", () -> new BlockTileModel<>(EMBlockTypes.MELTER, properties -> properties.mapColor(BlockResourceInfo.STEEL.getMapColor())),
-                    (block, properties) -> new ItemBlockTooltip<>(block, true, properties
+    public static final BlockRegistryObject<BlockTileModel<TileEntityMelter, Machine<TileEntityMelter>>,  ItemBlockTooltip> MELTER =
+            BLOCKS.register("thermalizer", properties -> new BlockTileModel<>(EMBlockTypes.MELTER, BlockTile.defaultProperties(properties).mapColor(BlockResourceInfo.STEEL.getMapColor())),
+                    (block, properties) -> new ItemBlockTooltip(block, properties
+                    .component(MekanismDataComponents.DETAILS, Unit.INSTANCE)
                             .component(MekanismDataComponents.EJECTOR, AttachedEjector.DEFAULT)
                             .component(MekanismDataComponents.SIDE_CONFIG, EMAttachedSideConfig.MELTER_MACHINE)
                     )).forItemHolder(holder -> holder
                     .addAttachmentOnlyContainers(ContainerType.FLUID, () -> FluidTanksBuilder.builder()
                             .addBasic(TileEntityMelter.MAX_FLUID)
                             .build()
-                    ).addAttachmentOnlyContainers(ContainerType.HEAT, () -> HeatCapacitorsBuilder.builder()
+                    ).addAttachmentOnlyContainers(ContainerType.HEAT, () -> HeatCapacitorBuilder.builder()
                             .addBasic(10,5,100)
                             .build()
                     ).addAttachmentOnlyContainers(ContainerType.ITEM, () -> ItemSlotsBuilder.builder()
@@ -237,9 +245,10 @@ public class EMBlocks {
                             .build()
                     )
             );
-    public static final BlockRegistryObject<BlockTileModel<TileEntitySolidifier, Machine<TileEntitySolidifier>>,   ItemBlockTooltip<BlockTileModel<TileEntitySolidifier, Machine<TileEntitySolidifier>>>> SOLIDIFIER =
-            BLOCKS.register("solidification_chamber", () -> new BlockTileModel<>(EMBlockTypes.SOLIDIFIER, properties -> properties.mapColor(BlockResourceInfo.STEEL.getMapColor())),
-                    (block, properties) -> new ItemBlockTooltip<>(block, true, properties
+    public static final BlockRegistryObject<BlockTileModel<TileEntitySolidifier, Machine<TileEntitySolidifier>>,   ItemBlockTooltip> SOLIDIFIER =
+            BLOCKS.register("solidification_chamber", properties -> new BlockTileModel<>(EMBlockTypes.SOLIDIFIER, BlockTile.defaultProperties(properties).mapColor(BlockResourceInfo.STEEL.getMapColor())),
+                    (block, properties) -> new ItemBlockTooltip(block, properties
+                    .component(MekanismDataComponents.DETAILS, Unit.INSTANCE)
                             .component(MekanismDataComponents.EJECTOR, AttachedEjector.DEFAULT)
                             .component(MekanismDataComponents.SIDE_CONFIG, EMAttachedSideConfig.SOLIDIFICATION_MACHINE)
                     )).forItemHolder(holder -> holder
@@ -254,9 +263,10 @@ public class EMBlocks {
                             .build()
                     ));
 
-    public static final BlockRegistryObject<BlockTileModel<TileEntityLunarNeutronActivator, Machine<TileEntityLunarNeutronActivator>>, ItemBlockTooltip<BlockTileModel<TileEntityLunarNeutronActivator, Machine<TileEntityLunarNeutronActivator>>>> LUNAR_NEUTRON_ACTIVATOR =
-            BLOCKS.register("lunar_neutron_activator", () -> new BlockTileModel<>(EMBlockTypes.LUNAR_NEUTRON_ACTIVATOR, properties -> properties.mapColor(MapColor.COLOR_PINK)),
-                    (block, properties) -> new ItemBlockTooltip<>(block, true, properties
+    public static final BlockRegistryObject<BlockTileModel<TileEntityLunarNeutronActivator, Machine<TileEntityLunarNeutronActivator>>, ItemBlockTooltip> LUNAR_NEUTRON_ACTIVATOR =
+            BLOCKS.register("lunar_neutron_activator", properties -> new BlockTileModel<>(EMBlockTypes.LUNAR_NEUTRON_ACTIVATOR, BlockTile.defaultProperties(properties).mapColor(MapColor.COLOR_PINK)),
+                    (block, properties) -> new ItemBlockTooltip(block, properties
+                    .component(MekanismDataComponents.DETAILS, Unit.INSTANCE)
                             .component(MekanismDataComponents.EJECTOR, AttachedEjector.DEFAULT)
                             .component(MekanismDataComponents.SIDE_CONFIG, AttachedSideConfig.SNA)
                     )
@@ -274,8 +284,7 @@ public class EMBlocks {
 
 
     public static final BlockRegistryObject<BlockTileModel<TileEntityLaserDisenchanter, BlockTypeTile<TileEntityLaserDisenchanter>>, ItemBlockLaserTractorBeam> LASER_DISENCHANTER =
-            BLOCKS.register("laser_disenchanter", () -> new BlockTileModel<>(EMBlockTypes.LASER_DISENCHANTER,
-                    properties -> properties.mapColor(MapColor.COLOR_GRAY)), ItemBlockLaserTractorBeam::new
+            BLOCKS.register("laser_disenchanter", properties -> new BlockTileModel<>(EMBlockTypes.LASER_DISENCHANTER, BlockTile.defaultProperties(properties).mapColor(MapColor.COLOR_GRAY)), ItemBlockLaserTractorBeam::new
             ).forItemHolder(holder -> holder.addAttachmentOnlyContainers(ContainerType.ITEM,() ->
                     ItemSlotsBuilder.builder()
                             .addOutput(2 * 6)
@@ -286,8 +295,8 @@ public class EMBlocks {
                             .addBasic(TileEntityLaserDisenchanter.MAX_GAS,stack->stack.is(EMChemicals.CRYONOCTIS))
                             .build()));
 
-    public static final BlockRegistryObject<BlockTileModel<TileEntityEnchantingStation, BlockTypeTile<TileEntityEnchantingStation>>, ItemBlockTooltip<BlockTileModel<TileEntityEnchantingStation, BlockTypeTile<TileEntityEnchantingStation>>>> ENCHANTING_STATION =
-            BLOCKS.registerDetails("enchanting_station", () -> new BlockTileModel<>(EMBlockTypes.ENCHANTING_STATION, properties -> properties.mapColor(BlockResourceInfo.STEEL.getMapColor())))
+    public static final BlockRegistryObject<BlockTileModel<TileEntityEnchantingStation, BlockTypeTile<TileEntityEnchantingStation>>, ItemBlockTooltip> ENCHANTING_STATION =
+            BLOCKS.registerDetails("enchanting_station", properties -> new BlockTileModel<>(EMBlockTypes.ENCHANTING_STATION, BlockTile.defaultProperties(properties).mapColor(BlockResourceInfo.STEEL.getMapColor())))
                     .forItemHolder(holder ->
                             holder.addAttachmentOnlyContainers(ContainerType.ITEM,
                                     () -> ItemSlotsBuilder.builder()
@@ -300,9 +309,10 @@ public class EMBlocks {
                                             .addBasic(TileEntityEnchantingStation.MAX_GAS, stack -> stack.is(EMChemicals.CRYONOCTIS))
                                             .build()));
 
-    public static final BlockRegistryObject<BlockTile<TileEntityEnchantmentSorter, BlockTypeTile<TileEntityEnchantmentSorter>>, ItemBlockTooltip<BlockTile<TileEntityEnchantmentSorter, BlockTypeTile<TileEntityEnchantmentSorter>>>> SORTIFICHANTOR =
-            BLOCKS.register("sortifichantor", () -> new BlockTile<>(EMBlockTypes.SORTIFICHANTOR, properties -> properties.mapColor(BlockResourceInfo.STEEL.getMapColor())),
-                    (block, properties) -> new ItemBlockTooltip<>(block, true, properties
+    public static final BlockRegistryObject<BlockTile<TileEntityEnchantmentSorter, BlockTypeTile<TileEntityEnchantmentSorter>>, ItemBlockTooltip> SORTIFICHANTOR =
+            BLOCKS.register("sortifichantor", properties -> new BlockTile<>(EMBlockTypes.SORTIFICHANTOR, BlockTile.defaultProperties(properties).mapColor(BlockResourceInfo.STEEL.getMapColor())),
+                    (block, properties) -> new ItemBlockTooltip(block, properties
+                    .component(MekanismDataComponents.DETAILS, Unit.INSTANCE)
                             .component(MekanismDataComponents.FILTER_AWARE, FilterAware.EMPTY)
                             .component(MekanismDataComponents.EJECTOR, AttachedEjector.DEFAULT)
                             .component(MekanismDataComponents.SIDE_CONFIG, new AttachedSideConfig(Map.of(TransmissionType.ITEM, EMAttachedSideConfig.SORTER_MACHINE)))
@@ -410,34 +420,30 @@ public class EMBlocks {
 
     private static void registerOre(OreType ore) {
         String name = ore.getResource().getRegistrySuffix() + "_ore";
-        BlockRegistryObject<BlockOre, ItemBlockTooltip<BlockOre>> nether = registerBlock("netherrack_"+name, () -> new BlockOre(ore,BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERRACK)));
-        BlockRegistryObject<BlockOre, ItemBlockTooltip<BlockOre>> endStone = registerBlock("end_stone_" + name,
-                () -> new BlockOre(ore, BlockBehaviour.Properties.ofFullCopy(Blocks.END_STONE)));
-        BlockRegistryObject<BlockOre, ItemBlockTooltip<BlockOre>> aether = registerBlock("holystone_" + name,
-                () -> new BlockOre(ore, BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.WOOL).instrument(NoteBlockInstrument.BASEDRUM).strength(3.0F).requiresCorrectToolForDrops()));
-        BlockRegistryObject<BlockOre, ItemBlockTooltip<BlockOre>> undergarden = registerBlock("depthrock_" + name,
-                () -> new BlockOre(ore, BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).instrument(NoteBlockInstrument.BASEDRUM).mapColor(MapColor.TERRACOTTA_LIGHT_GREEN).strength(1.5F, 6.0F).sound(SoundType.BASALT).requiresCorrectToolForDrops()));
-        BlockRegistryObject<BlockOre, ItemBlockTooltip<BlockOre>> undergarden2 = registerBlock("shiverstone_" + name,
-                () -> new BlockOre(ore, BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).instrument(NoteBlockInstrument.BASEDRUM).mapColor(MapColor.GLOW_LICHEN).strength(3.5F, 12F).sound(SoundType.NETHER_BRICKS).requiresCorrectToolForDrops().friction(0.98F)));
+        BlockRegistryObject<BlockOre, ItemBlockTooltip> nether = BLOCKS.register("netherrack_"+name, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERRACK), properties -> new BlockOre(ore, properties), ItemBlockTooltip::new);
+        BlockRegistryObject<BlockOre, ItemBlockTooltip> endStone = BLOCKS.register("end_stone_" + name, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.END_STONE), properties -> new BlockOre(ore, properties), ItemBlockTooltip::new);
+        BlockRegistryObject<BlockOre, ItemBlockTooltip> aether = BLOCKS.register("holystone_" + name, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.STONE), properties -> new BlockOre(ore, properties.mapColor(MapColor.WOOL).instrument(NoteBlockInstrument.BASEDRUM).strength(3.0F).requiresCorrectToolForDrops()), ItemBlockTooltip::new);
+        BlockRegistryObject<BlockOre, ItemBlockTooltip> undergarden = BLOCKS.register("depthrock_" + name, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.STONE), properties -> new BlockOre(ore, properties.instrument(NoteBlockInstrument.BASEDRUM).mapColor(MapColor.TERRACOTTA_LIGHT_GREEN).strength(1.5F, 6.0F).sound(SoundType.BASALT).requiresCorrectToolForDrops()), ItemBlockTooltip::new);
+        BlockRegistryObject<BlockOre, ItemBlockTooltip> undergarden2 = BLOCKS.register("shiverstone_" + name, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.STONE), properties -> new BlockOre(ore, properties.instrument(NoteBlockInstrument.BASEDRUM).mapColor(MapColor.GLOW_LICHEN).strength(3.5F, 12F).sound(SoundType.NETHER_BRICKS).requiresCorrectToolForDrops().friction(0.98F)), ItemBlockTooltip::new);
     }
 
     private static EMOreBlockType registerOre(EMOreType ore) {
         String name = ore.getResource().getRegistrySuffix() + "_ore";
-        BlockRegistryObject<EMBlockOre, ItemBlockTooltip<EMBlockOre>> stoneOre = registerBlock(name, () -> new EMBlockOre(ore));
-        BlockRegistryObject<EMBlockOre, ItemBlockTooltip<EMBlockOre>> deepslateOre = BLOCKS.register("deepslate_" + name,
-                () -> new EMBlockOre(ore, BlockBehaviour.Properties.ofLegacyCopy(stoneOre.value()).mapColor(MapColor.DEEPSLATE)
+        BlockRegistryObject<EMBlockOre, ItemBlockTooltip> stoneOre = registerBlock(name, properties -> new EMBlockOre(ore, EMBlockOre.defaultProperties(properties)));
+        BlockRegistryObject<EMBlockOre, ItemBlockTooltip> deepslateOre = BLOCKS.register("deepslate_" + name, () -> BlockBehaviour.Properties.ofLegacyCopy(stoneOre.value()),
+                properties -> new EMBlockOre(ore, properties.mapColor(MapColor.DEEPSLATE)
                         .strength(4.5F, 3).sound(SoundType.DEEPSLATE)), ItemBlockTooltip::new);
         return new EMOreBlockType(stoneOre, deepslateOre);
     }
 
-    private static <BLOCK extends Block & IHasDescription> BlockRegistryObject<BLOCK, ItemBlockTooltip<BLOCK>> registerBlock(String name,
+    private static <BLOCK extends Block & IHasDescription> BlockRegistryObject<BLOCK, ItemBlockTooltip> registerBlock(String name,
                                                                                                                              Supplier<? extends BLOCK> blockSupplier) {
         return BLOCKS.register(name, blockSupplier, ItemBlockTooltip::new);
     }
 
-    private static <BLOCK extends Block & IHasDescription> BlockRegistryObject<BLOCK, ItemBlockTooltip<BLOCK>> registerBlock(String name,
+    private static <BLOCK extends Block & IHasDescription> BlockRegistryObject<BLOCK, ItemBlockTooltip> registerBlock(String name,
                                                                                                                              Supplier<? extends BLOCK> blockSupplier, Rarity rarity) {
-        return BLOCKS.register(name, blockSupplier, (block, props) -> new ItemBlockTooltip<>(block, props.rarity(rarity)));
+        return BLOCKS.register(name, blockSupplier, (block, props) -> new ItemBlockTooltip(block, props.rarity(rarity)));
     }
 
 
@@ -526,30 +532,56 @@ public class EMBlocks {
                 );
     }
 
-    private static <TILE extends TileEntityFactory<?>> BlockRegistryObject<BlockFactory<?>, ItemBlockFactory> registerFactory(Factory<TILE> type) {
-        FactoryTier tier = (FactoryTier) type.get(AttributeTier.class).tier();
-        BlockRegistryObject<BlockFactory<?>, ItemBlockFactory> factory = registerTieredBlock(tier, "_" + type.getFactoryType().getRegistryNameComponent() + "_factory", () -> new BlockFactory<>(type), ItemBlockFactory::new);
+    private static <TILE extends TileEntityFactory<?>> BlockRegistryObject<BlockFactory<?>, ItemBlockTooltip> registerFactory(Factory<TILE> type) {
+        FactoryTier tier = (FactoryTier) type.getOrThrow(AttributeTier.class).tier();
+        FactoryType factoryType = type.getOrThrow(AttributeFactoryType.class).getFactoryType();
+        AttachedSideConfig sideConfig;
+        if (factoryType == EMFactoryType.ALLOYING) {
+            sideConfig = AttachedSideConfig.EXTRA_MACHINE;
+        } else if (factoryType == EMFactoryType.FLUID_ALLOYING) {
+            sideConfig = EMAttachedSideConfig.FLUID_ALLOYER_MACHINE;
+        } else if (factoryType == EMFactoryType.FLUID_COMBINING) {
+            sideConfig = EMAttachedSideConfig.FLUID_COMBINER_MACHINE;
+        } else {
+            sideConfig = switch (factoryType) {
+                case SMELTING, ENRICHING, CRUSHING, SAWING -> AttachedSideConfig.ELECTRIC_MACHINE;
+                case COMPRESSING, INFUSING -> AttachedSideConfig.ADVANCED_MACHINE;
+                case COMBINING -> AttachedSideConfig.EXTRA_MACHINE;
+                case PURIFYING, INJECTING -> AttachedSideConfig.ADVANCED_MACHINE_INPUT_ONLY;
+                default -> AttachedSideConfig.ELECTRIC_MACHINE;
+            };
+        }
+        BlockRegistryObject<BlockFactory<?>, ItemBlockTooltip> factory = registerTieredBlock(tier, "_" + factoryType.getSerializedName() + "_factory", properties -> new BlockFactory<>(type, properties),
+                (block, properties) -> new ItemBlockTooltip(block, properties
+                        .component(MekanismDataComponents.FACTORY_TIER, tier)
+                        .component(MekanismDataComponents.FACTORY_TYPE, factoryType)
+                        .component(MekanismDataComponents.SORTING, false)
+                        .component(MekanismDataComponents.EJECTOR, AttachedEjector.DEFAULT)
+                        .component(MekanismDataComponents.SIDE_CONFIG, sideConfig)
+                        .component(MekanismDataComponents.DETAILS, Unit.INSTANCE)
+                ));
         factory.forItemHolder(holder -> {
             int processes = tier.processes;
-            Predicate<ItemStack> finalPredicate = getItemStackPredicate(type);
-            if (type.getFactoryType().equals(EMFactoryType.ALLOYING)){
+            Predicate<ItemResource> recipeInputPredicate = getItemPredicate(factoryType);
+            if (factoryType == EMFactoryType.ALLOYING) {
                 holder.addAttachmentOnlyContainers(ContainerType.ITEM, () -> ItemSlotsBuilder.builder()
-                        .addBasicFactorySlots(processes, finalPredicate)
+                        .addBasicFactorySlots(processes, recipeInputPredicate)
                         .addInput(EMRecipeType.ALLOYING, EMInputRecipeCache.TripleItem::containsInputB)
                         .addInput(EMRecipeType.ALLOYING, EMInputRecipeCache.TripleItem::containsInputC)
                         .addEnergy()
                         .build()
                 );
+                return;
             }
-            switch (type.getFactoryType()) {
+            switch (factoryType) {
                 case SMELTING, ENRICHING, CRUSHING -> holder.addAttachmentOnlyContainers(ContainerType.ITEM, () -> ItemSlotsBuilder.builder()
-                        .addBasicFactorySlots(processes, finalPredicate)
+                        .addBasicFactorySlots(processes, recipeInputPredicate)
                         .addEnergy()
                         .build()
                 );
                 case COMPRESSING, INJECTING, PURIFYING -> holder
                         .addAttachmentOnlyContainers(ContainerType.CHEMICAL, () -> ChemicalTanksBuilder.builder()
-                                .addBasic(TileEntityAdvancedElectricMachine.MAX_GAS * processes, switch (type.getFactoryType()) {
+                                .addBasic(TileEntityAdvancedElectricMachine.MAX_GAS * processes, (IMekanismRecipeTypeProvider<?, ?, ?, ?, ? extends InputRecipeCache.ItemChemical<?>>) switch (factoryType) {
                                     case COMPRESSING -> MekanismRecipeType.COMPRESSING;
                                     case INJECTING -> MekanismRecipeType.INJECTING;
                                     case PURIFYING -> MekanismRecipeType.PURIFYING;
@@ -557,13 +589,13 @@ public class EMBlocks {
                                 }, InputRecipeCache.ItemChemical::containsInputB)
                                 .build()
                         ).addAttachmentOnlyContainers(ContainerType.ITEM, () -> ItemSlotsBuilder.builder()
-                                .addBasicFactorySlots(processes, finalPredicate)
+                                .addBasicFactorySlots(processes, recipeInputPredicate)
                                 .addChemicalFillOrConvertSlot(0)
                                 .addEnergy()
                                 .build()
                         );
                 case COMBINING -> holder.addAttachmentOnlyContainers(ContainerType.ITEM, () -> ItemSlotsBuilder.builder()
-                        .addBasicFactorySlots(processes, finalPredicate)
+                        .addBasicFactorySlots(processes, recipeInputPredicate)
                         .addInput(MekanismRecipeType.COMBINING, InputRecipeCache.DoubleItem::containsInputB)
                         .addEnergy()
                         .build()
@@ -573,73 +605,73 @@ public class EMBlocks {
                                 .addBasic(TileEntityMetallurgicInfuser.MAX_INFUSE * processes, MekanismRecipeType.METALLURGIC_INFUSING, InputRecipeCache.ItemChemical::containsInputB)
                                 .build()
                         ).addAttachmentOnlyContainers(ContainerType.ITEM, () -> ItemSlotsBuilder.builder()
-                                .addBasicFactorySlots(processes, finalPredicate)
-                                .addInfusionFillOrConvertSlot(0)
+                                .addBasicFactorySlots(processes, recipeInputPredicate)
+                                .addChemicalFillOrConvertSlot(0)
                                 .addEnergy()
                                 .build()
                         );
                 case SAWING -> holder.addAttachmentOnlyContainers(ContainerType.ITEM, () -> ItemSlotsBuilder.builder()
-                        .addBasicFactorySlots(processes, finalPredicate, true)
+                        .addBasicFactorySlots(processes, recipeInputPredicate, true)
                         .addEnergy()
                         .build()
                 );
+                default -> {
+                }
             }
-
         });
         return factory;
     }
 
-    private static <TILE extends TileEntityFactory<?>> @Nullable Predicate<ItemStack> getItemStackPredicate(Factory<TILE> type) {
-        Predicate<ItemStack> recipeInputPredicate = null;
-        if (type.getFactoryType().equals(EMFactoryType.ALLOYING)) {
-            recipeInputPredicate = s -> EMRecipeType.ALLOYING.getInputCache().containsInputA(null, s);
-        } else {
-            switch (type.getFactoryType()) {
-                case SMELTING -> recipeInputPredicate = s -> MekanismRecipeType.SMELTING.getInputCache().containsInput(null, s);
-                case ENRICHING -> recipeInputPredicate = s -> MekanismRecipeType.ENRICHING.getInputCache().containsInput(null, s);
-                case CRUSHING -> recipeInputPredicate = s -> MekanismRecipeType.CRUSHING.getInputCache().containsInput(null, s);
-                case COMPRESSING -> recipeInputPredicate = s -> MekanismRecipeType.COMPRESSING.getInputCache().containsInputA(null, s);
-                case COMBINING -> recipeInputPredicate = s -> MekanismRecipeType.COMBINING.getInputCache().containsInputA(null, s);
-                case PURIFYING -> recipeInputPredicate = s -> MekanismRecipeType.PURIFYING.getInputCache().containsInputA(null, s);
-                case INJECTING -> recipeInputPredicate = s -> MekanismRecipeType.INJECTING.getInputCache().containsInputA(null, s);
-                case INFUSING -> recipeInputPredicate = s -> MekanismRecipeType.METALLURGIC_INFUSING.getInputCache().containsInputA(null, s);
-                case SAWING -> recipeInputPredicate = s -> MekanismRecipeType.SAWING.getInputCache().containsInput(null, s);
-            }
+    private static Predicate<ItemResource> getItemPredicate(FactoryType factoryType) {
+        if (factoryType == EMFactoryType.ALLOYING) {
+            return s -> EMRecipeType.ALLOYING.getInputCache().containsInputA(null, s);
         }
-        return recipeInputPredicate;
+        return switch (factoryType) {
+            case SMELTING -> s -> MekanismRecipeType.SMELTING.getInputCache().containsInput(null, s);
+            case ENRICHING -> s -> MekanismRecipeType.ENRICHING.getInputCache().containsInput(null, s);
+            case CRUSHING -> s -> MekanismRecipeType.CRUSHING.getInputCache().containsInput(null, s);
+            case COMPRESSING -> s -> MekanismRecipeType.COMPRESSING.getInputCache().containsInputA(null, s);
+            case COMBINING -> s -> MekanismRecipeType.COMBINING.getInputCache().containsInputA(null, s);
+            case PURIFYING -> s -> MekanismRecipeType.PURIFYING.getInputCache().containsInputA(null, s);
+            case INJECTING -> s -> MekanismRecipeType.INJECTING.getInputCache().containsInputA(null, s);
+            case INFUSING -> s -> MekanismRecipeType.METALLURGIC_INFUSING.getInputCache().containsInputA(null, s);
+            case SAWING -> s -> MekanismRecipeType.SAWING.getInputCache().containsInput(null, s);
+            default -> s -> false;
+        };
     }
 
     private static <BLOCK extends Block, ITEM extends BlockItem> BlockRegistryObject<BLOCK, ITEM> registerTieredBlock(BlockType type, String suffix,
-                                                                                                                      Function<MapColor, ? extends BLOCK> blockSupplier, BiFunction<BLOCK, Item.Properties, ITEM> itemCreator) {
-        ITier tier = type.get(AttributeTier.class).tier();
-        return registerTieredBlock(tier, suffix, () -> blockSupplier.apply(tier.getBaseTier().getMapColor()), itemCreator);
+          BiFunction<BlockBehaviour.Properties, MapColor, ? extends BLOCK> blockCreator, BiFunction<BLOCK, Item.Properties, ITEM> itemCreator) {
+        ITier tier = type.getOrThrow(AttributeTier.class).tier();
+        return registerTieredBlock(tier, suffix, properties -> blockCreator.apply(properties, tier.getBaseTier().getMapColor()), itemCreator);
     }
 
     private static <BLOCK extends Block, ITEM extends BlockItem> BlockRegistryObject<BLOCK, ITEM> registerTieredBlock(BlockType type, String suffix,
-                                                                                                                      Supplier<? extends BLOCK> blockSupplier, BiFunction<BLOCK, Item.Properties, ITEM> itemCreator) {
-        return registerTieredBlock(type.get(AttributeTier.class).tier(), suffix, blockSupplier, itemCreator);
+          Function<BlockBehaviour.Properties, ? extends BLOCK> blockCreator, BiFunction<BLOCK, Item.Properties, ITEM> itemCreator) {
+        return registerTieredBlock(type.getOrThrow(AttributeTier.class).tier(), suffix, blockCreator, itemCreator);
     }
 
     private static <BLOCK extends Block, ITEM extends BlockItem> BlockRegistryObject<BLOCK, ITEM> registerTieredBlock(ITier tier, String suffix,
-                                                                                                                      Supplier<? extends BLOCK> blockSupplier, BiFunction<BLOCK, Item.Properties, ITEM> itemCreator) {
+          Function<BlockBehaviour.Properties, ? extends BLOCK> blockSupplier, BiFunction<BLOCK, Item.Properties, ITEM> itemCreator) {
         return BLOCKS.register(tier.getBaseTier().getLowerName() + suffix, blockSupplier, itemCreator);
     }
+
     private static BlockRegistryObject<Block, BlockItem> registerAlloyBlock(AlloyTier tier) {
         ((InitializableEnum) (Object)tier).evolvedmekanism$initNewValues();
-        return BLOCKS.register("block_alloy_"+tier.getName(), ()->new Block(BlockBehaviour.Properties.of().strength(5,9)), BlockItem::new);
+        return BLOCKS.register("block_alloy_"+tier.getName(), properties -> new Block(properties.strength(5,9)), BlockItem::new);
     }
 
 
     private static BlockRegistryObject<EMBlockResource, EMItemBlockResource> registerResourceBlock(EMBlockResourceInfo resource) {
-        return BLOCKS.register("block_" + resource.getRegistrySuffix(), () -> new EMBlockResource(resource), (block, properties) -> {
+        return BLOCKS.register("block_" + resource.getRegistrySuffix(), properties -> new EMBlockResource(resource, properties), (block, properties) -> {
             if (!block.getResourceInfo().burnsInFire()) {
                 properties = properties.fireResistant();
             }
             return new EMItemBlockResource(block, properties);
         });
     }
-    public static BlockRegistryObject<BlockFactory<?>, ItemBlockFactory> getFactory(@NotNull FactoryTier tier, @NotNull FactoryType type) {
-        BlockRegistryObject<BlockFactory<?>, ItemBlockFactory> factory = getRegisteredFactory(tier, type);
+    public static BlockRegistryObject<BlockFactory<?>, ItemBlockTooltip> getFactory(@NotNull FactoryTier tier, @NotNull FactoryType type) {
+        BlockRegistryObject<BlockFactory<?>, ItemBlockTooltip> factory = getRegisteredFactory(tier, type);
         if (factory == null) {
             factory = MekanismBlocks.getFactory(tier, type);
         }
@@ -649,7 +681,7 @@ public class EMBlocks {
         return factory;
     }
 
-    public static BlockRegistryObject<BlockFactory<?>, ItemBlockFactory> getRegisteredFactory(@NotNull FactoryTier tier, @NotNull FactoryType type) {
+    public static BlockRegistryObject<BlockFactory<?>, ItemBlockTooltip> getRegisteredFactory(@NotNull FactoryTier tier, @NotNull FactoryType type) {
         return FACTORIES.get(tier, type);
     }
 

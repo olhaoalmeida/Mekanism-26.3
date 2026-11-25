@@ -3,7 +3,7 @@ package fr.iglee42.evolvedmekanism.tiles;
 import java.util.Objects;
 import java.util.function.Predicate;
 import mekanism.api.IContentsListener;
-import mekanism.api.annotations.NothingNullByDefault;
+import org.jspecify.annotations.NullMarked;
 import mekanism.api.functions.ConstantPredicates;
 import mekanism.common.inventory.container.slot.ContainerSlotType;
 import mekanism.common.inventory.slot.BasicInventorySlot;
@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@NothingNullByDefault
+@NullMarked
 public class LimitedInputInventorySlot extends BasicInventorySlot {
 
     public static LimitedInputInventorySlot at(@Nullable IContentsListener listener, int x, int y) {

@@ -1,11 +1,11 @@
 package fr.iglee42.evolvedmekanism.recipes.vanilla_input;
 
-import mekanism.api.annotations.NothingNullByDefault;
+import org.jspecify.annotations.NullMarked;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-@NothingNullByDefault
+@NullMarked
 public record TriFluidRecipeInput(FluidStack main, FluidStack extra, FluidStack secondExtra) implements RecipeInput {
 
     @Override

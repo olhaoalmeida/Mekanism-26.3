@@ -1,7 +1,7 @@
 package fr.iglee42.evolvedmekanism.inventory.personalstorage;
 
 import fr.iglee42.evolvedmekanism.tiers.PersonalStorageTier;
-import mekanism.api.annotations.NothingNullByDefault;
+import org.jspecify.annotations.NullMarked;
 import mekanism.api.functions.ConstantPredicates;
 import mekanism.api.inventory.IInventorySlot;
 import mekanism.api.inventory.IMekanismInventory;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-@NothingNullByDefault
+@NullMarked
 public abstract class AbstractTieredPersonalStorageItemInventory implements IMekanismInventory {
 
     protected final List<IInventorySlot> slots;

@@ -3,7 +3,7 @@ package fr.iglee42.evolvedmekanism.registries;
 import fr.iglee42.evolvedmekanism.EvolvedMekanism;
 import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.Chemical;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
@@ -79,10 +79,10 @@ public class EMTags {
         public static final TagKey<Item> CIRCUITS_QUANTUM = commonTag("circuits/quantum");
 
         private static TagKey<Item> commonTag(String name) {
-            return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
+            return ItemTags.create(Identifier.fromNamespaceAndPath("c", name));
         }
         private static TagKey<Item> mekTag(String name) {
-            return ItemTags.create(ResourceLocation.fromNamespaceAndPath("mekanism", name));
+            return ItemTags.create(Identifier.fromNamespaceAndPath("mekanism", name));
         }
 
         private static TagKey<Item> tag(String name) {
@@ -115,11 +115,11 @@ public class EMTags {
 
 
         private static TagKey<Block> commonTag(String name) {
-            return BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
+            return BlockTags.create(Identifier.fromNamespaceAndPath("c", name));
         }
 
         private static TagKey<Block> mekTag(String name) {
-            return BlockTags.create(ResourceLocation.fromNamespaceAndPath("mekanism", name));
+            return BlockTags.create(Identifier.fromNamespaceAndPath("mekanism", name));
         }
 
         private static TagKey<Block> tag(String name) {
@@ -137,7 +137,7 @@ public class EMTags {
         }
 
         private static TagKey<Fluid> commonTag(String name) {
-            return FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
+            return FluidTags.create(Identifier.fromNamespaceAndPath("c", name));
         }
     }
 

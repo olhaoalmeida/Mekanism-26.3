@@ -1,30 +1,46 @@
 package fr.iglee42.evolvedmekanism.recipes;
 
-import java.util.Comparator;
+import fr.iglee42.evolvedmekanism.EvolvedMekanism;
+import fr.iglee42.evolvedmekanism.recipes.vanilla_input.TriFluidRecipeInput;
+import fr.iglee42.evolvedmekanism.registries.EMRecipeType;
 import java.util.List;
 import java.util.Objects;
-
-import fr.iglee42.evolvedmekanism.recipes.vanilla_input.TriFluidRecipeInput;
-import mekanism.api.annotations.NothingNullByDefault;
 import mekanism.api.recipes.MekanismRecipe;
+import mekanism.api.recipes.book.CombiningBookCategory;
+import mekanism.api.recipes.book.CombiningBookCategory.CombiningBookInfo;
+import mekanism.api.recipes.display.recipe.CombiningRecipeDisplay;
 import mekanism.api.recipes.ingredients.FluidStackIngredient;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.PlacementInfo;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.util.TriPredicate;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStackTemplate;
+import net.neoforged.neoforge.fluids.crafting.display.FluidStackSlotDisplay;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
-@NothingNullByDefault
-public abstract class FluidAlloyingRecipe extends MekanismRecipe<TriFluidRecipeInput> implements TriPredicate<@NotNull FluidStack, @NotNull FluidStack, @NotNull FluidStack> {
+@NullMarked
+public abstract class FluidAlloyingRecipe extends MekanismRecipe<TriFluidRecipeInput, CombiningBookCategory, CombiningBookInfo> implements TriPredicate<FluidStack, FluidStack, FluidStack> {
+
+    private static final Holder<Item> STATION = DeferredHolder.create(Registries.ITEM, Identifier.fromNamespaceAndPath(EvolvedMekanism.MODID, "fluid_alloyer"));
 
     private final FluidStackIngredient mainInput;
     private final FluidStackIngredient extraInput;
     private final FluidStackIngredient tertiaryInput;
-    private final FluidStackIngredient output;
+    private final FluidStackTemplate output;
 
-    public FluidAlloyingRecipe(FluidStackIngredient mainInput, FluidStackIngredient extraInput, FluidStackIngredient tertiaryInput, FluidStackIngredient output) {
+    protected FluidAlloyingRecipe(Recipe.CommonInfo commonInfo, CombiningBookInfo bookInfo, FluidStackIngredient mainInput, FluidStackIngredient extraInput,
+          FluidStackIngredient tertiaryInput, FluidStackTemplate output) {
+        super(commonInfo, bookInfo, 0F);
         this.mainInput = Objects.requireNonNull(mainInput, "Main input cannot be null.");
         this.extraInput = Objects.requireNonNull(extraInput, "Secondary input cannot be null.");
         this.tertiaryInput = Objects.requireNonNull(tertiaryInput, "Tertiary input cannot be null.");
@@ -48,29 +64,25 @@ public abstract class FluidAlloyingRecipe extends MekanismRecipe<TriFluidRecipeI
         return tertiaryInput;
     }
 
-    public FluidStackIngredient getOutputRaw() {
+    public FluidStackTemplate getOutputRaw() {
         return output;
     }
 
     @Contract(value = "_, _, _ -> new", pure = true)
-    public FluidStack getOutput(@NotNull FluidStack main, @NotNull FluidStack extra, @NotNull FluidStack tertiary) {
-        return outputFluid().copy();
+    public FluidStackTemplate getOutput(FluidStack main, FluidStack extra, FluidStack tertiary) {
+        return output;
     }
 
-    public List<FluidStack> getOutputDefinition() {
-        return List.of(outputFluid());
+    public List<FluidStackTemplate> getOutputDefinition() {
+        return List.of(output);
     }
 
-    private FluidStack outputFluid() {
-        return output.getRepresentations().stream()
-                .filter(stack -> stack.getFluid().isSource(stack.getFluid().defaultFluidState()))
-                .min(Comparator.comparing(FluidStack::getFluid, FluidOrder.INSTANCE))
-                .orElseGet(() -> output.getRepresentations().isEmpty() ? FluidStack.EMPTY : output.getRepresentations().getFirst());
+    public SlotDisplay getOutputDisplay() {
+        return new FluidStackSlotDisplay(output);
     }
 
-    @Override
     public boolean isIncomplete() {
-        return mainInput.hasNoMatchingInstances() || extraInput.hasNoMatchingInstances() || tertiaryInput.hasNoMatchingInstances() || output.hasNoMatchingInstances();
+        return mainInput.hasNoMatchingInstances() || extraInput.hasNoMatchingInstances() || tertiaryInput.hasNoMatchingInstances();
     }
 
     @Override
@@ -79,21 +91,40 @@ public abstract class FluidAlloyingRecipe extends MekanismRecipe<TriFluidRecipeI
     }
 
     @Override
-    public @NotNull ItemStack getResultItem(net.minecraft.core.HolderLookup.@NotNull Provider provider) {
-        return ItemStack.EMPTY;
+    public void logMissingTags() {
+        mainInput.logMissingTags();
+        extraInput.logMissingTags();
+        tertiaryInput.logMissingTags();
     }
 
-    static final class FluidOrder implements Comparator<Fluid> {
-        static final FluidOrder INSTANCE = new FluidOrder();
+    @Override
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
 
-        @Override
-        public int compare(Fluid fluid1, Fluid fluid2) {
-            boolean source1 = fluid1.isSource(fluid1.defaultFluidState());
-            boolean source2 = fluid2.isSource(fluid2.defaultFluidState());
-            if (source1 != source2) {
-                return source1 ? -1 : 1;
-            }
-            return 0;
+    @Override
+    public RecipeType<FluidAlloyingRecipe> getType() {
+        return EMRecipeType.FLUID_ALLOYING.value();
+    }
+
+    @Override
+    public List<RecipeDisplay> display() {
+        return List.of(new CombiningRecipeDisplay(mainInput.display(), extraInput.display(), getOutputDisplay(), new SlotDisplay.ItemSlotDisplay(STATION), experience()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        } else if (o == null || getClass() != o.getClass()) {
+            return false;
         }
+        FluidAlloyingRecipe other = (FluidAlloyingRecipe) o;
+        return mainInput.equals(other.mainInput) && extraInput.equals(other.extraInput) && tertiaryInput.equals(other.tertiaryInput) && output.equals(other.output);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mainInput, extraInput, tertiaryInput, output);
     }
 }

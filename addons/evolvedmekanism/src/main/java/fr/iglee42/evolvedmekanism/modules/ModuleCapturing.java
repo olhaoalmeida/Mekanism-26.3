@@ -2,7 +2,6 @@ package fr.iglee42.evolvedmekanism.modules;
 
 import fr.iglee42.evolvedmekanism.EvolvedMekanism;
 import fr.iglee42.evolvedmekanism.registries.EMModules;
-import mekanism.api.annotations.ParametersAreNotNullByDefault;
 import mekanism.api.gear.ICustomModule;
 import mekanism.api.gear.IModule;
 import mekanism.common.content.gear.ModuleHelper;
@@ -20,7 +19,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 
 @EventBusSubscriber(modid = EvolvedMekanism.MODID)
-@ParametersAreNotNullByDefault
 public class ModuleCapturing implements ICustomModule<ModuleCapturing> {
     @SubscribeEvent
     public static void addEggDrop(LivingDropsEvent event) {

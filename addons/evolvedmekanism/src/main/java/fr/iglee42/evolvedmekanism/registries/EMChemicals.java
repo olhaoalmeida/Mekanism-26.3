@@ -6,7 +6,7 @@ import mekanism.api.chemical.ChemicalBuilder;
 import mekanism.common.ChemicalConstants;
 import mekanism.common.registration.impl.ChemicalDeferredRegister;
 import mekanism.common.registration.impl.DeferredChemical;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class EMChemicals {
 
@@ -19,7 +19,7 @@ public class EMChemicals {
     public static final DeferredChemical<Chemical> NITROGEN = CHEMICALS.register(EMChemicalConstants.NITROGEN);
     public static final DeferredChemical<Chemical> CRYONOCTIS = CHEMICALS.register(EMChemicalConstants.CRYONOCTIS);
 
-    private static DeferredChemical<Chemical> createInfuse(String id, ResourceLocation texture, int color){
+    private static DeferredChemical<Chemical> createInfuse(String id, Identifier texture, int color){
         return CHEMICALS.register(id,() -> new Chemical(ChemicalBuilder.builder(texture).tint(color)));
     }
 }

@@ -2,7 +2,6 @@ package fr.iglee42.evolvedmekanism.utils;
 
 import java.util.List;
 
-import mekanism.api.annotations.NothingNullByDefault;
 import mekanism.api.chemical.IChemicalTank;
 import mekanism.api.energy.IEnergyContainer;
 import mekanism.api.heat.IHeatCapacitor;
@@ -13,7 +12,6 @@ import net.minecraft.nbt.ListTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.fluids.IFluidTank;
 
-@NothingNullByDefault
 public class EMDataHandlerUtils {
 
     private EMDataHandlerUtils() {

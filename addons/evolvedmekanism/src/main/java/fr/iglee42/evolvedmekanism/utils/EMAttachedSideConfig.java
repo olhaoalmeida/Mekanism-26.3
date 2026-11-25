@@ -1,10 +1,10 @@
 package fr.iglee42.evolvedmekanism.utils;
 
 import mekanism.api.RelativeSide;
-import Nonemekanism.common.component.component.AttachedSideConfig;
+import mekanism.common.component.component.AttachedSideConfig;
 import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.tile.component.config.DataType;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 
 import java.util.EnumMap;
 import java.util.Map;

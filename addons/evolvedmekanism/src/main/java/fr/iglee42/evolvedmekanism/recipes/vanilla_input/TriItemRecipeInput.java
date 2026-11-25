@@ -1,11 +1,11 @@
 package fr.iglee42.evolvedmekanism.recipes.vanilla_input;
 
-import mekanism.api.annotations.NothingNullByDefault;
+import org.jspecify.annotations.NullMarked;
 import mekanism.api.chemical.ChemicalStack;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;
 
-@NothingNullByDefault
+@NullMarked
 public record TriItemRecipeInput(ItemStack main, ItemStack extra,ItemStack secondExtra) implements RecipeInput {
 
     @Override

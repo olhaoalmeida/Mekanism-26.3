@@ -3,7 +3,7 @@ package fr.iglee42.evolvedmekanism.tiles;
 import fr.iglee42.evolvedmekanism.tiers.PersonalStorageTier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -38,7 +38,7 @@ public class TileEntityTieredPersonalChest extends TileEntityTieredPersonalStora
     }
 
     @Override
-    protected ResourceLocation getStat() {
+    protected Identifier getStat() {
         return Stats.OPEN_CHEST;
     }
 

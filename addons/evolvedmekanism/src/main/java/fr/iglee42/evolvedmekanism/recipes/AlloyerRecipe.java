@@ -1,23 +1,30 @@
 package fr.iglee42.evolvedmekanism.recipes;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.BiPredicate;
-
+import fr.iglee42.evolvedmekanism.EvolvedMekanism;
 import fr.iglee42.evolvedmekanism.recipes.vanilla_input.TriItemRecipeInput;
-import mekanism.api.annotations.NothingNullByDefault;
+import java.util.List;
 import mekanism.api.recipes.MekanismRecipe;
+import mekanism.api.recipes.book.CombiningBookCategory;
+import mekanism.api.recipes.book.CombiningBookCategory.CombiningBookInfo;
+import mekanism.api.recipes.display.recipe.CombiningRecipeDisplay;
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.PlacementInfo;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.TriPredicate;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import fr.iglee42.evolvedmekanism.registries.EMRecipeType;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Main Input: ItemStack
@@ -30,103 +37,88 @@ import org.jetbrains.annotations.NotNull;
  *
  * @apiNote Alloyers and Alloying Factories can process this recipe type.
  */
-@NothingNullByDefault
-public abstract class AlloyerRecipe extends MekanismRecipe<TriItemRecipeInput> implements TriPredicate<@NotNull ItemStack, @NotNull ItemStack, @NotNull ItemStack> {
+@NullMarked
+public abstract class AlloyerRecipe extends MekanismRecipe<TriItemRecipeInput, CombiningBookCategory, CombiningBookInfo> implements TriPredicate<ItemStack, ItemStack, ItemStack> {
 
-    private final ItemStackIngredient mainInput;
-    private final ItemStackIngredient extraInput;
-    private final ItemStackIngredient tertiaryExtraInput;
-    private final ItemStack output;
+    private static final Holder<Item> STATION = DeferredHolder.create(Registries.ITEM, Identifier.fromNamespaceAndPath(EvolvedMekanism.MODID, "alloyer"));
 
-    /**
-     * @param mainInput  Main input.
-     * @param extraInput Secondary input.
-     * @param secondaryExtraInput Tertiary input.
-     * @param output     Output.
-     */
-    public AlloyerRecipe(ItemStackIngredient mainInput, ItemStackIngredient extraInput, ItemStackIngredient secondaryExtraInput, ItemStack output) {
-        this.mainInput = Objects.requireNonNull(mainInput, "Main input cannot be null.");
-        this.extraInput = Objects.requireNonNull(extraInput, "Secondary input cannot be null.");
-        this.tertiaryExtraInput = Objects.requireNonNull(secondaryExtraInput, "Tertiary input cannot be null.");
-        Objects.requireNonNull(output, "Output cannot be null.");
-        if (output.isEmpty()) {
-            throw new IllegalArgumentException("Output cannot be empty.");
-        }
-        this.output = output.copy();
-    }
-
-    @Override
-    public boolean test(ItemStack input, ItemStack extra, ItemStack secondExtra) {
-        return mainInput.test(input) && extraInput.test(extra) && tertiaryExtraInput.test(secondExtra);
+    protected AlloyerRecipe(Recipe.CommonInfo commonInfo, CombiningBookInfo bookInfo) {
+        super(commonInfo, bookInfo, 0F);
     }
 
     /**
-     * Gets the item input ingredient.
+     * Gets the main item input ingredient.
      */
-    public ItemStackIngredient getMainInput() {
-        return mainInput;
-    }
+    public abstract ItemStackIngredient getMainInput();
 
     /**
      * Gets the secondary input ingredient.
      */
-    public ItemStackIngredient getExtraInput() {
-        return extraInput;
-    }
+    public abstract ItemStackIngredient getExtraInput();
 
     /**
      * Gets the tertiary input ingredient.
      */
-    public ItemStackIngredient getTertiaryExtraInput() {
-        return tertiaryExtraInput;
+    public abstract ItemStackIngredient getTertiaryExtraInput();
+
+    @Override
+    public boolean test(ItemStack input, ItemStack extra, ItemStack secondExtra) {
+        return getMainInput().test(input) && getExtraInput().test(extra) && getTertiaryExtraInput().test(secondExtra);
     }
 
     /**
      * Gets a new output based on the given inputs.
      *
-     * @param input Specific input.
-     * @param extra Specific secondary input.
-     * @param secondExtra Specific tertiary input.
-     *
-     * @return New output.
-     *
-     * @apiNote While Mekanism does not currently make use of the inputs, it is important to support it and pass the proper value in case any addons define input based
-     * outputs where things like NBT may be different.
      * @implNote The passed in inputs should <strong>NOT</strong> be modified.
      */
     @Contract(value = "_, _, _ -> new", pure = true)
-    public ItemStack getOutput(@NotNull ItemStack input, @NotNull ItemStack extra, @NotNull ItemStack secondExtra) {
-        return output.copy();
-    }
+    public abstract ItemStackTemplate getOutput(ItemStack input, ItemStack extra, ItemStack secondExtra);
 
-    @NotNull
+    /**
+     * For recipe viewers, gets the output representations to display.
+     *
+     * @return Representation of the output, <strong>MUST NOT</strong> be modified.
+     */
+    public abstract List<ItemStackTemplate> getOutputDefinition();
+
+    public abstract SlotDisplay getOutputDisplay();
+
     @Override
-    public ItemStack getResultItem(HolderLookup.@NotNull Provider provider) {
-        return output.copy();
+    public ItemStack assemble(TriItemRecipeInput input) {
+        if (!isIncomplete() && test(input.main(), input.extra(), input.secondExtra())) {
+            return getOutput(input.main(), input.extra(), input.secondExtra()).create();
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
     public boolean matches(TriItemRecipeInput input, Level level) {
-        return !isIncomplete() && test(input.main(),input.extra(),input.secondExtra());
+        return !isIncomplete() && test(input.main(), input.extra(), input.secondExtra());
     }
 
-    public ItemStack getOutputRaw(){
-        return output.copy();
-    }
-
-    /**
-     * For JEI, gets the output representations to display.
-     *
-     * @return Representation of the output, <strong>MUST NOT</strong> be modified.
-     */
-    public List<ItemStack> getOutputDefinition() {
-        return Collections.singletonList(output);
+    public boolean isIncomplete() {
+        return getMainInput().hasNoMatchingInstances() || getExtraInput().hasNoMatchingInstances() || getTertiaryExtraInput().hasNoMatchingInstances();
     }
 
     @Override
-    public boolean isIncomplete() {
-        return mainInput.hasNoMatchingInstances() || extraInput.hasNoMatchingInstances() || tertiaryExtraInput.hasNoMatchingInstances();
+    public void logMissingTags() {
+        getMainInput().logMissingTags();
+        getExtraInput().logMissingTags();
+        getTertiaryExtraInput().logMissingTags();
     }
 
+    @Override
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
 
+    @Override
+    public RecipeType<AlloyerRecipe> getType() {
+        return EMRecipeType.ALLOYING.value();
+    }
+
+    @Override
+    public List<RecipeDisplay> display() {
+        return List.of(new CombiningRecipeDisplay(getMainInput().display(), getExtraInput().display(), getOutputDisplay(), new SlotDisplay.ItemSlotDisplay(STATION), experience()));
+    }
 }

@@ -5,6 +5,6 @@ import mekanism.common.block.BlockOre;
 import mekanism.common.item.block.ItemBlockTooltip;
 import mekanism.common.registration.impl.BlockRegistryObject;
 
-public record EMOreBlockType(BlockRegistryObject<EMBlockOre, ItemBlockTooltip<EMBlockOre>> stone,
-                             BlockRegistryObject<EMBlockOre, ItemBlockTooltip<EMBlockOre>> deepslate) {
+public record EMOreBlockType(BlockRegistryObject<EMBlockOre, ItemBlockTooltip> stone,
+                             BlockRegistryObject<EMBlockOre, ItemBlockTooltip> deepslate) {
 }

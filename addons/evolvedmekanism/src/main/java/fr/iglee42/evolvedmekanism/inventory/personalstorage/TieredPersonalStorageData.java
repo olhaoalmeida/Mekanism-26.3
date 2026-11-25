@@ -3,7 +3,7 @@ package fr.iglee42.evolvedmekanism.inventory.personalstorage;
 import fr.iglee42.evolvedmekanism.EvolvedMekanism;
 import fr.iglee42.evolvedmekanism.tiers.PersonalStorageTier;
 import mekanism.api.SerializationConstants;
-import mekanism.api.annotations.NothingNullByDefault;
+import org.jspecify.annotations.NullMarked;
 import mekanism.api.inventory.IInventorySlot;
 import Nonemekanism.common.component.containers.type.ContainerType;
 import mekanism.common.lib.MekanismSavedData;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@NothingNullByDefault
+@NullMarked
 class TieredPersonalStorageData extends MekanismSavedData {
     private final Map<UUID, TieredPersonalStorageItemInventory> inventoriesById = new HashMap<>();
 

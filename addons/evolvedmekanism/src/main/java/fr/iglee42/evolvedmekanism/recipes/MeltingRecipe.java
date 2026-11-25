@@ -1,45 +1,50 @@
 package fr.iglee42.evolvedmekanism.recipes;
 
-import fr.iglee42.evolvedmekanism.recipes.vanilla_input.SingleItemBiFluidRecipeInput;
-import mekanism.api.annotations.NothingNullByDefault;
-import mekanism.api.recipes.MekanismRecipe;
-import mekanism.api.recipes.ingredients.FluidStackIngredient;
-import mekanism.api.recipes.ingredients.ItemStackIngredient;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.SingleRecipeInput;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Comparator;
+import fr.iglee42.evolvedmekanism.EvolvedMekanism;
+import fr.iglee42.evolvedmekanism.registries.EMRecipeType;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import mekanism.api.recipes.MekanismRecipe;
+import mekanism.api.recipes.book.LiquificationBookCategory;
+import mekanism.api.recipes.book.LiquificationBookCategory.LiquificationBookInfo;
+import mekanism.api.recipes.display.recipe.LiquificationRecipeDisplay;
+import mekanism.api.recipes.ingredients.ItemStackIngredient;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.PlacementInfo;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.fluids.FluidStackTemplate;
+import net.neoforged.neoforge.fluids.crafting.display.FluidStackSlotDisplay;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Input: ItemStack
  * <br>
- * Item Output: ItemStack
+ * Output: FluidStack
+ *
  * @apiNote Thermalizer can process this recipe type.
  */
-@NothingNullByDefault
-public abstract class MeltingRecipe extends MekanismRecipe<SingleRecipeInput> implements Predicate<@NotNull ItemStack> {
+@NullMarked
+public abstract class MeltingRecipe extends MekanismRecipe<SingleRecipeInput, LiquificationBookCategory, LiquificationBookInfo> implements Predicate<ItemStack> {
+
+    private static final Holder<Item> STATION = DeferredHolder.create(Registries.ITEM, Identifier.fromNamespaceAndPath(EvolvedMekanism.MODID, "thermalizer"));
 
     private final ItemStackIngredient input;
-    private final FluidStackIngredient output;
+    private final FluidStackTemplate output;
 
-    /**
-     * @param input     Item input.
-     * @param output     Item output.
-     *
-     * @apiNote At least one output must not be empty.
-     */
-    public MeltingRecipe(ItemStackIngredient input,
-                         FluidStackIngredient output) {
+    protected MeltingRecipe(Recipe.CommonInfo commonInfo, LiquificationBookInfo bookInfo, ItemStackIngredient input, FluidStackTemplate output) {
+        super(commonInfo, bookInfo, 0F);
         this.input = Objects.requireNonNull(input, "Item input cannot be null.");
         this.output = Objects.requireNonNull(output, "Fluid output cannot be null.");
     }
@@ -57,39 +62,32 @@ public abstract class MeltingRecipe extends MekanismRecipe<SingleRecipeInput> im
     }
 
     /**
-     * For JEI, gets the output representations to display.
-     *
-     * @return Representation of the output, <strong>MUST NOT</strong> be modified.
+     * For recipe viewers, gets the output to display.
      */
-    public List<FluidStack> getOutputDefinition() {
-        return getValidOutputFluids();
+    public List<FluidStackTemplate> getOutputDefinition() {
+        return List.of(output);
+    }
+
+    public SlotDisplay getOutputDisplay() {
+        return new FluidStackSlotDisplay(output);
     }
 
     /**
      * Gets a new output based on the given inputs.
      *
-     * @param input Specific item input.
-     * @return New output.
-     * @apiNote While Mekanism does not currently make use of the inputs, it is important to support it and pass the proper value in case any addons define input based
-     * outputs where things like NBT may be different.
      * @implNote The passed in inputs should <strong>NOT</strong> be modified.
      */
-    @Contract(value = "_ -> new", pure = true)
-    public FluidStack getOutput(ItemStack input) {
-        return getValidOutputFluids().getFirst().copy();
-    }
-
-    public FluidStackIngredient getOutputRaw(){
+    @Contract(pure = true)
+    public FluidStackTemplate getOutput(ItemStack input) {
         return output;
     }
 
-    private List<FluidStack> getValidOutputFluids(){
-        return output.getRepresentations().stream().filter(stack->stack.getFluid().isSource(stack.getFluid().defaultFluidState())).sorted((f1,f2)->FluidComparator.INSTANCE.compare(f1.getFluid(),f2.getFluid())).toList();
+    public FluidStackTemplate getOutputRaw() {
+        return output;
     }
 
-    @Override
     public boolean isIncomplete() {
-        return input.hasNoMatchingInstances() || output.hasNoMatchingInstances();
+        return input.hasNoMatchingInstances();
     }
 
     @Override
@@ -97,20 +95,39 @@ public abstract class MeltingRecipe extends MekanismRecipe<SingleRecipeInput> im
         return !isIncomplete() && test(input.item());
     }
 
-    static final class FluidComparator implements Comparator<Fluid> {
-
-        static final FluidComparator INSTANCE = new FluidComparator();
-        FluidComparator() {
-        }
-
-        @Override
-        public int compare(Fluid fluid1, Fluid fluid2) {
-            boolean isSource1 = fluid1.isSource(fluid1.defaultFluidState());
-            if (isSource1 != fluid2.isSource(fluid2.defaultFluidState())) {
-                return isSource1 ? -1 : 1;
-            }
-            return 0;
-        }
+    @Override
+    public void logMissingTags() {
+        input.logMissingTags();
     }
 
+    @Override
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public RecipeType<MeltingRecipe> getType() {
+        return EMRecipeType.MELTING.value();
+    }
+
+    @Override
+    public List<RecipeDisplay> display() {
+        return List.of(new LiquificationRecipeDisplay(input.display(), getOutputDisplay(), new SlotDisplay.ItemSlotDisplay(STATION), experience()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        } else if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MeltingRecipe other = (MeltingRecipe) o;
+        return input.equals(other.input) && output.equals(other.output);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(input, output);
+    }
 }

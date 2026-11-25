@@ -2,7 +2,6 @@ package fr.iglee42.evolvedmekanism.modules;
 
 import fr.iglee42.evolvedmekanism.EvolvedMekanism;
 import fr.iglee42.evolvedmekanism.registries.EMModules;
-import mekanism.api.annotations.ParametersAreNotNullByDefault;
 import mekanism.api.gear.ICustomModule;
 import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.lib.Color;
@@ -13,7 +12,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 @EventBusSubscriber(modid = EvolvedMekanism.MODID)
-@ParametersAreNotNullByDefault
 public class ModuleAirAffinity implements ICustomModule<ModuleAirAffinity> {
 
     @SubscribeEvent

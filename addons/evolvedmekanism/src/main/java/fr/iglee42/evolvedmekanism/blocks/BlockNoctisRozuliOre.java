@@ -4,10 +4,10 @@ import fr.iglee42.evolvedmekanism.EvolvedMekanism;
 import fr.iglee42.evolvedmekanism.registries.EMBlocks;
 import fr.iglee42.evolvedmekanism.utils.EMNight;
 import fr.iglee42.evolvedmekanism.registries.EMOreType;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -46,7 +46,7 @@ public class BlockNoctisRozuliOre extends EMBlockOre{
     @Override
     public String getDescriptionId() {
         boolean isDeepslate = BuiltInRegistries.BLOCK.getKey(this).getPath().contains("deepslate");
-        return Util.makeDescriptionId("block", ResourceLocation.withDefaultNamespace((isDeepslate ? "deepslate_":"")+"lapis_ore"));
+        return Util.makeDescriptionId("block", Identifier.withDefaultNamespace((isDeepslate ? "deepslate_":"")+"lapis_ore"));
     }
 
     public BlockNoctisRozuliOre(EMOreType ore, Properties properties) {

@@ -10,8 +10,8 @@ import fr.iglee42.emgenerators.tile.TileEntityTieredWindGenerator;
 import fr.iglee42.evolvedmekanism.EvolvedMekanism;
 import fr.iglee42.evolvedmekanism.registries.EMBlocks;
 import fr.iglee42.evolvedmekanism.registries.EMContainerTypes;
-import Nonemekanism.common.component.containers.type.ContainerType;
-import Nonemekanism.common.component.containers.item.ItemSlotsBuilder;
+import mekanism.common.component.containers.type.ContainerType;
+import mekanism.common.component.containers.item.ItemSlotsBuilder;
 import mekanism.common.block.prefab.BlockTile.BlockTileModel;
 import mekanism.common.inventory.container.tile.MekanismTileContainer;
 import mekanism.common.item.block.ItemBlockTooltip;
@@ -41,7 +41,7 @@ public class EMGenBlocks {
             CREATIVE_SOLAR_GENERATOR = registerTieredSolarGenerator("creative_solar_generator", EMGenBlockTypes.CREATIVE_SOLAR_GENERATOR);
 
 
-    public static final BlockRegistryObject<BlockTileModel<TileEntityLunarGenerator, Generator<TileEntityLunarGenerator>>, ItemBlockTooltip<BlockTileModel<TileEntityLunarGenerator, Generator<TileEntityLunarGenerator>>>> LUNAR_GENERATOR =
+    public static final BlockRegistryObject<BlockTileModel<TileEntityLunarGenerator, Generator<TileEntityLunarGenerator>>, ItemBlockTooltip> LUNAR_GENERATOR =
             BLOCKS.registerDetails("lunar_generator", () -> new BlockTileModel<>(EMGenBlockTypes.LUNAR_GENERATOR, properties -> properties.mapColor(MapColor.COLOR_PINK)))
                     .forItemHolder(holder -> holder.addAttachmentOnlyContainers(ContainerType.ITEM, () -> ItemSlotsBuilder.builder().addEnergy().build()));
 

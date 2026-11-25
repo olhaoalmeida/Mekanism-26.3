@@ -1,6 +1,6 @@
 package fr.iglee42.evolvedmekanism.recipes.vanilla_input;
 
-import mekanism.api.annotations.NothingNullByDefault;
+import org.jspecify.annotations.NullMarked;
 import mekanism.api.recipes.vanilla_input.FluidRecipeInput;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -10,7 +10,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  *
  * @since 10.6.0
  */
-@NothingNullByDefault
+@NullMarked
 public record SingleItemBiFluidRecipeInput(ItemStack item, FluidStack fluid, FluidStack fluidExtra) implements FluidRecipeInput {
 
     public ItemStack getItem(int index) {
@@ -53,11 +53,11 @@ public record SingleItemBiFluidRecipeInput(ItemStack item, FluidStack fluid, Flu
     @Override
     public int hashCode() {
         int hash = FluidStack.hashFluidAndComponents(fluid);
-        hash = 31 * hash + fluid.getAmount();
+        hash = 31 * hash + fluid.amount();
         hash = FluidStack.hashFluidAndComponents(fluidExtra);
-        hash = 31 * hash + fluidExtra.getAmount();
+        hash = 31 * hash + fluidExtra.amount();
         hash = 31 * hash + ItemStack.hashItemAndComponents(item);
-        hash = 31 + hash + item.getCount();
+        hash = 31 + hash + item.count();
         return hash;
     }
 }

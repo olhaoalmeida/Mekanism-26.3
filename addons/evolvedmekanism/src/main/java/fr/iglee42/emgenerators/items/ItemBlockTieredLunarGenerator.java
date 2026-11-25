@@ -10,7 +10,7 @@ import mekanism.common.item.block.ItemBlockTooltip;
 import mekanism.generators.common.content.blocktype.Generator;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemBlockTieredLunarGenerator extends ItemBlockTooltip<BlockTile.BlockTileModel<TileEntityTieredAdvancedLunarGenerator, Generator<TileEntityTieredAdvancedLunarGenerator>>> {
+public class ItemBlockTieredLunarGenerator extends ItemBlockTooltip {
 
     public ItemBlockTieredLunarGenerator(BlockTile.BlockTileModel<TileEntityTieredAdvancedLunarGenerator, Generator<TileEntityTieredAdvancedLunarGenerator>> block, Properties props) {
         super(block,props);
