@@ -1,31 +1,21 @@
 package fr.iglee42.evolvedmekanism.tiles.machine;
 
-import mekanism.api.AutomationType;
 import mekanism.api.IContentsListener;
-import org.jspecify.annotations.NullMarked;
-import mekanism.api.functions.ConstantPredicates;
-import mekanism.common.block.attribute.AttributeEnergy;
+import mekanism.api.functions.IntObjectToIntFunction;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
-import java.util.function.Predicate;
+/**
+ * Kept for API compatibility. In 26.3 the extra per-recipe energy is expressed through the base energy calculator of {@link MachineEnergyContainer}, so this is a thin
+ * factory around it.
+ */
+public final class SolidifierEnergyContainer {
 
-@NullMarked
-public class SolidifierEnergyContainer extends MachineEnergyContainer<TileEntitySolidifier> {
-
-    public static SolidifierEnergyContainer input(TileEntitySolidifier tile, @Nullable IContentsListener listener) {
-        AttributeEnergy electricBlock = validateBlock(tile);
-        return new SolidifierEnergyContainer(electricBlock.getStorage(), electricBlock.getUsage(), notExternal, ConstantPredicates.alwaysTrue(), tile, listener);
+    private SolidifierEnergyContainer() {
     }
 
-    private SolidifierEnergyContainer(long maxEnergy, long energyPerTick, Predicate<@NotNull AutomationType> canExtract,
-                                      Predicate<@NotNull AutomationType> canInsert, TileEntitySolidifier tile, @Nullable IContentsListener listener) {
-        super(maxEnergy, energyPerTick, canExtract, canInsert, tile, listener);
-    }
-
-    @Override
-    public long getBaseEnergyPerTick() {
-        return super.getBaseEnergyPerTick() + (tile.getRecipeEnergyRequired());
+    public static MachineEnergyContainer<TileEntitySolidifier> input(TileEntitySolidifier tile, @Nullable IContentsListener listener) {
+        IntObjectToIntFunction<TileEntitySolidifier> calculator = (base, t) -> base + t.getRecipeEnergyRequired();
+        return MachineEnergyContainer.input(tile, calculator, listener);
     }
 }
