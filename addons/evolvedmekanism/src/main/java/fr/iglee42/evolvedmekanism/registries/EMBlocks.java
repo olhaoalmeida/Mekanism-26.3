@@ -399,23 +399,23 @@ public class EMBlocks {
     public static final BlockRegistryObject<BlockTileModel<TileEntityChemicalTank, Machine<TileEntityChemicalTank>>, ItemBlockChemicalTank> DENSE_CHEMICAL_TANK = registerChemicalTank(EMBlockTypes.DENSE_CHEMICAL_TANK);
     public static final BlockRegistryObject<BlockTileModel<TileEntityChemicalTank, Machine<TileEntityChemicalTank>>, ItemBlockChemicalTank> MULTIVERSAL_CHEMICAL_TANK = registerChemicalTank(EMBlockTypes.MULTIVERSAL_CHEMICAL_TANK);
 
-    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage<BlockTieredPersonnalBarrel>> ADVANCED_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.ADVANCED_PERSONAL_BARREL, PersonalStorageTier.ADVANCED);
-    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage<BlockTieredPersonnalBarrel>> ELITE_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.ELITE_PERSONAL_BARREL, PersonalStorageTier.ELITE);
-    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage<BlockTieredPersonnalBarrel>> ULTIMATE_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.ULTIMATE_PERSONAL_BARREL, PersonalStorageTier.ULTIMATE);
-    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage<BlockTieredPersonnalBarrel>> OVERCLOCKED_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.OVERCLOCKED_PERSONAL_BARREL, PersonalStorageTier.OVERCLOCKED);
-    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage<BlockTieredPersonnalBarrel>> QUANTUM_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.QUANTUM_PERSONAL_BARREL, PersonalStorageTier.QUANTUM);
-    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage<BlockTieredPersonnalBarrel>> DENSE_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.DENSE_PERSONAL_BARREL, PersonalStorageTier.DENSE);
-    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage<BlockTieredPersonnalBarrel>> MULTIVERSAL_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.MULTIVERSAL_PERSONAL_BARREL, PersonalStorageTier.MULTIVERSAL);
-    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage<BlockTieredPersonnalBarrel>> CREATIVE_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.CREATIVE_PERSONAL_BARREL, PersonalStorageTier.CREATIVE);
+    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage> ADVANCED_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.ADVANCED_PERSONAL_BARREL, PersonalStorageTier.ADVANCED);
+    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage> ELITE_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.ELITE_PERSONAL_BARREL, PersonalStorageTier.ELITE);
+    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage> ULTIMATE_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.ULTIMATE_PERSONAL_BARREL, PersonalStorageTier.ULTIMATE);
+    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage> OVERCLOCKED_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.OVERCLOCKED_PERSONAL_BARREL, PersonalStorageTier.OVERCLOCKED);
+    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage> QUANTUM_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.QUANTUM_PERSONAL_BARREL, PersonalStorageTier.QUANTUM);
+    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage> DENSE_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.DENSE_PERSONAL_BARREL, PersonalStorageTier.DENSE);
+    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage> MULTIVERSAL_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.MULTIVERSAL_PERSONAL_BARREL, PersonalStorageTier.MULTIVERSAL);
+    public static final BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage> CREATIVE_PERSONAL_BARREL =registerPersonalBarrel(EMBlockTypes.CREATIVE_PERSONAL_BARREL, PersonalStorageTier.CREATIVE);
 
-    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage<BlockTieredPersonnalChest>> ADVANCED_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.ADVANCED_PERSONAL_CHEST,PersonalStorageTier.ADVANCED);
-    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage<BlockTieredPersonnalChest>> ELITE_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.ELITE_PERSONAL_CHEST,PersonalStorageTier.ELITE);
-    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage<BlockTieredPersonnalChest>> ULTIMATE_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.ULTIMATE_PERSONAL_CHEST,PersonalStorageTier.ULTIMATE);
-    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage<BlockTieredPersonnalChest>> OVERCLOCKED_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.OVERCLOCKED_PERSONAL_CHEST,PersonalStorageTier.OVERCLOCKED);
-    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage<BlockTieredPersonnalChest>> QUANTUM_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.QUANTUM_PERSONAL_CHEST,PersonalStorageTier.QUANTUM);
-    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage<BlockTieredPersonnalChest>> DENSE_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.DENSE_PERSONAL_CHEST,PersonalStorageTier.DENSE);
-    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage<BlockTieredPersonnalChest>> MULTIVERSAL_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.MULTIVERSAL_PERSONAL_CHEST,PersonalStorageTier.MULTIVERSAL);
-    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage<BlockTieredPersonnalChest>> CREATIVE_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.CREATIVE_PERSONAL_CHEST,PersonalStorageTier.CREATIVE);
+    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage> ADVANCED_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.ADVANCED_PERSONAL_CHEST,PersonalStorageTier.ADVANCED);
+    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage> ELITE_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.ELITE_PERSONAL_CHEST,PersonalStorageTier.ELITE);
+    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage> ULTIMATE_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.ULTIMATE_PERSONAL_CHEST,PersonalStorageTier.ULTIMATE);
+    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage> OVERCLOCKED_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.OVERCLOCKED_PERSONAL_CHEST,PersonalStorageTier.OVERCLOCKED);
+    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage> QUANTUM_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.QUANTUM_PERSONAL_CHEST,PersonalStorageTier.QUANTUM);
+    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage> DENSE_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.DENSE_PERSONAL_CHEST,PersonalStorageTier.DENSE);
+    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage> MULTIVERSAL_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.MULTIVERSAL_PERSONAL_CHEST,PersonalStorageTier.MULTIVERSAL);
+    public static final BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage> CREATIVE_PERSONAL_CHEST = registerPersonalChest(EMBlockTypes.CREATIVE_PERSONAL_CHEST,PersonalStorageTier.CREATIVE);
 
 
     private static void registerOre(OreType ore) {
@@ -447,11 +447,11 @@ public class EMBlocks {
     }
 
 
-    private static BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage<BlockTieredPersonnalChest>> registerPersonalChest(BlockTypeTile<TileEntityTieredPersonalChest> type,PersonalStorageTier tier) {
-        return registerTieredBlock(tier, "_personal_chest", () -> new BlockTieredPersonnalChest(type,tier), (block,props) -> new ItemBlockTieredPersonalStorage<>(block, Stats.OPEN_CHEST,block.getTier()));
+    private static BlockRegistryObject<BlockTieredPersonnalChest, ItemBlockTieredPersonalStorage> registerPersonalChest(BlockTypeTile<TileEntityTieredPersonalChest> type,PersonalStorageTier tier) {
+        return registerTieredBlock(tier, "_personal_chest", () -> new BlockTieredPersonnalChest(type,tier), (block,props) -> new ItemBlockTieredPersonalStorage(block, props, Stats.OPEN_CHEST, block.getTier()));
     }
-    private static BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage<BlockTieredPersonnalBarrel>> registerPersonalBarrel(BlockTypeTile<TileEntityTieredPersonalBarrel> type, PersonalStorageTier tier) {
-        return registerTieredBlock(tier, "_personal_barrel", () -> new BlockTieredPersonnalBarrel(type,tier), (block,props) -> new ItemBlockTieredPersonalStorage<>(block, Stats.OPEN_CHEST,block.getTier()));
+    private static BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage> registerPersonalBarrel(BlockTypeTile<TileEntityTieredPersonalBarrel> type, PersonalStorageTier tier) {
+        return registerTieredBlock(tier, "_personal_barrel", () -> new BlockTieredPersonnalBarrel(type,tier), (block,props) -> new ItemBlockTieredPersonalStorage(block, props, Stats.OPEN_CHEST, block.getTier()));
     }
 
     private static BlockRegistryObject<BlockBin, ItemBlockBin> registerBin(BlockTypeTile<TileEntityBin> type) {
