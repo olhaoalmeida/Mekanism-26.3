@@ -43,8 +43,8 @@ public class TileEntityTieredPersonalChest extends TileEntityTieredPersonalStora
     }
 
     @Override
-    protected void onUpdateClient() {
-        super.onUpdateClient();
+    protected void onUpdateClient(Level level) {
+        super.onUpdateClient(level);
         chestLidController.tickLid();
     }
 
@@ -63,12 +63,12 @@ public class TileEntityTieredPersonalChest extends TileEntityTieredPersonalStora
     }
 
     @Override
-    public InteractionResult openGui(Player player) {
+    public InteractionResult openGui(Level level, Player player) {
         BlockPos above = getBlockPos().above();
         if (level.getBlockState(above).isRedstoneConductor(level, above)) {
             //If the block above is solid consume the action
             return InteractionResult.CONSUME;
         }
-        return super.openGui(player);
+        return super.openGui(level, player);
     }
 }

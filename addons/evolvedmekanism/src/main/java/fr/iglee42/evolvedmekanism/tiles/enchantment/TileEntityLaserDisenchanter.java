@@ -3,21 +3,25 @@ package fr.iglee42.evolvedmekanism.tiles.enchantment;
 import fr.iglee42.evolvedmekanism.registries.EMBlocks;
 import fr.iglee42.evolvedmekanism.registries.EMChemicals;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import mekanism.api.*;
+import java.util.List;
+import mekanism.api.AutomationType;
+import mekanism.api.IContentsListener;
+import mekanism.api.SerializationConstants;
 import mekanism.api.chemical.BasicChemicalTank;
 import mekanism.api.chemical.IChemicalTank;
+import mekanism.api.energy.IEnergyContainer;
 import mekanism.api.functions.ConstantPredicates;
 import mekanism.api.inventory.IInventorySlot;
-import mekanism.common.CommonWorldTickHandler;
-import Nonemekanism.common.component.containers.type.ContainerType;
+import mekanism.api.resource.IMekanismResourceHandler;
+import mekanism.common.Mekanism;
 import mekanism.common.capabilities.energy.BasicEnergyContainer;
-import mekanism.common.capabilities.energy.LaserEnergyContainer;
-import mekanism.common.capabilities.holder.chemical.ChemicalTankHelper;
-import mekanism.common.capabilities.holder.chemical.IChemicalTankHolder;
-import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
-import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
-import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
-import mekanism.common.config.MekanismConfig;
+import mekanism.common.capabilities.energy.MachineEnergyContainer;
+import mekanism.common.capabilities.energy.VariableCapacityEnergyContainer;
+import mekanism.common.capabilities.holder.container.IContainerHolder;
+import mekanism.common.capabilities.holder.container.MekContainerHelper;
+import mekanism.common.capabilities.holder.single.ISingleContainerHolder;
+import mekanism.common.component.containers.type.ContainerType;
+import mekanism.common.component.containers.type.IContainerType;
 import mekanism.common.integration.computer.SpecialComputerMethodWrapper;
 import mekanism.common.integration.computer.annotation.ComputerMethod;
 import mekanism.common.integration.computer.annotation.WrappingComputerMethod;
@@ -25,34 +29,24 @@ import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.slot.ContainerSlotType;
 import mekanism.common.inventory.container.slot.SlotOverlay;
 import mekanism.common.inventory.container.sync.SyncableEnum;
-import mekanism.common.inventory.container.sync.SyncableInt;
-import mekanism.common.inventory.container.sync.SyncableLong;
-import mekanism.common.inventory.slot.EnergyInventorySlot;
-import mekanism.common.inventory.slot.FluidInventorySlot;
+import mekanism.common.inventory.slot.ChemicalInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
-import Nonemekanism.common.inventory.slot.ChemicalInventorySlot;
 import mekanism.common.registries.MekanismDataComponents;
 import mekanism.common.tile.interfaces.IHasMode;
-import mekanism.common.tile.laser.TileEntityBasicLaser;
 import mekanism.common.tile.laser.TileEntityLaserAmplifier;
 import mekanism.common.tile.laser.TileEntityLaserReceptor;
-import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.NBTUtils;
 import mekanism.common.util.WorldUtils;
+import mekanism.common.util.WorldUtils.DropsWithXp;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -61,24 +55,25 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.redstone.Redstone;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.BooleanSupplier;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
+import org.jetbrains.annotations.UnknownNullability;
 
 public class TileEntityLaserDisenchanter extends TileEntityLaserReceptor implements IHasMode {
 
     public static final long MAX_GAS = 10000;
 
+    @UnknownNullability//Initialized via getInitialChemicalTanks
     @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerChemicalTankWrapper.class, methodNames = {"getChemical", "getChemicalCapacity", "getChemicalNeeded",
             "getChemicalFilledPercentage"}, docPlaceholder = "chemical")
     public IChemicalTank chemicalTank;
 
+    @UnknownNullability//Initialized via getInitialInventory
     @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper.class, methodNames = "getGasItemInput", docPlaceholder = "gas item input slot")
     ChemicalInventorySlot gasInputSlot;
+    @UnknownNullability//Initialized via getInitialInventory
     @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper.class, methodNames = "getGasItemOutput", docPlaceholder = "gas item output slot")
     ChemicalInventorySlot gasOutputSlot;
 
@@ -91,31 +86,33 @@ public class TileEntityLaserDisenchanter extends TileEntityLaserReceptor impleme
     }
 
     @Override
-    protected void addInitialEnergyContainers(EnergyContainerHelper builder, IContentsListener listener) {
-        builder.addContainer(energyContainer = LaserEnergyContainer.create(BasicEnergyContainer.notExternal, ConstantPredicates.alwaysTrue(), this, listener), RelativeSide.BACK);
+    protected ISingleContainerHolder<IEnergyContainer> getInitialEnergyContainer(IContentsListener listener) {
+        energyContainer = VariableCapacityEnergyContainer.create(MachineEnergyContainer.validateBlock(this)::getStorage, BasicEnergyContainer.notExternal,
+              ConstantPredicates.alwaysTrue(), listener);
+        return _ -> energyContainer;
     }
 
     @Override
-    public @Nullable IChemicalTankHolder getInitialChemicalTanks(IContentsListener listener) {
-        ChemicalTankHelper builder = ChemicalTankHelper.forSide(facingSupplier);
-        builder.addTank(chemicalTank = BasicChemicalTank.createModern(MAX_GAS, stack->stack.is(EMChemicals.CRYONOCTIS), listener));
+    public IContainerHolder<IChemicalTank> getInitialChemicalTanks(IContentsListener listener) {
+        MekContainerHelper<IChemicalTank> builder = MekContainerHelper.forSide(facingSupplier);
+        builder.addContainer(chemicalTank = BasicChemicalTank.create(MAX_GAS, chemical -> chemical.typeHolder().is(EMChemicals.CRYONOCTIS), listener));
         return builder.build();
     }
 
     @Override
-    protected @Nullable IInventorySlotHolder getInitialInventory(IContentsListener listener) {
-        InventorySlotHelper builder = InventorySlotHelper.forSide(facingSupplier);
+    protected IContainerHolder<IInventorySlot> getInitialInventory(IContentsListener listener) {
+        MekContainerHelper<IInventorySlot> builder = MekContainerHelper.forSide(facingSupplier);
 
         for (int slotX = 0; slotX < 6; slotX++) {
             for (int slotY = 0; slotY < 2; slotY++) {
                 OutputInventorySlot slot = OutputInventorySlot.at(listener, 43 + slotX * 18, 30 + slotY * 18);
-                builder.addSlot(slot);
+                builder.addContainer(slot);
                 slot.setSlotType(ContainerSlotType.NORMAL);
             }
         }
 
-        builder.addSlot(gasInputSlot = ChemicalInventorySlot.drain(chemicalTank, listener, 16, 16));
-        builder.addSlot(gasOutputSlot = ChemicalInventorySlot.fill(chemicalTank, listener, 16, 48));
+        builder.addContainer(gasInputSlot = ChemicalInventorySlot.drain(chemicalTank, listener, 16, 16));
+        builder.addContainer(gasOutputSlot = ChemicalInventorySlot.fill(chemicalTank, listener, 16, 48));
         gasInputSlot.setSlotType(ContainerSlotType.INPUT);
         gasInputSlot.setSlotOverlay(SlotOverlay.PLUS);
         gasOutputSlot.setSlotType(ContainerSlotType.OUTPUT);
@@ -124,30 +121,31 @@ public class TileEntityLaserDisenchanter extends TileEntityLaserReceptor impleme
     }
 
     @Override
-    protected void handleBreakBlock(BlockState state, ServerLevel level, BlockPos hitPos, Player player, ItemStack tool) {
-        List<ItemStack> drops = WorldUtils.getDrops(state, level, hitPos, WorldUtils.getTileEntity(level, hitPos), player, tool);
-        CommonWorldTickHandler.fallbackItemCollector = drops::add;
-        breakBlock(state, level, hitPos, tool);
-        CommonWorldTickHandler.fallbackItemCollector = null;
+    protected void handleBreakBlock(BlockState state, ServerLevel level, BlockPos hitPos, Player player, ItemStack tool, TransactionContext transaction) {
+        DropsWithXp<ItemStack> dropsWithXp = WorldUtils.getDrops(state, level, hitPos, WorldUtils.getTileEntity(level, hitPos), player, tool);
+        List<ItemStack> drops = dropsWithXp.items();
+        Mekanism.worldTickHandler.fallbackItemCollector = drops::add;
+        breakBlock(state, level, hitPos, tool, dropsWithXp.experience());
+        Mekanism.worldTickHandler.fallbackItemCollector = null;
 
         for (int i = 0; i < drops.size(); i++) {
             ItemStack stack = drops.get(i);
-            if (stack.isEnchanted()){
-                ItemEnchantments enchantments = stack.getOrDefault(DataComponents.ENCHANTMENTS,ItemEnchantments.EMPTY);
+            if (stack.isEnchanted()) {
+                ItemEnchantments enchantments = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
                 for (Object2IntMap.Entry<Holder<Enchantment>> enchantment : enchantments.entrySet()) {
                     ItemEnchantments.Mutable bookEnchants = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
                     bookEnchants.set(enchantment.getKey(), enchantment.getIntValue());
-                    int xp = getEnchantmentXp(enchantment);
-                    if (drops.stream().anyMatch(it->it.is(Items.BOOK)) && chemicalTank.extract(xp * 100L, Action.SIMULATE, AutomationType.INTERNAL).getAmount() >= xp * 100L){
-                        chemicalTank.extract(xp * 100L, Action.EXECUTE, AutomationType.INTERNAL);
-                        drops.stream().filter(it->it.is(Items.BOOK)).findFirst().ifPresent(it->it.shrink(1));
+                    int cost = getEnchantmentXp(enchantment) * 100;
+                    if (drops.stream().anyMatch(it -> it.is(Items.BOOK)) && chemicalTank.amountAsLong() >= cost
+                        && chemicalTank.extract(chemicalTank.resource(), cost, transaction, AutomationType.INTERNAL) == cost) {
+                        drops.stream().filter(it -> it.is(Items.BOOK)).findFirst().ifPresent(it -> it.shrink(1));
                         ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
-                        EnchantmentHelper.setEnchantments(book,bookEnchants.toImmutable());
+                        EnchantmentHelper.setEnchantments(book, bookEnchants.toImmutable());
                         drops.addLast(book);
                         ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(enchantments);
-                        mutable.removeIf(h->h.equals(enchantment.getKey()));
+                        mutable.removeIf(h -> h.equals(enchantment.getKey()));
                         enchantments = mutable.toImmutable();
-                        EnchantmentHelper.setEnchantments(stack,enchantments);
+                        EnchantmentHelper.setEnchantments(stack, enchantments);
                     }
                 }
             }
@@ -156,37 +154,45 @@ public class TileEntityLaserDisenchanter extends TileEntityLaserReceptor impleme
         if (!drops.isEmpty()) {
             BlockPos dropPos = null;
             Direction opposite = null;
-            List<IInventorySlot> inventorySlots = getInventorySlots(null);
+            IMekanismResourceHandler<ItemResource, IInventorySlot> inventoryHandler = this::getInventorySlots;
             for (ItemStack drop : drops) {
-                drop = InventoryUtils.insertItem(inventorySlots, drop, Action.EXECUTE, AutomationType.INTERNAL);
-                if (!drop.isEmpty()) {
+                if (drop.isEmpty()) {
+                    continue;
+                }
+                int toInsert = drop.count();
+                int inserted = inventoryHandler.insert(ItemResource.of(drop), toInsert, transaction, AutomationType.INTERNAL);
+                if (inserted < toInsert) {
                     if (dropPos == null) {
                         Direction direction = getDirection();
                         dropPos = worldPosition.relative(direction, 2);
                         opposite = direction.getOpposite();
                     }
-                    Block.popResourceFromFace(level, dropPos, opposite, drop);
+                    Block.popResourceFromFace(level, dropPos, opposite, drop.copyWithCount(toInsert - inserted));
                 }
             }
         }
     }
 
     @Override
-    protected boolean handleHitItem(ItemEntity entity) {
+    protected boolean handleHitItem(ItemEntity entity, TransactionContext transaction) {
         ItemStack stack = entity.getItem();
-        stack = InventoryUtils.insertItem(getInventorySlots(null), stack, Action.EXECUTE, AutomationType.INTERNAL);
-        entity.setItem(stack);
-        return true;
+        IMekanismResourceHandler<ItemResource, IInventorySlot> inventoryHandler = this::getInventorySlots;
+        int inserted = inventoryHandler.insert(ItemResource.of(stack), stack.count(), transaction, AutomationType.INTERNAL);
+        if (inserted == stack.count()) {
+            entity.discard();
+            return true;
+        }
+        stack.shrink(inserted);
+        return super.handleHitItem(entity, transaction);
     }
 
-
     @Override
-    protected boolean onUpdateServer() {
-        gasInputSlot.drainTank();
-        gasOutputSlot.fillTank();
+    protected boolean onUpdateServer(ServerLevel level) {
+        gasInputSlot.drainTankIntoSlot(null);
+        gasOutputSlot.fillTankFromSlot(null);
         setEmittingRedstone(false);
 
-        boolean sendUpdatePacket = super.onUpdateServer();
+        boolean sendUpdatePacket = super.onUpdateServer(level);
         if (outputMode != TileEntityLaserAmplifier.RedstoneOutput.ENTITY_DETECTION) {
             setEmittingRedstone(false);
         }
@@ -194,27 +200,27 @@ public class TileEntityLaserDisenchanter extends TileEntityLaserReceptor impleme
     }
 
     @Override
-    public void setEmittingRedstone(boolean foundEntity) {
+    protected void setEmittingRedstone(boolean foundEntity) {
         this.emittingRedstone = foundEntity;
     }
 
 
     @Override
-    protected long toFire() {
-        return canFunction() ? Math.min(super.toFire(), Long.MAX_VALUE) : 0L;
+    protected int toFire() {
+        return canFunction() ? super.toFire() : 0;
     }
 
 
     @Override
     public int getRedstoneLevel() {
         if (outputMode == TileEntityLaserAmplifier.RedstoneOutput.ENERGY_CONTENTS) {
-            return MekanismUtils.redstoneLevelFromContents(energyContainer.getEnergy(), energyContainer.getMaxEnergy());
+            return MekanismUtils.redstoneLevelFromContents(energyContainer);
         }
         return emittingRedstone ? Redstone.SIGNAL_MAX : Redstone.SIGNAL_NONE;
     }
 
     @Override
-    protected boolean makesComparatorDirty(ContainerType<?, ?, ?> type) {
+    protected boolean makesComparatorDirty(IContainerType<?, ?> type) {
         return type == ContainerType.ENERGY;
     }
 
@@ -241,25 +247,25 @@ public class TileEntityLaserDisenchanter extends TileEntityLaserReceptor impleme
     }
 
     @Override
-    public void readSustainedData(HolderLookup.Provider provider, CompoundTag data) {
-        super.readSustainedData(provider, data);
-        NBTUtils.setEnumIfPresent(data, SerializationConstants.OUTPUT_MODE, TileEntityLaserAmplifier.RedstoneOutput.BY_ID, mode -> outputMode = mode);
+    public void readSustainedData(ValueInput input) {
+        super.readSustainedData(input);
+        outputMode = input.read(SerializationConstants.OUTPUT_MODE, TileEntityLaserAmplifier.RedstoneOutput.CODEC).orElse(TileEntityLaserAmplifier.RedstoneOutput.OFF);
     }
 
     @Override
-    public void writeSustainedData(HolderLookup.Provider provider, CompoundTag data) {
-        super.writeSustainedData(provider, data);
-        NBTUtils.writeEnum(data, SerializationConstants.OUTPUT_MODE, outputMode);
+    public void writeSustainedData(ValueOutput output) {
+        super.writeSustainedData(output);
+        output.store(SerializationConstants.OUTPUT_MODE, TileEntityLaserAmplifier.RedstoneOutput.CODEC, outputMode);
     }
 
     @Override
-    protected void applyImplicitComponents(@NotNull DataComponentInput input) {
+    protected void applyImplicitComponents(DataComponentGetter input) {
         super.applyImplicitComponents(input);
         outputMode = input.getOrDefault(MekanismDataComponents.REDSTONE_OUTPUT, outputMode);
     }
 
     @Override
-    protected void collectImplicitComponents(DataComponentMap.@NotNull Builder builder) {
+    protected void collectImplicitComponents(DataComponentMap.Builder builder) {
         super.collectImplicitComponents(builder);
         builder.set(MekanismDataComponents.REDSTONE_OUTPUT, outputMode);
     }

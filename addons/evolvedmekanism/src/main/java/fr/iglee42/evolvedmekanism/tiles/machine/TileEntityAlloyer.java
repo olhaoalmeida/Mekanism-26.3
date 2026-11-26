@@ -19,14 +19,15 @@ import mekanism.api.recipes.outputs.IOutputHandler;
 import mekanism.api.recipes.outputs.OutputHelper;
 import mekanism.client.recipe_viewer.type.IRecipeViewerRecipeType;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
-import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
-import mekanism.common.capabilities.holder.energy.IEnergyContainerHolder;
-import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
-import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.api.energy.IEnergyContainer;
+import mekanism.common.capabilities.holder.container.IContainerHolder;
+import mekanism.common.capabilities.holder.container.MekContainerHelper;
+import mekanism.common.capabilities.holder.single.ISingleContainerHolder;
+import mekanism.common.capabilities.holder.single.SingleConfigHolder;
 import mekanism.common.integration.computer.SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper;
 import mekanism.common.integration.computer.annotation.ComputerMethod;
 import mekanism.common.integration.computer.annotation.WrappingComputerMethod;
-import Nonemekanism.common.integration.computer.ComputerConstants;
+import mekanism.common.integration.computer.ComputerConstants;
 import mekanism.common.inventory.container.slot.ContainerSlotType;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
@@ -35,17 +36,24 @@ import mekanism.common.inventory.warning.WarningTracker.WarningType;
 import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.recipe.IMekanismRecipeTypeProvider;
 import mekanism.common.tile.component.TileComponentConfig;
-import mekanism.common.tile.component.TileComponentEjector;
 import mekanism.common.tile.component.config.ConfigInfo;
 import mekanism.common.tile.component.config.DataType;
 import mekanism.common.tile.component.config.slot.InventorySlotInfo;
 import mekanism.common.tile.prefab.TileEntityProgressMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import mekanism.api.recipes.book.CombiningBookCategory;
+import mekanism.api.recipes.book.CombiningBookCategory.CombiningBookInfo;
+import fr.iglee42.evolvedmekanism.recipes.vanilla_input.TriItemRecipeInput;
+import org.jetbrains.annotations.UnknownNullability;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -58,20 +66,27 @@ public class TileEntityAlloyer extends TileEntityProgressMachine<AlloyerRecipe> 
           RecipeError.NOT_ENOUGH_OUTPUT_SPACE,
           RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT
     );
-    private final IOutputHandler<@NotNull ItemStack> outputHandler;
-    private final IInputHandler<@NotNull ItemStack> inputHandler;
-    private final IInputHandler<@NotNull ItemStack> extraInputHandler;
-    private final IInputHandler<@NotNull ItemStack> secondExtraInputHandler;
+    private final IOutputHandler<ItemStackTemplate> outputHandler;
+    private final IInputHandler<Item, ItemStack> inputHandler;
+    private final IInputHandler<Item, ItemStack> extraInputHandler;
+    private final IInputHandler<Item, ItemStack> secondExtraInputHandler;
+    private final RecipeContainers recipeContainers;
 
+    @UnknownNullability//Initialized via getInitialEnergyContainer
     private MachineEnergyContainer<TileEntityAlloyer> energyContainer;
+    @UnknownNullability//Initialized via getInitialInventory
     @WrappingComputerMethod(wrapper = ComputerIInventorySlotWrapper.class, methodNames = "getMainInput", docPlaceholder = "item input slot")
     InputInventorySlot mainInputSlot;
+    @UnknownNullability//Initialized via getInitialInventory
     @WrappingComputerMethod(wrapper = ComputerIInventorySlotWrapper.class, methodNames = "getSecondaryInput", docPlaceholder = "secondary input slot")
     LimitedInputInventorySlot extraInputSlot;
+    @UnknownNullability//Initialized via getInitialInventory
     @WrappingComputerMethod(wrapper = ComputerIInventorySlotWrapper.class, methodNames = "getTertiaryInput", docPlaceholder = "tertiary input slot")
     LimitedInputInventorySlot secondExtraInputSlot;
+    @UnknownNullability//Initialized via getInitialInventory
     @WrappingComputerMethod(wrapper = ComputerIInventorySlotWrapper.class, methodNames = "getOutput", docPlaceholder = "output slot")
     OutputInventorySlot outputSlot;
+    @UnknownNullability//Initialized via getInitialInventory
     @WrappingComputerMethod(wrapper = ComputerIInventorySlotWrapper.class, methodNames = "getEnergyItem", docPlaceholder = "energy slot")
     EnergyInventorySlot energySlot;
 
@@ -80,13 +95,18 @@ public class TileEntityAlloyer extends TileEntityProgressMachine<AlloyerRecipe> 
         setupItemIOExtraConfig(configComponent,mainInputSlot, outputSlot, extraInputSlot,secondExtraInputSlot, energySlot);
         configComponent.setupInputConfig(TransmissionType.ENERGY, energyContainer);
 
-        ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM);
 
         inputHandler = InputHelper.getInputHandler(mainInputSlot, RecipeError.NOT_ENOUGH_INPUT);
         extraInputHandler = InputHelper.getInputHandler(extraInputSlot, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
         secondExtraInputHandler = InputHelper.getInputHandler(secondExtraInputSlot, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
         outputHandler = OutputHelper.getOutputHandler(outputSlot, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
+        recipeContainers = new RecipeContainers(List.of(mainInputSlot, extraInputSlot, secondExtraInputSlot), outputSlot);
+    }
+
+    @Override
+    protected boolean hasItemOutput() {
+        return true;
     }
 
     private static ConfigInfo setupItemIOExtraConfig(TileComponentConfig config,IInventorySlot inputSlot, IInventorySlot outputSlot, IInventorySlot extraSlot, IInventorySlot secondaryExtraSlot, IInventorySlot energySlot) {
@@ -102,72 +122,70 @@ public class TileEntityAlloyer extends TileEntityProgressMachine<AlloyerRecipe> 
         return itemConfig;
     }
 
-    @NotNull
     @Override
-    protected IEnergyContainerHolder getInitialEnergyContainers(IContentsListener listener, IContentsListener recipeCacheListener,IContentsListener unpause) {
-        EnergyContainerHelper builder = EnergyContainerHelper.forSideWithConfig(this);
-        builder.addContainer(energyContainer = MachineEnergyContainer.input(this, unpause));
-        return builder.build();
+    protected ISingleContainerHolder<IEnergyContainer> getInitialEnergyContainer(IContentsListener listener, IContentsListener recipeCacheListener, IContentsListener recipeCacheUnpauseListener) {
+        energyContainer = MachineEnergyContainer.input(this, recipeCacheUnpauseListener);
+        return SingleConfigHolder.energy(energyContainer, this);
     }
 
-    @NotNull
     @Override
-    protected IInventorySlotHolder getInitialInventory(IContentsListener listener, IContentsListener recipeCacheListener,IContentsListener unpause) {
-        InventorySlotHelper builder = InventorySlotHelper.forSideWithConfig(this);
-        builder.addSlot(mainInputSlot = InputInventorySlot.at(item -> containsRecipeABC(item, extraInputSlot.getStack(),secondExtraInputSlot.getStack()), this::containsRecipeA, recipeCacheListener,
-              64, 17)
+    protected IContainerHolder<IInventorySlot> getInitialInventory(IContentsListener listener, IContentsListener recipeCacheListener, IContentsListener recipeCacheUnpauseListener) {
+        MekContainerHelper<IInventorySlot> builder = MekContainerHelper.forSideWithItemConfig(this);
+        builder.addContainer(mainInputSlot = InputInventorySlot.at((itemType, _) -> containsRecipeABC(itemType, extraInputSlot.resource(), secondExtraInputSlot.resource()), this::containsRecipeA,
+              recipeCacheListener, 64, 17)
         ).tracksWarnings(slot -> slot.warning(WarningType.NO_MATCHING_RECIPE, getWarningCheck(RecipeError.NOT_ENOUGH_INPUT)));
-        builder.addSlot(extraInputSlot = LimitedInputInventorySlot.at(item -> containsRecipeBAC(mainInputSlot.getStack(), item,secondExtraInputSlot.getStack()), this::containsRecipeB, recipeCacheListener,
-              55, 53)
+        builder.addContainer(extraInputSlot = LimitedInputInventorySlot.at((itemType, _) -> containsRecipeBAC(mainInputSlot.resource(), itemType, secondExtraInputSlot.resource()), this::containsRecipeB,
+              recipeCacheListener, 55, 53)
         ).tracksWarnings(slot -> slot.warning(WarningType.NO_MATCHING_RECIPE, getWarningCheck(RecipeError.NOT_ENOUGH_SECONDARY_INPUT)));
-        builder.addSlot(secondExtraInputSlot = LimitedInputInventorySlot.at(item -> containsRecipeCAB(mainInputSlot.getStack(), extraInputSlot.getStack(),item), this::containsRecipeC, recipeCacheListener,
-                75, 53)
+        builder.addContainer(secondExtraInputSlot = LimitedInputInventorySlot.at((itemType, _) -> containsRecipeCAB(mainInputSlot.resource(), extraInputSlot.resource(), itemType), this::containsRecipeC,
+              recipeCacheListener, 75, 53)
         ).tracksWarnings(slot -> slot.warning(WarningType.NO_MATCHING_RECIPE, getWarningCheck(RecipeError.NOT_ENOUGH_SECONDARY_INPUT)));
-        builder.addSlot(outputSlot = OutputInventorySlot.at(unpause, 116, 35))
+        builder.addContainer(outputSlot = OutputInventorySlot.at(recipeCacheUnpauseListener, 116, 35))
+              .setOnTakeCheck(recipeCacheLookupMonitor)
               .tracksWarnings(slot -> slot.warning(WarningType.NO_SPACE_IN_OUTPUT, getWarningCheck(RecipeError.NOT_ENOUGH_OUTPUT_SPACE)));
-        builder.addSlot(energySlot = EnergyInventorySlot.fillOrConvert(energyContainer, this::getLevel, listener, 141, 35));
+        builder.addContainer(energySlot = EnergyInventorySlot.fillOrConvert(energyContainer, this::getLevel, listener, 141, 35));
         extraInputSlot.setSlotType(ContainerSlotType.EXTRA);
         secondExtraInputSlot.setSlotType(ContainerSlotType.EXTRA);
         return builder.build();
     }
 
     @Override
-    protected boolean onUpdateServer() {
-        boolean send = super.onUpdateServer();
-        energySlot.fillContainerOrConvert();
-        recipeCacheLookupMonitor.updateAndProcess();
+    protected boolean onUpdateServer(ServerLevel level) {
+        boolean send = super.onUpdateServer(level);
+        energySlot.fillContainerOrConvert(null);
+        recipeCacheLookupMonitor.updateAndProcess(level);
         return send;
     }
 
-    @NotNull
     @Override
-    public IMekanismRecipeTypeProvider<?,AlloyerRecipe, EMInputRecipeCache.TripleItem<AlloyerRecipe>> getRecipeType() {
+    public IMekanismRecipeTypeProvider<TriItemRecipeInput, CombiningBookCategory, CombiningBookInfo, AlloyerRecipe, EMInputRecipeCache.TripleItem<AlloyerRecipe>> getRecipeType() {
         return EMRecipeType.ALLOYING;
     }
 
     @Nullable
     @Override
-    public AlloyerRecipe getRecipe(int cacheIndex) {
-        return findFirstRecipe(inputHandler, extraInputHandler,secondExtraInputHandler);
+    public RecipeHolder<AlloyerRecipe> getRecipe(int cacheIndex) {
+        return findFirstRecipe(inputHandler, extraInputHandler, secondExtraInputHandler);
     }
 
-    @NotNull
     @Override
-    public CachedRecipe<AlloyerRecipe> createNewCachedRecipe(@NotNull AlloyerRecipe recipe, int cacheIndex) {
-        return ThreeInputCachedRecipe.alloyer(recipe, recheckAllRecipeErrors, inputHandler, extraInputHandler, secondExtraInputHandler, outputHandler)
-              .setErrorsChanged(this::onErrorsChanged)
-              .setCanHolderFunction(this::canFunction)
-              .setActive(this::setActive)
-              .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-              .setRequiredTicks(this::getTicksRequired)
-              .setOnFinish(this::markForSave)
-              .setOperatingTicksChanged(this::setOperatingTicks);
+    public CachedRecipe<AlloyerRecipe> createNewCachedRecipe(AlloyerRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(ThreeInputCachedRecipe.alloyer(recipe, recheckAllRecipeErrors, inputHandler, extraInputHandler, secondExtraInputHandler, outputHandler));
     }
 
-    @NotNull
+    @Override
+    public RecipeContainers getRecipeContainers(int cacheIndex) {
+        return recipeContainers;
+    }
+
     @Override
     public AlloyerUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new AlloyerUpgradeData(provider,redstone, getControlType(), getEnergyContainer(), getOperatingTicks(), energySlot, extraInputSlot,secondExtraInputSlot, mainInputSlot, outputSlot, getComponents());
+        return new AlloyerUpgradeData(provider, redstone, getControlType(), energyContainer, recipeCacheLookupMonitor, energySlot, extraInputSlot, secondExtraInputSlot, mainInputSlot, outputSlot, getComponents(), problemPath());
+    }
+
+    @Override
+    public MachineEnergyContainer<TileEntityAlloyer> energyContainer() {
+        return energyContainer;
     }
 
     public MachineEnergyContainer<TileEntityAlloyer> getEnergyContainer() {
