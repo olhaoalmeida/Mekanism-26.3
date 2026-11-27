@@ -1,38 +1,24 @@
 package fr.iglee42.evolvedmekanism.multiblock.apt;
 
-import java.util.*;
-
 import fr.iglee42.evolvedmekanism.EvolvedMekanismLang;
 import fr.iglee42.evolvedmekanism.registries.EMBlocks;
-import mekanism.api.Action;
-import mekanism.api.AutomationType;
 import mekanism.api.IContentsListener;
-import mekanism.api.chemical.IChemicalHandler;
+import mekanism.api.chemical.IChemicalTank;
+import mekanism.api.energy.IEnergyContainer;
 import mekanism.api.text.EnumColor;
-import mekanism.common.MekanismLang;
-import Nonemekanism.common.component.containers.type.ContainerType;
-import mekanism.common.capabilities.Capabilities;
-import mekanism.common.capabilities.energy.MachineEnergyContainer;
-import mekanism.common.capabilities.holder.chemical.IChemicalTankHolder;
-import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
-import mekanism.common.capabilities.holder.energy.IEnergyContainerHolder;
-import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
-import mekanism.common.content.sps.SPSMultiblockData;
+import mekanism.common.capabilities.holder.container.IContainerHolder;
+import mekanism.common.capabilities.holder.container.ProxiedContainerHolder;
+import mekanism.common.capabilities.holder.single.ISingleContainerHolder;
+import mekanism.common.capabilities.holder.single.ProxiedSingleContainerHolder;
+import mekanism.common.component.containers.type.ContainerType;
+import mekanism.common.component.containers.type.IContainerType;
 import mekanism.common.integration.computer.annotation.ComputerMethod;
-import mekanism.common.lib.multiblock.MultiblockData;
-import mekanism.common.registries.MekanismBlocks;
-import mekanism.common.util.CableUtils;
-import mekanism.common.util.ChemicalUtil;
 import mekanism.common.util.text.BooleanStateDisplay.InputOutput;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class TileEntityAPTPort extends TileEntityAPTCasing {
 
@@ -41,27 +27,20 @@ public class TileEntityAPTPort extends TileEntityAPTCasing {
         delaySupplier = NO_DELAY;
     }
 
-
-    @NotNull
     @Override
-    protected IEnergyContainerHolder getInitialEnergyContainers(IContentsListener listener) {
-        return side -> getMultiblock().getEnergyContainers(side);
+    protected ISingleContainerHolder<IEnergyContainer> getInitialEnergyContainer(IContentsListener listener) {
+        return ProxiedSingleContainerHolder.energy(_ -> true, _ -> true, _ -> getMultiblock().getEnergyContainer());
     }
 
     @Override
-    public @Nullable IChemicalTankHolder getInitialChemicalTanks(IContentsListener listener) {
-        return side -> getMultiblock().getChemicalTanks(side);
+    public IContainerHolder<IChemicalTank> getInitialChemicalTanks(IContentsListener listener) {
+        return new ProxiedContainerHolder<>(_ -> true, _ -> true, _ -> getMultiblock().getChemicalTanks());
     }
 
-    @NotNull
-    @Override
-    protected IInventorySlotHolder getInitialInventory(IContentsListener listener) {
-        return side -> getMultiblock().getInventorySlots(side);
-    }
-
+    //Note: Inventory slots are handled by the default TileEntityMultiblock implementation
 
     @Override
-    public boolean persists(ContainerType<?, ?, ?> type) {
+    public boolean persists(IContainerType<?, ?> type) {
         // Item type is not required because it is supported by the default
         if (type == ContainerType.CHEMICAL || type == ContainerType.ENERGY) {
             return false;
@@ -70,13 +49,11 @@ public class TileEntityAPTPort extends TileEntityAPTCasing {
     }
 
     @Override
-    public InteractionResult onSneakRightClick(Player player) {
-        if (!isRemote()) {
-            boolean oldMode = getActive();
-            setActive(!oldMode);
-            player.displayClientMessage(EvolvedMekanismLang.APT_PORT_MODE.translateColored(EnumColor.GRAY, InputOutput.of(oldMode, true)), true);
-        }
-        return InteractionResult.SUCCESS;
+    public InteractionResult onSneakRightClick(Level level, Player player) {
+        boolean oldMode = getActive();
+        setActive(!oldMode);
+        player.sendOverlayMessage(EvolvedMekanismLang.APT_PORT_MODE.translateColored(EnumColor.GRAY, InputOutput.of(oldMode, true)));
+        return InteractionResult.SUCCESS_SERVER;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package fr.iglee42.emtools.registries;
 
 import fr.iglee42.evolvedmekanism.EvolvedMekanism;
-import mekanism.api.MekanismAPI;
+import mekanism.api.MekanismRegistries;
 import mekanism.api.chemical.Chemical;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
@@ -153,7 +153,7 @@ public class EMToolsTags {
 
 
         private static TagKey<Chemical> tag(String name) {
-            return TagKey.create(MekanismAPI.CHEMICAL_REGISTRY_NAME,EvolvedMekanism.rl(name));
+            return TagKey.create(MekanismRegistries.Keys.CHEMICAL,EvolvedMekanism.rl(name));
         }
     }
 

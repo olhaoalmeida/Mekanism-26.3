@@ -3,7 +3,9 @@ package fr.iglee42.emgenerators.tiers;
 import fr.iglee42.evolvedmekanism.config.EMConfig;
 import fr.iglee42.evolvedmekanism.tiers.EMBaseTier;
 import mekanism.api.tier.BaseTier;
+import java.util.Locale;
 import mekanism.api.tier.ITier;
+import org.jetbrains.annotations.NotNull;
 
 public enum AdvancedWindGeneratorTier implements ITier {
 
@@ -20,6 +22,12 @@ public enum AdvancedWindGeneratorTier implements ITier {
 
     AdvancedWindGeneratorTier(BaseTier baseTier) {
         this.baseTier = baseTier;
+    }
+
+    @NotNull
+    @Override
+    public String getSerializedName() {
+        return name().toLowerCase(Locale.ROOT);
     }
 
     @Override

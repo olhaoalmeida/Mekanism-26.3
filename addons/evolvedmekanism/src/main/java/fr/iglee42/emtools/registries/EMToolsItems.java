@@ -1,133 +1,135 @@
 package fr.iglee42.emtools.registries;
 
 import fr.iglee42.emtools.config.EvolvedMekanismToolsConfig;
-import fr.iglee42.emtools.registries.EMToolsArmorMaterials;
 import fr.iglee42.evolvedmekanism.EvolvedMekanism;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.UnaryOperator;
 import mekanism.common.registration.impl.ItemDeferredRegister;
 import mekanism.common.registration.impl.ItemRegistryObject;
-import mekanism.tools.common.item.*;
-import mekanism.tools.common.material.BaseMekanismMaterial;
 import mekanism.tools.common.material.MaterialCreator;
-import mekanism.tools.common.material.VanillaPaxelMaterialCreator;
-import net.minecraft.core.Holder;
-import net.minecraft.world.item.*;
+import mekanism.tools.common.registries.ToolsItems;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.item.component.BlocksAttacks;
+import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.neoforged.bus.api.IEventBus;
-
-import java.util.function.BiFunction;
 
 public class EMToolsItems {
     public static final ItemDeferredRegister ITEMS = new ItemDeferredRegister(EvolvedMekanism.MODID);
 
-    public static final ItemRegistryObject<ItemMekanismPickaxe> BETTER_GOLD_PICKAXE = registerPickaxe(EvolvedMekanismToolsConfig.materials.betterGold);
-    public static final ItemRegistryObject<ItemMekanismAxe> BETTER_GOLD_AXE = registerAxe(EvolvedMekanismToolsConfig.materials.betterGold);
-    public static final ItemRegistryObject<ItemMekanismShovel> BETTER_GOLD_SHOVEL = registerShovel(EvolvedMekanismToolsConfig.materials.betterGold);
-    public static final ItemRegistryObject<ItemMekanismHoe> BETTER_GOLD_HOE = registerHoe(EvolvedMekanismToolsConfig.materials.betterGold);
-    public static final ItemRegistryObject<ItemMekanismSword> BETTER_GOLD_SWORD = registerSword(EvolvedMekanismToolsConfig.materials.betterGold);
-    public static final ItemRegistryObject<ItemMekanismPaxel> BETTER_GOLD_PAXEL = registerPaxel(EvolvedMekanismToolsConfig.materials.betterGold);
-    public static final ItemRegistryObject<ItemMekanismArmor> BETTER_GOLD_HELMET = registerArmor(EMToolsArmorMaterials.BETTER_GOLD, EvolvedMekanismToolsConfig.materials.betterGold, ArmorItem.Type.HELMET);
-    public static final ItemRegistryObject<ItemMekanismArmor> BETTER_GOLD_CHESTPLATE = registerArmor(EMToolsArmorMaterials.BETTER_GOLD, EvolvedMekanismToolsConfig.materials.betterGold, ArmorItem.Type.CHESTPLATE);
-    public static final ItemRegistryObject<ItemMekanismArmor> BETTER_GOLD_LEGGINGS = registerArmor(EMToolsArmorMaterials.BETTER_GOLD, EvolvedMekanismToolsConfig.materials.betterGold, ArmorItem.Type.LEGGINGS);
-    public static final ItemRegistryObject<ItemMekanismArmor> BETTER_GOLD_BOOTS = registerArmor(EMToolsArmorMaterials.BETTER_GOLD, EvolvedMekanismToolsConfig.materials.betterGold, ArmorItem.Type.BOOTS);
-    public static final ItemRegistryObject<ItemMekanismShield> BETTER_GOLD_SHIELD = registerShield(EvolvedMekanismToolsConfig.materials.betterGold);
+    public static final ItemRegistryObject<Item> BETTER_GOLD_PICKAXE = registerPickaxe(EvolvedMekanismToolsConfig.materials.betterGold);
+    public static final ItemRegistryObject<Item> BETTER_GOLD_AXE = registerAxe(EvolvedMekanismToolsConfig.materials.betterGold);
+    public static final ItemRegistryObject<Item> BETTER_GOLD_SHOVEL = registerShovel(EvolvedMekanismToolsConfig.materials.betterGold);
+    public static final ItemRegistryObject<Item> BETTER_GOLD_HOE = registerHoe(EvolvedMekanismToolsConfig.materials.betterGold);
+    public static final ItemRegistryObject<Item> BETTER_GOLD_SWORD = registerSword(EvolvedMekanismToolsConfig.materials.betterGold);
+    public static final ItemRegistryObject<Item> BETTER_GOLD_PAXEL = registerPaxel(EvolvedMekanismToolsConfig.materials.betterGold);
+    public static final ItemRegistryObject<Item> BETTER_GOLD_HELMET = registerArmor(EvolvedMekanismToolsConfig.materials.betterGold, ArmorType.HELMET);
+    public static final ItemRegistryObject<Item> BETTER_GOLD_CHESTPLATE = registerArmor(EvolvedMekanismToolsConfig.materials.betterGold, ArmorType.CHESTPLATE);
+    public static final ItemRegistryObject<Item> BETTER_GOLD_LEGGINGS = registerArmor(EvolvedMekanismToolsConfig.materials.betterGold, ArmorType.LEGGINGS);
+    public static final ItemRegistryObject<Item> BETTER_GOLD_BOOTS = registerArmor(EvolvedMekanismToolsConfig.materials.betterGold, ArmorType.BOOTS);
+    public static final ItemRegistryObject<ShieldItem> BETTER_GOLD_SHIELD = registerShield(EvolvedMekanismToolsConfig.materials.betterGold);
 
-    public static final ItemRegistryObject<ItemMekanismPickaxe> PLASLITHERITE_PICKAXE = registerPickaxe(EvolvedMekanismToolsConfig.materials.plaslitherite);
-    public static final ItemRegistryObject<ItemMekanismAxe> PLASLITHERITE_AXE = registerAxe(EvolvedMekanismToolsConfig.materials.plaslitherite);
-    public static final ItemRegistryObject<ItemMekanismShovel> PLASLITHERITE_SHOVEL = registerShovel(EvolvedMekanismToolsConfig.materials.plaslitherite);
-    public static final ItemRegistryObject<ItemMekanismHoe> PLASLITHERITE_HOE = registerHoe(EvolvedMekanismToolsConfig.materials.plaslitherite);
-    public static final ItemRegistryObject<ItemMekanismSword> PLASLITHERITE_SWORD = registerSword(EvolvedMekanismToolsConfig.materials.plaslitherite);
-    public static final ItemRegistryObject<ItemMekanismPaxel> PLASLITHERITE_PAXEL = registerPaxel(EvolvedMekanismToolsConfig.materials.plaslitherite);
-    public static final ItemRegistryObject<ItemMekanismArmor> PLASLITHERITE_HELMET = registerArmor(EMToolsArmorMaterials.PLASLITHERITE, EvolvedMekanismToolsConfig.materials.plaslitherite, ArmorItem.Type.HELMET);
-    public static final ItemRegistryObject<ItemMekanismArmor> PLASLITHERITE_CHESTPLATE = registerArmor(EMToolsArmorMaterials.PLASLITHERITE, EvolvedMekanismToolsConfig.materials.plaslitherite, ArmorItem.Type.CHESTPLATE);
-    public static final ItemRegistryObject<ItemMekanismArmor> PLASLITHERITE_LEGGINGS = registerArmor(EMToolsArmorMaterials.PLASLITHERITE, EvolvedMekanismToolsConfig.materials.plaslitherite, ArmorItem.Type.LEGGINGS);
-    public static final ItemRegistryObject<ItemMekanismArmor> PLASLITHERITE_BOOTS = registerArmor(EMToolsArmorMaterials.PLASLITHERITE, EvolvedMekanismToolsConfig.materials.plaslitherite, ArmorItem.Type.BOOTS);
-    public static final ItemRegistryObject<ItemMekanismShield> PLASLITHERITE_SHIELD = registerShield(EvolvedMekanismToolsConfig.materials.plaslitherite);
+    public static final ItemRegistryObject<Item> PLASLITHERITE_PICKAXE = registerPickaxe(EvolvedMekanismToolsConfig.materials.plaslitherite);
+    public static final ItemRegistryObject<Item> PLASLITHERITE_AXE = registerAxe(EvolvedMekanismToolsConfig.materials.plaslitherite);
+    public static final ItemRegistryObject<Item> PLASLITHERITE_SHOVEL = registerShovel(EvolvedMekanismToolsConfig.materials.plaslitherite);
+    public static final ItemRegistryObject<Item> PLASLITHERITE_HOE = registerHoe(EvolvedMekanismToolsConfig.materials.plaslitherite);
+    public static final ItemRegistryObject<Item> PLASLITHERITE_SWORD = registerSword(EvolvedMekanismToolsConfig.materials.plaslitherite);
+    public static final ItemRegistryObject<Item> PLASLITHERITE_PAXEL = registerPaxel(EvolvedMekanismToolsConfig.materials.plaslitherite);
+    public static final ItemRegistryObject<Item> PLASLITHERITE_HELMET = registerArmor(EvolvedMekanismToolsConfig.materials.plaslitherite, ArmorType.HELMET);
+    public static final ItemRegistryObject<Item> PLASLITHERITE_CHESTPLATE = registerArmor(EvolvedMekanismToolsConfig.materials.plaslitherite, ArmorType.CHESTPLATE);
+    public static final ItemRegistryObject<Item> PLASLITHERITE_LEGGINGS = registerArmor(EvolvedMekanismToolsConfig.materials.plaslitherite, ArmorType.LEGGINGS);
+    public static final ItemRegistryObject<Item> PLASLITHERITE_BOOTS = registerArmor(EvolvedMekanismToolsConfig.materials.plaslitherite, ArmorType.BOOTS);
+    public static final ItemRegistryObject<ShieldItem> PLASLITHERITE_SHIELD = registerShield(EvolvedMekanismToolsConfig.materials.plaslitherite);
 
-    public static final ItemRegistryObject<ItemMekanismPickaxe> REFINED_REDSTONE_PICKAXE = registerPickaxe(EvolvedMekanismToolsConfig.materials.refinedRedstone);
-    public static final ItemRegistryObject<ItemMekanismAxe> REFINED_REDSTONE_AXE = registerAxe(EvolvedMekanismToolsConfig.materials.refinedRedstone);
-    public static final ItemRegistryObject<ItemMekanismShovel> REFINED_REDSTONE_SHOVEL = registerShovel(EvolvedMekanismToolsConfig.materials.refinedRedstone);
-    public static final ItemRegistryObject<ItemMekanismHoe> REFINED_REDSTONE_HOE = registerHoe(EvolvedMekanismToolsConfig.materials.refinedRedstone);
-    public static final ItemRegistryObject<ItemMekanismSword> REFINED_REDSTONE_SWORD = registerSword(EvolvedMekanismToolsConfig.materials.refinedRedstone);
-    public static final ItemRegistryObject<ItemMekanismPaxel> REFINED_REDSTONE_PAXEL = registerPaxel(EvolvedMekanismToolsConfig.materials.refinedRedstone);
-    public static final ItemRegistryObject<ItemMekanismArmor> REFINED_REDSTONE_HELMET = registerArmor(EMToolsArmorMaterials.REFINED_REDSTONE, EvolvedMekanismToolsConfig.materials.refinedRedstone, ArmorItem.Type.HELMET);
-    public static final ItemRegistryObject<ItemMekanismArmor> REFINED_REDSTONE_CHESTPLATE = registerArmor(EMToolsArmorMaterials.REFINED_REDSTONE, EvolvedMekanismToolsConfig.materials.refinedRedstone, ArmorItem.Type.CHESTPLATE);
-    public static final ItemRegistryObject<ItemMekanismArmor> REFINED_REDSTONE_LEGGINGS = registerArmor(EMToolsArmorMaterials.REFINED_REDSTONE, EvolvedMekanismToolsConfig.materials.refinedRedstone, ArmorItem.Type.LEGGINGS);
-    public static final ItemRegistryObject<ItemMekanismArmor> REFINED_REDSTONE_BOOTS = registerArmor(EMToolsArmorMaterials.REFINED_REDSTONE, EvolvedMekanismToolsConfig.materials.refinedRedstone, ArmorItem.Type.BOOTS);
-    public static final ItemRegistryObject<ItemMekanismShield> REFINED_REDSTONE_SHIELD = registerShield(EvolvedMekanismToolsConfig.materials.refinedRedstone);
+    public static final ItemRegistryObject<Item> REFINED_REDSTONE_PICKAXE = registerPickaxe(EvolvedMekanismToolsConfig.materials.refinedRedstone);
+    public static final ItemRegistryObject<Item> REFINED_REDSTONE_AXE = registerAxe(EvolvedMekanismToolsConfig.materials.refinedRedstone);
+    public static final ItemRegistryObject<Item> REFINED_REDSTONE_SHOVEL = registerShovel(EvolvedMekanismToolsConfig.materials.refinedRedstone);
+    public static final ItemRegistryObject<Item> REFINED_REDSTONE_HOE = registerHoe(EvolvedMekanismToolsConfig.materials.refinedRedstone);
+    public static final ItemRegistryObject<Item> REFINED_REDSTONE_SWORD = registerSword(EvolvedMekanismToolsConfig.materials.refinedRedstone);
+    public static final ItemRegistryObject<Item> REFINED_REDSTONE_PAXEL = registerPaxel(EvolvedMekanismToolsConfig.materials.refinedRedstone);
+    public static final ItemRegistryObject<Item> REFINED_REDSTONE_HELMET = registerArmor(EvolvedMekanismToolsConfig.materials.refinedRedstone, ArmorType.HELMET);
+    public static final ItemRegistryObject<Item> REFINED_REDSTONE_CHESTPLATE = registerArmor(EvolvedMekanismToolsConfig.materials.refinedRedstone, ArmorType.CHESTPLATE);
+    public static final ItemRegistryObject<Item> REFINED_REDSTONE_LEGGINGS = registerArmor(EvolvedMekanismToolsConfig.materials.refinedRedstone, ArmorType.LEGGINGS);
+    public static final ItemRegistryObject<Item> REFINED_REDSTONE_BOOTS = registerArmor(EvolvedMekanismToolsConfig.materials.refinedRedstone, ArmorType.BOOTS);
+    public static final ItemRegistryObject<ShieldItem> REFINED_REDSTONE_SHIELD = registerShield(EvolvedMekanismToolsConfig.materials.refinedRedstone);
 
-    public static final ItemRegistryObject<ItemMekanismPickaxe> NOCTIS_ROZULI_PICKAXE = registerPickaxe(EvolvedMekanismToolsConfig.materials.noctisRozuli);
-    public static final ItemRegistryObject<ItemMekanismAxe> NOCTIS_ROZULI_AXE = registerAxe(EvolvedMekanismToolsConfig.materials.noctisRozuli);
-    public static final ItemRegistryObject<ItemMekanismShovel> NOCTIS_ROZULI_SHOVEL = registerShovel(EvolvedMekanismToolsConfig.materials.noctisRozuli);
-    public static final ItemRegistryObject<ItemMekanismHoe> NOCTIS_ROZULI_HOE = registerHoe(EvolvedMekanismToolsConfig.materials.noctisRozuli);
-    public static final ItemRegistryObject<ItemMekanismSword> NOCTIS_ROZULI_SWORD = registerSword(EvolvedMekanismToolsConfig.materials.noctisRozuli);
-    public static final ItemRegistryObject<ItemMekanismPaxel> NOCTIS_ROZULI_PAXEL = registerPaxel(EvolvedMekanismToolsConfig.materials.noctisRozuli);
-    public static final ItemRegistryObject<ItemMekanismArmor> NOCTIS_ROZULI_HELMET = registerArmor(EMToolsArmorMaterials.NOCTIS_ROZULI, EvolvedMekanismToolsConfig.materials.noctisRozuli, ArmorItem.Type.HELMET);
-    public static final ItemRegistryObject<ItemMekanismArmor> NOCTIS_ROZULI_CHESTPLATE = registerArmor(EMToolsArmorMaterials.NOCTIS_ROZULI, EvolvedMekanismToolsConfig.materials.noctisRozuli, ArmorItem.Type.CHESTPLATE);
-    public static final ItemRegistryObject<ItemMekanismArmor> NOCTIS_ROZULI_LEGGINGS = registerArmor(EMToolsArmorMaterials.NOCTIS_ROZULI, EvolvedMekanismToolsConfig.materials.noctisRozuli, ArmorItem.Type.LEGGINGS);
-    public static final ItemRegistryObject<ItemMekanismArmor> NOCTIS_ROZULI_BOOTS = registerArmor(EMToolsArmorMaterials.NOCTIS_ROZULI, EvolvedMekanismToolsConfig.materials.noctisRozuli, ArmorItem.Type.BOOTS);
-    public static final ItemRegistryObject<ItemMekanismShield> NOCTIS_ROZULI_SHIELD = registerShield(EvolvedMekanismToolsConfig.materials.noctisRozuli);
+    public static final ItemRegistryObject<Item> NOCTIS_ROZULI_PICKAXE = registerPickaxe(EvolvedMekanismToolsConfig.materials.noctisRozuli);
+    public static final ItemRegistryObject<Item> NOCTIS_ROZULI_AXE = registerAxe(EvolvedMekanismToolsConfig.materials.noctisRozuli);
+    public static final ItemRegistryObject<Item> NOCTIS_ROZULI_SHOVEL = registerShovel(EvolvedMekanismToolsConfig.materials.noctisRozuli);
+    public static final ItemRegistryObject<Item> NOCTIS_ROZULI_HOE = registerHoe(EvolvedMekanismToolsConfig.materials.noctisRozuli);
+    public static final ItemRegistryObject<Item> NOCTIS_ROZULI_SWORD = registerSword(EvolvedMekanismToolsConfig.materials.noctisRozuli);
+    public static final ItemRegistryObject<Item> NOCTIS_ROZULI_PAXEL = registerPaxel(EvolvedMekanismToolsConfig.materials.noctisRozuli);
+    public static final ItemRegistryObject<Item> NOCTIS_ROZULI_HELMET = registerArmor(EvolvedMekanismToolsConfig.materials.noctisRozuli, ArmorType.HELMET);
+    public static final ItemRegistryObject<Item> NOCTIS_ROZULI_CHESTPLATE = registerArmor(EvolvedMekanismToolsConfig.materials.noctisRozuli, ArmorType.CHESTPLATE);
+    public static final ItemRegistryObject<Item> NOCTIS_ROZULI_LEGGINGS = registerArmor(EvolvedMekanismToolsConfig.materials.noctisRozuli, ArmorType.LEGGINGS);
+    public static final ItemRegistryObject<Item> NOCTIS_ROZULI_BOOTS = registerArmor(EvolvedMekanismToolsConfig.materials.noctisRozuli, ArmorType.BOOTS);
+    public static final ItemRegistryObject<ShieldItem> NOCTIS_ROZULI_SHIELD = registerShield(EvolvedMekanismToolsConfig.materials.noctisRozuli);
 
-
-    private static ItemRegistryObject<ItemMekanismShield> registerShield(MaterialCreator material) {
-        return register(ItemMekanismShield::new, "_shield", material);
+    private static ItemRegistryObject<ShieldItem> registerShield(MaterialCreator material) {
+        return ITEMS.registerItem(material.registryPrefix() + "_shield", properties -> new ShieldItem(ToolsItems.setCommonProperties(properties, material)
+              .durability(material.shieldDurability())
+              .component(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY)
+              .repairable(material.repairItems())
+              .equippableUnswappable(EquipmentSlot.OFFHAND)
+              .delayedComponent(DataComponents.BLOCKS_ATTACKS, context -> new BlocksAttacks(
+                    material.shieldBlockDelay(),
+                    material.shieldDisableCooldownScale(),
+                    List.of(new BlocksAttacks.DamageReduction(
+                          material.shieldHorizontalBlockingAngle(),
+                          Optional.empty(),
+                          material.shieldDamageReductionBase(),
+                          material.shieldDamageReductionFactor()
+                    )),
+                    new BlocksAttacks.ItemDamageFunction(material.shieldDamageThreshold(), material.shieldItemDamageBase(), material.shieldItemDamageFactor()),
+                    Optional.of(context.getOrThrow(DamageTypeTags.BYPASSES_SHIELD)),
+                    Optional.of(SoundEvents.SHIELD_BLOCK),
+                    Optional.of(SoundEvents.SHIELD_BREAK)
+              ))
+              .component(DataComponents.BREAK_SOUND, SoundEvents.SHIELD_BREAK)
+        ));
     }
 
-    private static ItemRegistryObject<ItemMekanismPickaxe> registerPickaxe(MaterialCreator material) {
-        return register(ItemMekanismPickaxe::new, "_pickaxe", material);
+    private static ItemRegistryObject<Item> registerSimple(MaterialCreator material, String suffix, UnaryOperator<Item.Properties> modifier) {
+        return ITEMS.registerSimple(material.registryPrefix() + suffix, properties -> modifier.apply(ToolsItems.setCommonProperties(properties, material)));
     }
 
-    private static ItemRegistryObject<ItemMekanismAxe> registerAxe(MaterialCreator material) {
-        return register(ItemMekanismAxe::new, "_axe", material);
+    private static ItemRegistryObject<Item> registerPickaxe(MaterialCreator material) {
+        return registerSimple(material, "_pickaxe", p -> p.pickaxe(material.toToolMaterial(), material.pickaxeDamage(), material.pickaxeAtkSpeed()));
     }
 
-    private static ItemRegistryObject<ItemMekanismShovel> registerShovel(MaterialCreator material) {
-        return register(ItemMekanismShovel::new, "_shovel", material);
+    private static ItemRegistryObject<Item> registerAxe(MaterialCreator material) {
+        return registerSimple(material, "_axe", p -> p.axe(material.toToolMaterial(), material.axeDamage(), material.axeAtkSpeed()));
     }
 
-    private static ItemRegistryObject<ItemMekanismHoe> registerHoe(MaterialCreator material) {
-        return register(ItemMekanismHoe::new, "_hoe", material);
+    private static ItemRegistryObject<Item> registerShovel(MaterialCreator material) {
+        return registerSimple(material, "_shovel", p -> p.shovel(material.toToolMaterial(), material.shovelDamage(), material.shovelAtkSpeed()));
     }
 
-    private static ItemRegistryObject<ItemMekanismSword> registerSword(MaterialCreator material) {
-        return register(ItemMekanismSword::new, "_sword", material);
+    private static ItemRegistryObject<Item> registerHoe(MaterialCreator material) {
+        return registerSimple(material, "_hoe", p -> p.hoe(material.toToolMaterial(), material.hoeDamage(), material.hoeAtkSpeed()));
     }
 
-    private static ItemRegistryObject<ItemMekanismPaxel> registerPaxel(MaterialCreator material) {
-        return register(ItemMekanismPaxel::new, "_paxel", material);
-    }
-    private static ItemRegistryObject<ItemMekanismPaxel> registerPaxel(VanillaPaxelMaterialCreator material) {
-        if (material.getVanillaTier() == Tiers.NETHERITE) {
-            return ITEMS.registerUnburnable(material.getRegistryPrefix() + "_paxel", properties -> new ItemMekanismPaxel(material, properties));
-        }
-        return ITEMS.registerItem(material.getRegistryPrefix() + "_paxel", properties -> new ItemMekanismPaxel(material, properties));
+    private static ItemRegistryObject<Item> registerSword(MaterialCreator material) {
+        return registerSimple(material, "_sword", p -> p.sword(material.toToolMaterial(), material.swordDamage(), material.swordAtkSpeed()));
     }
 
-    private static ItemRegistryObject<ItemMekanismArmor> registerArmor(Holder<ArmorMaterial> armorMaterial, MaterialCreator material, ArmorItem.Type armorType) {
-        return registerArmor(armorMaterial, material, armorType, ItemMekanismArmor::new);
+    private static ItemRegistryObject<Item> registerPaxel(MaterialCreator material) {
+        return ITEMS.registerItem(material.registryPrefix() + "_paxel", properties -> ToolsItems.paxel(ToolsItems.setCommonProperties(properties, material), material));
     }
 
-    private static ItemRegistryObject<ItemMekanismArmor> registerArmor(Holder<ArmorMaterial> armorMaterial, MaterialCreator material, ArmorItem.Type armorType, ArmorCreator armorCreator) {
-        return ITEMS.register(material.getRegistryPrefix() + "_" + armorType.getName(), () -> armorCreator.create(armorMaterial, armorType, getBaseProperties(material)
-                .durability(material.getDurabilityForType(armorType))));
+    private static ItemRegistryObject<Item> registerArmor(MaterialCreator material, ArmorType armorType) {
+        return registerSimple(material, "_" + armorType.getName(), p -> p
+              .humanoidArmor(material.toArmorMaterial(armorType), armorType)
+              //Durability must go after humanoidArmor to set it to the correct value
+              .durability(material.durability(armorType)));
     }
 
-    private static <ITEM extends Item> ItemRegistryObject<ITEM> register(BiFunction<MaterialCreator, Item.Properties, ITEM> itemCreator, String suffix,
-                                                                         MaterialCreator material) {
-        return ITEMS.register(material.getRegistryPrefix() + suffix, () -> itemCreator.apply(material, getBaseProperties(material)));
-    }
-
-    private static Item.Properties getBaseProperties(BaseMekanismMaterial material) {
-        Item.Properties properties = new Item.Properties();
-        if (!material.burnsInFire()) {
-            properties = properties.fireResistant();
-        }
-        return properties;
-    }
-
-    @FunctionalInterface
-    private interface ArmorCreator {
-
-        ItemMekanismArmor create(Holder<ArmorMaterial> material, ArmorItem.Type armorType, Item.Properties properties);
-    }
     public static void register(IEventBus modEventBus) {
         ITEMS.register(modEventBus);
     }

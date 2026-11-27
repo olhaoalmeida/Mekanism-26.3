@@ -3,21 +3,21 @@ package fr.iglee42.evolvedmekanism.multiblock.apt;
 import fr.iglee42.evolvedmekanism.EvolvedMekanism;
 import fr.iglee42.evolvedmekanism.registries.EMBlocks;
 import mekanism.api.SerializationConstants;
-import mekanism.common.lib.multiblock.MultiblockManager;
+import mekanism.common.lib.multiblock.MultiblockType;
 import mekanism.common.tile.prefab.TileEntityMultiblock;
-import mekanism.common.util.NBTUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class TileEntityAPTCasing extends TileEntityMultiblock<APTMultiblockData> {
 
+    private static final boolean DEFAULT_HANDLE_SOUND = false;
 
-    private boolean handleSound;
+    private boolean handleSound = DEFAULT_HANDLE_SOUND;
     private boolean prevActive;
 
     public TileEntityAPTCasing(BlockPos pos, BlockState state) {
@@ -28,10 +28,9 @@ public class TileEntityAPTCasing extends TileEntityMultiblock<APTMultiblockData>
         super(provider, pos, state);
     }
 
-
     @Override
-    protected boolean onUpdateServer(APTMultiblockData multiblock) {
-        boolean needsPacket = super.onUpdateServer(multiblock);
+    protected boolean onUpdateServer(ServerLevel level, APTMultiblockData multiblock) {
+        boolean needsPacket = super.onUpdateServer(level, multiblock);
         boolean active = multiblock.isFormed() && multiblock.handlesSound(this) && multiblock.progress > 0;
         if (active != prevActive) {
             prevActive = active;
@@ -40,15 +39,14 @@ public class TileEntityAPTCasing extends TileEntityMultiblock<APTMultiblockData>
         return needsPacket;
     }
 
-
     @Override
     public APTMultiblockData createMultiblock() {
         return new APTMultiblockData(this);
     }
 
     @Override
-    public MultiblockManager<APTMultiblockData> getManager() {
-        return EvolvedMekanism.aptManager;
+    public MultiblockType<APTMultiblockData> getMultiblockType() {
+        return EvolvedMekanism.APT_MULTIBLOCK;
     }
 
     @Override
@@ -57,18 +55,16 @@ public class TileEntityAPTCasing extends TileEntityMultiblock<APTMultiblockData>
         return multiblock.isFormed() && handleSound && multiblock.progress > 0;
     }
 
-    @NotNull
     @Override
-    public CompoundTag getReducedUpdateTag(HolderLookup.Provider provider) {
-        CompoundTag updateTag = super.getReducedUpdateTag(provider);
+    public void writeReducedUpdatedTag(ValueOutput output) {
+        super.writeReducedUpdatedTag(output);
         APTMultiblockData multiblock = getMultiblock();
-        updateTag.putBoolean(SerializationConstants.HANDLE_SOUND, multiblock.isFormed() && multiblock.handlesSound(this));
-        return updateTag;
+        output.putBoolean(SerializationConstants.HANDLE_SOUND, multiblock.isFormed() && multiblock.handlesSound(this));
     }
 
     @Override
-    public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.Provider provider) {
-        super.handleUpdateTag(tag,provider);
-        NBTUtils.setBooleanIfPresent(tag, SerializationConstants.HANDLE_SOUND, value -> handleSound = value);
+    public void handleUpdateTag(ValueInput input) {
+        super.handleUpdateTag(input);
+        handleSound = input.getBooleanOr(SerializationConstants.HANDLE_SOUND, DEFAULT_HANDLE_SOUND);
     }
 }

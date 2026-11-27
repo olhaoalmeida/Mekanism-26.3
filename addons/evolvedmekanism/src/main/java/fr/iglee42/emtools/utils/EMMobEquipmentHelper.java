@@ -12,7 +12,11 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.*;
+import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
+import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
+import net.minecraft.world.entity.monster.zombie.Drowned;
+import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.monster.zombie.ZombifiedPiglin;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -40,7 +44,7 @@ public class EMMobEquipmentHelper {
     public static void onLivingSpecialSpawn(FinalizeSpawnEvent event) {
         LivingEntity entity = event.getEntity();
         boolean isZombie = isZombie(entity);
-        if (isZombie || entity instanceof Skeleton || entity instanceof Stray || entity instanceof Piglin) {
+        if (isZombie || (entity instanceof AbstractSkeleton && !(entity instanceof WitherSkeleton)) || entity instanceof Piglin) {
             //Don't bother calculating random numbers unless the instanceof checks pass
             RandomSource random = event.getLevel().getRandom();
             DifficultyInstance difficulty = event.getDifficulty();

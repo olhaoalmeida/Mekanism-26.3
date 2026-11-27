@@ -1,62 +1,58 @@
 package fr.iglee42.evolvedmekanism.tiles.factory;
 
-import java.util.List;
-import java.util.Set;
-
-import fr.iglee42.evolvedmekanism.EvolvedMekanism;
 import fr.iglee42.evolvedmekanism.interfaces.EMInputRecipeCache;
 import fr.iglee42.evolvedmekanism.interfaces.IGetEnergySlot;
 import fr.iglee42.evolvedmekanism.interfaces.ThreeInputCachedRecipe;
 import fr.iglee42.evolvedmekanism.interfaces.TripleItemRecipeLookupHandler;
 import fr.iglee42.evolvedmekanism.recipes.AlloyerRecipe;
 import fr.iglee42.evolvedmekanism.recipes.vanilla_input.TriItemRecipeInput;
+import fr.iglee42.evolvedmekanism.recipeviewers.EMRecipeViewersTypes;
 import fr.iglee42.evolvedmekanism.registries.EMRecipeType;
 import fr.iglee42.evolvedmekanism.tiers.EMFactoryTier;
 import fr.iglee42.evolvedmekanism.tiles.LimitedInputInventorySlot;
 import fr.iglee42.evolvedmekanism.tiles.upgrade.AlloyerUpgradeData;
+import java.util.List;
+import java.util.Set;
 import mekanism.api.IContentsListener;
-import mekanism.api.RelativeSide;
 import mekanism.api.inventory.IInventorySlot;
-import mekanism.api.math.MathUtils;
-import mekanism.api.providers.IBlockProvider;
-import mekanism.api.recipes.CombinerRecipe;
+import mekanism.api.recipes.book.CombiningBookCategory;
+import mekanism.api.recipes.book.CombiningBookCategory.CombiningBookInfo;
 import mekanism.api.recipes.cache.CachedRecipe;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
-import mekanism.api.recipes.cache.TwoInputCachedRecipe;
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
 import mekanism.api.recipes.inputs.IInputHandler;
 import mekanism.api.recipes.inputs.InputHelper;
+import mekanism.client.recipe_viewer.type.IRecipeViewerRecipeType;
 import mekanism.common.Mekanism;
-import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.capabilities.holder.container.MekContainerHelper;
 import mekanism.common.integration.computer.SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper;
 import mekanism.common.integration.computer.annotation.WrappingComputerMethod;
 import mekanism.common.inventory.container.slot.ContainerSlotType;
-import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.recipe.IMekanismRecipeTypeProvider;
-import mekanism.common.recipe.MekanismRecipeType;
-import mekanism.common.recipe.lookup.IDoubleRecipeLookupHandler.DoubleItemRecipeLookupHandler;
-import mekanism.common.recipe.lookup.cache.InputRecipeCache.DoubleItem;
 import mekanism.common.recipe.lookup.cache.type.ItemInputCache;
 import mekanism.common.tier.FactoryTier;
 import mekanism.common.tile.component.config.ConfigInfo;
 import mekanism.common.tile.component.config.DataType;
 import mekanism.common.tile.component.config.slot.InventorySlotInfo;
 import mekanism.common.tile.factory.TileEntityItemToItemFactory;
-import mekanism.common.upgrade.CombinerUpgradeData;
 import mekanism.common.upgrade.IUpgradeData;
-import mekanism.common.util.InventoryUtils;
-import mekanism.common.util.MekanismUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
+import org.jetbrains.annotations.UnknownNullability;
+import org.jspecify.annotations.Nullable;
 
-public class TileEntityAlloyingFactory extends TileEntityItemToItemFactory<AlloyerRecipe> implements TripleItemRecipeLookupHandler<AlloyerRecipe> {
+public class TileEntityAlloyingFactory extends TileEntityItemToItemFactory<CombiningBookCategory, CombiningBookInfo, AlloyerRecipe> implements TripleItemRecipeLookupHandler<AlloyerRecipe> {
 
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
           RecipeError.NOT_ENOUGH_ENERGY,
@@ -70,11 +66,13 @@ public class TileEntityAlloyingFactory extends TileEntityItemToItemFactory<Alloy
           RecipeError.NOT_ENOUGH_SECONDARY_INPUT
     );
 
-    private final IInputHandler<@NotNull ItemStack> extraInputHandler;
-    private final IInputHandler<@NotNull ItemStack> secondExtraInputHandler;
+    private final IInputHandler<Item, ItemStack> extraInputHandler;
+    private final IInputHandler<Item, ItemStack> secondExtraInputHandler;
 
+    @UnknownNullability//Initialized via getInitialInventory
     @WrappingComputerMethod(wrapper = ComputerIInventorySlotWrapper.class, methodNames = "getSecondaryInput", docPlaceholder = "secondary input slot")
     LimitedInputInventorySlot extraSlot;
+    @UnknownNullability//Initialized via getInitialInventory
     @WrappingComputerMethod(wrapper = ComputerIInventorySlotWrapper.class, methodNames = "getTertiaryInput", docPlaceholder = "tertiary input slot")
     LimitedInputInventorySlot secondExtraSlot;
 
@@ -82,27 +80,30 @@ public class TileEntityAlloyingFactory extends TileEntityItemToItemFactory<Alloy
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES, GLOBAL_ERROR_TYPES);
         extraInputHandler = InputHelper.getInputHandler(extraSlot, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
         secondExtraInputHandler = InputHelper.getInputHandler(secondExtraSlot, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
+        for (int i = 0; i < recipeContainers.length; i++) {
+            //Add the extra slots to the input recipe containers
+            recipeContainers[i] = recipeContainers[i].withExtraInput(extraSlot).withExtraInput(secondExtraSlot);
+        }
         ConfigInfo itemConfig = configComponent.getConfig(TransmissionType.ITEM);
         if (itemConfig != null) {
-            itemConfig.addSlotInfo(DataType.EXTRA, new InventorySlotInfo(true, true, extraSlot,secondExtraSlot));
+            itemConfig.addSlotInfo(DataType.EXTRA, new InventorySlotInfo(true, true, extraSlot, secondExtraSlot));
         }
     }
 
     @Override
-    protected void addSlots(InventorySlotHelper builder, IContentsListener listener, IContentsListener updateSortingListener) {
+    protected void addSlots(MekContainerHelper<IInventorySlot> builder, IContentsListener listener, IContentsListener updateSortingListener) {
         super.addSlots(builder, listener, updateSortingListener);
-        int imageWidth = 176 +(38 *( tier.ordinal() - EMFactoryTier.OVERCLOCKED.ordinal() + 1)) + 9;
+        int imageWidth = 176 + (38 * (tier.ordinal() - EMFactoryTier.OVERCLOCKED.ordinal() + 1)) + 9;
         int inventorySize = 9 * 20;
         int endInventory = (imageWidth / 2 + inventorySize / 2) - 10;
         int extraSlotX = tier.ordinal() > FactoryTier.ULTIMATE.ordinal() ? endInventory + 4 : 7;
         int extraSlotY = tier.ordinal() > FactoryTier.ULTIMATE.ordinal() ? 143 : 57;
-        builder.addSlot(extraSlot = LimitedInputInventorySlot.at((tier.ordinal() + 1) * 64,this::containsRecipeB, markAllMonitorsChanged(listener), extraSlotX, extraSlotY));
-        builder.addSlot(secondExtraSlot = LimitedInputInventorySlot.at((tier.ordinal() + 1) * 64, this::containsRecipeC, markAllMonitorsChanged(listener), extraSlotX, extraSlotY - 22));
+        builder.addContainer(extraSlot = LimitedInputInventorySlot.at((tier.ordinal() + 1) * 64, this::containsRecipeB, markAllMonitorsChanged(listener), extraSlotX, extraSlotY));
+        builder.addContainer(secondExtraSlot = LimitedInputInventorySlot.at((tier.ordinal() + 1) * 64, this::containsRecipeC, markAllMonitorsChanged(listener), extraSlotX, extraSlotY - 22));
         extraSlot.setSlotType(ContainerSlotType.EXTRA);
         secondExtraSlot.setSlotType(ContainerSlotType.EXTRA);
     }
 
-    @Nullable
     @Override
     protected LimitedInputInventorySlot getExtraSlot() {
         return extraSlot;
@@ -113,81 +114,79 @@ public class TileEntityAlloyingFactory extends TileEntityItemToItemFactory<Alloy
     }
 
     @Override
-    public boolean isValidInputItem(@NotNull ItemStack stack) {
-        return containsRecipeA(stack);
+    public boolean isValidInputItem(ItemResource itemType) {
+        return containsRecipeA(itemType);
     }
 
     @Override
-    protected int getNeededInput(AlloyerRecipe recipe, ItemStack inputStack) {
-        return MathUtils.clampToInt(recipe.getMainInput().getNeededAmount(inputStack));
+    protected int getNeededInput(AlloyerRecipe recipe, ItemResource inputType) {
+        return recipe.getMainInput().getNeededAmount(inputType);
     }
 
     @Override
-    public boolean isItemValidForSlot(@NotNull ItemStack stack) {
-        return containsRecipeA(stack);
+    public boolean isItemValidForSlot(ItemResource itemType) {
+        return containsRecipeA(itemType);
     }
 
     @Override
-    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<AlloyerRecipe> cached, @NotNull ItemStack stack) {
+    protected boolean isCachedRecipeValid(@Nullable CachedRecipe<AlloyerRecipe> cached, ItemResource itemType) {
         if (cached != null) {
             AlloyerRecipe cachedRecipe = cached.getRecipe();
-            return cachedRecipe.getMainInput().testType(stack) && (extraSlot.isEmpty() || cachedRecipe.getExtraInput().testType(extraSlot.getStack()));
+            return cachedRecipe.getMainInput().testType(itemType) && (extraSlot.isEmpty() || cachedRecipe.getExtraInput().testType(extraSlot.resource()));
         }
         return false;
     }
 
+    @Nullable
     @Override
-    protected AlloyerRecipe findRecipe(int process, @NotNull ItemStack fallbackInput, @NotNull IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot) {
-        ItemStack extra = extraSlot.getStack();
-        ItemStack secondExtra = secondExtraSlot.getStack();
-        ItemStack output = outputSlot.getStack();
-        return ((EMInputRecipeCache.IFindRecipes<ItemStack, ItemStackIngredient,ItemStack,ItemStackIngredient,ItemStack,ItemStackIngredient,AlloyerRecipe, ItemInputCache<AlloyerRecipe>,ItemInputCache<AlloyerRecipe>,ItemInputCache<AlloyerRecipe>>)getRecipeType().getInputCache()).findTypeBasedRecipe(level, fallbackInput, extra, secondExtra,
-              recipe -> InventoryUtils.areItemsStackable(recipe.getOutput(fallbackInput, extra,secondExtra), output));
+    protected RecipeHolder<AlloyerRecipe> findRecipe(ItemResource fallbackInput, IInventorySlot outputSlot, @Nullable IInventorySlot secondaryOutputSlot) {
+        ItemStack input = fallbackInput.toStack(1);
+        ItemStack extra = extraSlot.asItemStack();
+        ItemStack secondExtra = secondExtraSlot.asItemStack();
+        ItemResource outputContents = outputSlot.resource();
+        return ((EMInputRecipeCache.IFindRecipes<Item, ItemStack, ItemStackIngredient, Item, ItemStack, ItemStackIngredient, Item, ItemStack, ItemStackIngredient,
+              AlloyerRecipe, ItemInputCache<AlloyerRecipe>, ItemInputCache<AlloyerRecipe>, ItemInputCache<AlloyerRecipe>>) getRecipeType().getInputCache())
+              .findTypeBasedRecipe(level, input, extra, secondExtra,
+                    recipe -> outputContents.isEmpty() || outputContents.matches(recipe.getOutput(input, extra, secondExtra)));
     }
 
-
-    @NotNull
     @Override
-    public IMekanismRecipeTypeProvider<TriItemRecipeInput,AlloyerRecipe, EMInputRecipeCache.TripleItem<AlloyerRecipe>> getRecipeType() {
+    public IMekanismRecipeTypeProvider<TriItemRecipeInput, CombiningBookCategory, CombiningBookInfo, AlloyerRecipe, EMInputRecipeCache.TripleItem<AlloyerRecipe>> getRecipeType() {
         return EMRecipeType.ALLOYING;
+    }
+
+    @Override
+    public @Nullable IRecipeViewerRecipeType<AlloyerRecipe> recipeViewerType() {
+        return EMRecipeViewersTypes.ALLOYING;
     }
 
     @Nullable
     @Override
-    public AlloyerRecipe getRecipe(int cacheIndex) {
-        return findFirstRecipe(inputHandlers[cacheIndex], extraInputHandler,secondExtraInputHandler);
-    }
-
-    @NotNull
-    @Override
-    public CachedRecipe<AlloyerRecipe> createNewCachedRecipe(@NotNull AlloyerRecipe recipe, int cacheIndex) {
-        return ThreeInputCachedRecipe.alloyer(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], extraInputHandler,secondExtraInputHandler, outputHandlers[cacheIndex])
-              .setErrorsChanged(errors -> errorTracker.onErrorsChanged(errors, cacheIndex))
-              .setCanHolderFunction(this::canFunction)
-              .setActive(active -> setActiveState(active, cacheIndex))
-              .setEnergyRequirements(energyContainer::getEnergyPerTick, energyContainer)
-              .setRequiredTicks(this::getTicksRequired)
-              .setOnFinish(this::markForSave)
-              .setOperatingTicksChanged(operatingTicks -> progress[cacheIndex] = operatingTicks);
+    public RecipeHolder<AlloyerRecipe> getRecipe(int cacheIndex) {
+        return findFirstRecipe(inputHandlers[cacheIndex], extraInputHandler, secondExtraInputHandler);
     }
 
     @Override
-    public void parseUpgradeData(HolderLookup.Provider provider,@NotNull IUpgradeData upgradeData) {
+    public CachedRecipe<AlloyerRecipe> createNewCachedRecipe(AlloyerRecipe recipe, int cacheIndex, ContextMap recipeContext) {
+        return setCommonSettings(ThreeInputCachedRecipe.alloyer(recipe, recheckAllRecipeErrors[cacheIndex], inputHandlers[cacheIndex], extraInputHandler,
+              secondExtraInputHandler, outputHandlers[cacheIndex]), cacheIndex);
+    }
+
+    @Override
+    public void parseUpgradeData(IUpgradeData upgradeData, Provider provider, TransactionContext transaction) {
         if (upgradeData instanceof AlloyerUpgradeData data) {
             //Generic factory upgrade data handling
-            super.parseUpgradeData(provider,upgradeData);
-            //Copy the stack using NBT so that if it is not actually valid due to a reload we don't crash
-            extraSlot.deserializeNBT(provider,data.extraSlot.serializeNBT(provider));
-            secondExtraSlot.deserializeNBT(provider,data.secondaryExtraSlot.serializeNBT(provider));
+            super.parseUpgradeData(upgradeData, provider, transaction);
+            extraSlot.copyContents(data.extraSlot, transaction);
+            secondExtraSlot.copyContents(data.secondaryExtraSlot, transaction);
         } else {
             Mekanism.logger.warn("Unhandled upgrade data.", new Throwable());
         }
     }
 
-
-    @NotNull
     @Override
     public AlloyerUpgradeData getUpgradeData(HolderLookup.Provider provider) {
-        return new AlloyerUpgradeData(provider,redstone, getControlType(), getEnergyContainer(), progress, ((IGetEnergySlot)this).getEnergySlot(), extraSlot,secondExtraSlot, inputSlots, outputSlots, isSorting(), getComponents());
+        return new AlloyerUpgradeData(provider, redstone, getControlType(), energyContainer, ((IGetEnergySlot) this).getEnergySlot(), recipeCacheLookupMonitors,
+              extraSlot, secondExtraSlot, inputSlots, outputSlots, isSorting(), getComponents(), problemPath());
     }
 }

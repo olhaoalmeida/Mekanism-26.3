@@ -1,6 +1,7 @@
 package fr.iglee42.evolvedmekanism.multiblock.apt;
 
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Set;
 
 import fr.iglee42.evolvedmekanism.EvolvedMekanismLang;
@@ -62,19 +63,19 @@ public class APTValidator extends CuboidStructureValidator<APTMultiblockData> {
     };*/
 
     @Override
-    protected StructureRequirement getStructureRequirement(BlockPos pos) {
+    protected StructureRequirement getStructureRequirement(BlockPos pos, VoxelCuboid cuboid) {
         VoxelCuboid.WallRelative relative = cuboid.getWallRelative(pos);
         if (relative.isWall()) {
-            Structure.Axis axis = Structure.Axis.get(cuboid.getSide(pos));
+            Direction side = Objects.requireNonNull(cuboid.getSide(pos), "Side should not be null when part of a wall");
+            Structure.Axis axis = Structure.Axis.get(side);
             Structure.Axis h = axis.horizontal(), v = axis.vertical();
             //Note: This ends up becoming immutable by doing this but that is fine and doesn't really matter
-            Direction side = cuboid.getSide(pos);
             pos = pos.subtract(cuboid.getMinPos());
-            return side.getAxis().isHorizontal() && pos.getY() >= 3?
-                    StructureRequirement.REQUIREMENTS[ALLOWED_GRID[h.getCoord(pos)][v.getCoord(pos) + 2]] :
-                            StructureRequirement.REQUIREMENTS[ALLOWED_GRID[h.getCoord(pos)][v.getCoord(pos)]];
+            return StructureRequirement.VALUES.get(side.getAxis().isHorizontal() && pos.getY() >= 3 ?
+                    ALLOWED_GRID[h.getCoord(pos)][v.getCoord(pos) + 2] :
+                    ALLOWED_GRID[h.getCoord(pos)][v.getCoord(pos)]);
         }
-        return super.getStructureRequirement(pos);
+        return super.getStructureRequirement(pos, cuboid);
     }
 
     @Override
@@ -91,15 +92,14 @@ public class APTValidator extends CuboidStructureValidator<APTMultiblockData> {
     @Override
     protected boolean validateInner(BlockState state, Long2ObjectMap<ChunkAccess> chunkMap, BlockPos pos) {
         if (super.validateInner(state, chunkMap, pos)) return true;
-        pos = pos.subtract(cuboid.getMinPos());
+        pos = pos.subtract(cuboid().getMinPos());
         return pos.getY() == 1 && BlockType.is(state.getBlock(),EMBlockTypes.SUPERCHARGING_ELEMENT);
     }
 
     @Override
     public boolean precheck() {
-        // 144 = (24 missing blocks possible on each face) * (6 sides)
-        cuboid = StructureHelper.fetchCuboid(structure, BOUNDS, BOUNDS, EnumSet.allOf(CuboidSide.class), 72);
-        return cuboid != null;
+        // 72 = (12 missing blocks possible on each face) * (6 sides)
+        return precheck(StructureHelper.fetchCuboid(structure(), BOUNDS, BOUNDS, EnumSet.allOf(CuboidSide.class), 72));
     }
 
     @Override
@@ -108,7 +108,7 @@ public class APTValidator extends CuboidStructureValidator<APTMultiblockData> {
         for (BlockPos pos : structure.internalLocations) {
             BlockEntity tile = WorldUtils.getTileEntity(world, chunkMap, pos);
             if (tile instanceof TileEntitySuperchargingElement) {
-                if (pos.subtract(cuboid.getMinPos()).getY() != 1)  return FormationProtocol.FormationResult.fail(EvolvedMekanismLang.APT_INVALID_SUPERCHARGING);
+                if (pos.subtract(cuboid().getMinPos()).getY() != 1)  return FormationProtocol.FormationResult.fail(EvolvedMekanismLang.APT_INVALID_SUPERCHARGING);
                 elements.add(pos);
             }
         }

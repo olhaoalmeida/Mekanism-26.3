@@ -1,43 +1,19 @@
 package fr.iglee42.emtools.registries;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-
-import fr.iglee42.emtools.config.EMToolsMaterialConfig;
-import fr.iglee42.emtools.config.EvolvedMekanismToolsConfig;
 import fr.iglee42.evolvedmekanism.EvolvedMekanism;
-import mekanism.common.util.EnumUtils;
-import mekanism.tools.common.material.BaseMekanismMaterial;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+/**
+ * In 26.x armor materials are no longer a registry; they are built per item by MaterialCreator#toArmorMaterial.
+ * This empty register is kept only so existing callers (EvolvedMekanism) keep compiling.
+ */
 public class EMToolsArmorMaterials {
 
     private EMToolsArmorMaterials() {
     }
 
-    public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, EvolvedMekanism.MODID);
-
-    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> BETTER_GOLD = ARMOR_MATERIALS.register("better_gold", name -> createMaterial(name, EvolvedMekanismToolsConfig.materials.betterGold));
-    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> PLASLITHERITE = ARMOR_MATERIALS.register("plaslitherite", name -> createMaterial(name, EvolvedMekanismToolsConfig.materials.plaslitherite));
-    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> REFINED_REDSTONE = ARMOR_MATERIALS.register("refined_redstone", name -> createMaterial(name, EvolvedMekanismToolsConfig.materials.refinedRedstone));
-    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> NOCTIS_ROZULI = ARMOR_MATERIALS.register("noctis_rozuli", name -> createMaterial(name, EvolvedMekanismToolsConfig.materials.noctisRozuli));
-
-    private static ArmorMaterial createMaterial(Identifier name, BaseMekanismMaterial material) {
-        EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
-        for (ArmorItem.Type type : EnumUtils.ARMOR_TYPES) {
-            int providedDefense = material.getDefense(type);
-            if (providedDefense > 0) {
-                defense.put(type, providedDefense);
-            }
-        }
-        return new ArmorMaterial(defense.isEmpty() ? Collections.emptyMap() : defense, material.getEnchantmentValue(), material.equipSound(), material::getRepairIngredient,
-              List.of(new ArmorMaterial.Layer(name)), material.toughness(), material.knockbackResistance()
-        );
-    }
+    @SuppressWarnings("unused")
+    public static final DeferredRegister<Item> ARMOR_MATERIALS = DeferredRegister.create(Registries.ITEM, EvolvedMekanism.MODID);
 }

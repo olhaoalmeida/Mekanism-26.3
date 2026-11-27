@@ -49,7 +49,7 @@ public class EMToolsConfig extends BaseMekanismConfig {
 
     @Override
     public Type getConfigType() {
-        return Type.SERVER;
+        return Type.SYNCED;
     }
 
     public static class ArmorSpawnChanceConfig {
@@ -68,7 +68,7 @@ public class EMToolsConfig extends BaseMekanismConfig {
         public final CachedFloatValue armorEnchantmentChance;
 
         private ArmorSpawnChanceConfig(IMekanismConfig config, ModConfigSpec.Builder builder, MaterialCreator material) {
-            this(config, builder, material.getRegistryPrefix(), 0.33, 1, 1, 1, 1, 0.25, 0.5);
+            this(config, builder, material.registryPrefix(), 0.33, 1, 1, 1, 1, 0.25, 0.5);
         }
 
         private ArmorSpawnChanceConfig(IMekanismConfig config, ModConfigSpec.Builder builder, String key, double swordChance, double helmetChance,
@@ -77,7 +77,7 @@ public class EMToolsConfig extends BaseMekanismConfig {
             translations.topLevel().applyToBuilder(builder).push(key);
             this.canSpawnWeapon = CachedBooleanValue.wrap(config, translations.canSpawnWeapon().applyToBuilder(builder)
                   .define("canSpawnWeapon", true));
-            this.swordWeight = CachedFloatValue.wrap(config, translations.swordWeight().applyToBuilder(builder)
+            this.swordWeight = CachedFloatValue.wrap(config, translations.sharpWeaponWeight().applyToBuilder(builder)
                   .defineInRange("swordWeight", swordChance, 0, 1));
             this.helmetChance = CachedFloatValue.wrap(config, translations.helmetChance().applyToBuilder(builder)
                   .defineInRange("helmetChance", helmetChance, 0, 1));
