@@ -7,27 +7,22 @@ import fr.iglee42.evolvedmekanism.items.ItemPortableHazmatSuit;
 import fr.iglee42.evolvedmekanism.tiers.EMAlloyTier;
 import fr.iglee42.evolvedmekanism.tiers.EMBaseTier;
 import fr.iglee42.evolvedmekanism.tiers.storage.EMQIODriveTier;
-import mekanism.api.upgrade.Upgrade;
-import mekanism.api.text.TextComponentUtil;
+import mekanism.common.component.qio.DriveContents;
+import mekanism.common.component.qio.DriveMetadata;
+import mekanism.common.component.qio.DriveMetadata.DriveCapacity;
+import mekanism.common.registries.MekanismDataComponents;
 import mekanism.api.tier.AlloyTier;
 import mekanism.api.tier.BaseTier;
 import mekanism.common.item.*;
 import mekanism.common.registration.impl.ItemDeferredRegister;
 import mekanism.common.registration.impl.ItemRegistryObject;
-import mekanism.common.registries.MekanismModules;
 import mekanism.common.resource.IResource;
 import mekanism.common.resource.PrimaryResource;
 import mekanism.common.resource.ResourceType;
-import mekanism.common.tier.QIODriveTier;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-import java.util.function.Supplier;
 
 public class EMItems {
     public static final ItemDeferredRegister ITEMS = new ItemDeferredRegister(EvolvedMekanism.MODID);
@@ -36,7 +31,6 @@ public class EMItems {
         // JEI/EMI can load this class during another mod's construction, before EvolvedMekanism.initEnums().
         ((InitializableEnum) (Object) BaseTier.BASIC).evolvedmekanism$initNewValues();
         ((InitializableEnum) (Object) AlloyTier.INFUSED).evolvedmekanism$initNewValues();
-        ((InitializableEnum) (Object) QIODriveTier.BASE).evolvedmekanism$initNewValues();
     }
 
     public static final ItemRegistryObject<ItemAlloy> HYPERCHARGED_ALLOY = registerAlloy(EMAlloyTier.HYPERCHARGED);
@@ -58,11 +52,11 @@ public class EMItems {
     public static final ItemRegistryObject<ItemTierInstaller> CREATIVE_TIER_INSTALLER = registerInstaller(EMBaseTier.MULTIVERSAL,BaseTier.CREATIVE);
     public static final ItemRegistryObject<ItemMaxTierInstaller> MAX_TIER_INSTALLER = ITEMS.registerItem("max_tier_installer", ItemMaxTierInstaller::new);
 
-    public static final ItemRegistryObject<ItemQIODrive> BOOSTED_QIO_DRIVE = registerQIODrive("boosted", () -> EMQIODriveTier.BOOSTED);
-    public static final ItemRegistryObject<ItemQIODrive> SINGULARITY_QIO_DRIVE = registerQIODrive("singularity", () -> EMQIODriveTier.SINGULARITY);
-    public static final ItemRegistryObject<ItemQIODrive> HYPRA_SOLIDIFIED_QIO_DRIVE = registerQIODrive("hypra_solidified", () -> EMQIODriveTier.HYPRA_SOLIDIFIED);
-    public static final ItemRegistryObject<ItemQIODrive> BLACK_HOLE_QIO_DRIVE = registerQIODrive("black_hole", () -> EMQIODriveTier.BLACK_HOLE);
-    public static final ItemRegistryObject<ItemQIODrive> CREATIVE_QIO_DRIVE = registerQIODrive("creative", () -> EMQIODriveTier.CREATIVE);
+    public static final ItemRegistryObject<Item> BOOSTED_QIO_DRIVE = registerQIODrive("boosted", EMQIODriveTier.BOOSTED);
+    public static final ItemRegistryObject<Item> SINGULARITY_QIO_DRIVE = registerQIODrive("singularity", EMQIODriveTier.SINGULARITY);
+    public static final ItemRegistryObject<Item> HYPRA_SOLIDIFIED_QIO_DRIVE = registerQIODrive("hypra_solidified", EMQIODriveTier.HYPRA_SOLIDIFIED);
+    public static final ItemRegistryObject<Item> BLACK_HOLE_QIO_DRIVE = registerQIODrive("black_hole", EMQIODriveTier.BLACK_HOLE);
+    public static final ItemRegistryObject<Item> CREATIVE_QIO_DRIVE = registerQIODrive("creative", EMQIODriveTier.CREATIVE);
 
     public static final ItemRegistryObject<Item> BETTER_GOLD_INGOT = registerResource(ResourceType.INGOT, EMResources.BETTER_GOLD);
     public static final ItemRegistryObject<Item> PLASLITHERITE_INGOT = registerUnburnableResource(ResourceType.INGOT, EMResources.PLASLITHERITE);
@@ -84,11 +78,6 @@ public class EMItems {
     public static final ItemRegistryObject<Item> ENRICHED_BETTER_GOLD = registerResource(ResourceType.ENRICHED,EMResources.BETTER_GOLD);
     public static final ItemRegistryObject<Item> ENRICHED_PLASLITHERITE = registerUnburnableResource(ResourceType.ENRICHED,EMResources.PLASLITHERITE);
 
-    public static final ItemRegistryObject<ItemModule> AIR_AFFINITY = ITEMS.registerModule(EMModules.AIR_AFFINITY, Rarity.RARE);
-    public static final ItemRegistryObject<ItemModule> AQUA_AFFINITY = ITEMS.registerModule(EMModules.AQUA_AFFINITY,Rarity.RARE);
-    public static final ItemRegistryObject<ItemModule> CAPTURING = ITEMS.registerModule(EMModules.CAPTURING,Rarity.RARE);
-    public static final ItemRegistryObject<ItemModule> LUCK = ITEMS.registerModule(EMModules.LUCK,Rarity.RARE);
-    public static final ItemRegistryObject<ItemModule> ADVANCED_VISION_ENHANCEMENT = ITEMS.registerModule(EMModules.ADVANCED_VISION_ENHANCEMENT, Rarity.EPIC);
 
 
     public static final ItemRegistryObject<Item> MOLD_BLOCK = registerMold("storage_block");
@@ -102,20 +91,14 @@ public class EMItems {
     public static final ItemRegistryObject<Item> MOLD_WIRE = registerMold("wire");
     public static final ItemRegistryObject<Item> MOLD_COIN = registerMold("coin");
 
-    public static final ItemRegistryObject<ItemUpgrade> RADIOACTIVE_UPGRADE = registerUpgrade(EMUpgrades.RADIOACTIVE_UPGRADE);
+    public static final ItemRegistryObject<ItemUpgrade> RADIOACTIVE_UPGRADE = ITEMS.registerItem("upgrade_radioactive", ItemUpgrade::new);
 
     private static ItemRegistryObject<Item> registerCircuit(BaseTier tier) {
-        return ITEMS.registerItem(tier.getLowerName() + "_control_circuit", properties -> new Item(properties) {
-            @NotNull
-            @Override
-            public Component getName(@NotNull ItemStack stack) {
-                return TextComponentUtil.build(tier.getColor(), super.getName(stack));
-            }
-        });
+        return ITEMS.register(tier.getLowerName() + "_control_circuit", tier);
     }
 
     private static ItemRegistryObject<Item> registerMold(String name) {
-        return ITEMS.register("mold_"+name, ()-> new Item(new Item.Properties().stacksTo(1)));
+        return ITEMS.registerSimple("mold_" + name, properties -> properties.stacksTo(1));
     }
 
     private static ItemRegistryObject<ItemTierInstaller> registerInstaller(@Nullable BaseTier fromTier, @NotNull BaseTier toTier) {
@@ -123,36 +106,21 @@ public class EMItems {
     }
 
     private static ItemRegistryObject<ItemAlloy> registerAlloy(AlloyTier tier) {
-        return ITEMS.registerItem("alloy_" + tier.getName(), properties -> new ItemAlloy(tier, properties) {
-            @NotNull
-            @Override
-            public Component getName(@NotNull ItemStack stack) {
-                return TextComponentUtil.build(tier.getBaseTier().getColor(), super.getName(stack));
-            }
-        });
+        return ITEMS.registerItem("alloy_" + tier.getSerializedName(), properties -> new ItemAlloy(tier, properties))
+                .setNameColor(tier.getBaseTier().getTextColor());
     }
 
     private static ItemRegistryObject<Item> registerResource(ResourceType type, IResource resource) {
-        return ITEMS.register(type.getRegistryPrefix() + "_" + resource.getRegistrySuffix());
+        return ITEMS.registerSimple(type.getRegistryPrefix() + "_" + resource.getRegistrySuffix(), properties -> resource.modifyProperties(properties, type));
     }
+
     private static ItemRegistryObject<Item> registerUnburnableResource(ResourceType type, IResource resource) {
-        return ITEMS.registerUnburnable(type.getRegistryPrefix() + "_" + resource.getRegistrySuffix());
+        return ITEMS.registerSimple(type.getRegistryPrefix() + "_" + resource.getRegistrySuffix(), properties -> resource.modifyProperties(properties, type).fireResistant());
     }
 
-    private static ItemRegistryObject<ItemQIODrive> registerQIODrive(String name, Supplier<QIODriveTier> tierSupplier) {
-        return ITEMS.registerItem("qio_drive_" + name, properties -> new ItemQIODrive(resolveQIODriveTier(name, tierSupplier), properties));
-    }
-
-    private static QIODriveTier resolveQIODriveTier(String name, Supplier<QIODriveTier> tierSupplier) {
-        QIODriveTier tier = tierSupplier.get();
-        if (tier == null) {
-            ((InitializableEnum) (Object) QIODriveTier.BASE).evolvedmekanism$initNewValues();
-            tier = tierSupplier.get();
-        }
-        return Objects.requireNonNull(tier, "QIO drive tier was not initialized: " + name);
-    }
-
-    private static ItemRegistryObject<ItemUpgrade> registerUpgrade(Upgrade type) {
-        return ITEMS.registerItem("upgrade_" + type.getSerializedName(), properties -> new ItemUpgrade(type, properties));
+    private static ItemRegistryObject<Item> registerQIODrive(String name, EMQIODriveTier tier) {
+        return ITEMS.register("qio_drive_" + name, tier.baseTier().get(), properties -> properties.stacksTo(1)
+                .component(MekanismDataComponents.DRIVE_METADATA, new DriveMetadata(0, 0, new DriveCapacity(tier.count(), tier.types())))
+                .component(MekanismDataComponents.DRIVE_CONTENTS, DriveContents.EMPTY));
     }
 }

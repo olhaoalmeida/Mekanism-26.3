@@ -1,6 +1,9 @@
 package fr.iglee42.evolvedmekanism.registries;
 
 import mekanism.common.resource.IResource;
+import mekanism.common.resource.ResourceType;
+import net.minecraft.world.item.Item;
+import org.jspecify.annotations.Nullable;
 
 public enum EMResources implements IResource {
     BETTER_GOLD("better_gold"),
@@ -18,5 +21,10 @@ public enum EMResources implements IResource {
     @Override
     public String getRegistrySuffix() {
         return registrySuffix;
+    }
+
+    @Override
+    public Item.Properties modifyProperties(Item.Properties properties, @Nullable ResourceType resourceType) {
+        return properties;
     }
 }

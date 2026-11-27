@@ -1,158 +1,218 @@
 package fr.iglee42.evolvedmekanism.registries;
 
 import com.mojang.datafixers.util.Function4;
-import com.mojang.datafixers.util.Function7;
+import com.mojang.datafixers.util.Function5;
+import com.mojang.datafixers.util.Function6;
+import com.mojang.datafixers.util.Function9;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fr.iglee42.evolvedmekanism.EvolvedMekanism;
-import fr.iglee42.evolvedmekanism.impl.*;
+import fr.iglee42.evolvedmekanism.impl.BasicAPTRecipe;
+import fr.iglee42.evolvedmekanism.impl.BasicAlloyerRecipe;
+import fr.iglee42.evolvedmekanism.impl.BasicChemixerRecipe;
+import fr.iglee42.evolvedmekanism.impl.BasicFluidAlloyingRecipe;
+import fr.iglee42.evolvedmekanism.impl.BasicFluidCombiningRecipe;
+import fr.iglee42.evolvedmekanism.impl.BasicMelterRecipe;
+import fr.iglee42.evolvedmekanism.impl.BasicSolidificationRecipe;
+import fr.iglee42.evolvedmekanism.recipes.AlloyerRecipe;
+import fr.iglee42.evolvedmekanism.recipes.ChemixerRecipe;
+import fr.iglee42.evolvedmekanism.recipes.FluidAlloyingRecipe;
+import fr.iglee42.evolvedmekanism.recipes.FluidCombiningRecipe;
 import fr.iglee42.evolvedmekanism.recipes.MeltingRecipe;
+import fr.iglee42.evolvedmekanism.recipes.SolidificationRecipe;
 import fr.iglee42.evolvedmekanism.utils.EMSerializationConstants;
 import mekanism.api.SerializationConstants;
+import mekanism.api.recipes.MekanismRecipe;
+import mekanism.api.recipes.book.CombiningBookCategory.CombiningBookInfo;
+import mekanism.api.recipes.book.CompressingBookCategory.CompressingBookInfo;
+import mekanism.api.recipes.book.InjectingBookCategory.InjectingBookInfo;
+import mekanism.api.recipes.book.LiquificationBookCategory.LiquificationBookInfo;
 import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
 import mekanism.api.recipes.ingredients.FluidStackIngredient;
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
 import mekanism.common.recipe.serializer.MekanismRecipeSerializer;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStackTemplate;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import com.mojang.datafixers.util.Function3;
 
 public class EMRecipeSerializers {
 
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, EvolvedMekanism.MODID);
 
-   // public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PersonalChestUpgrading>> PERSONAL_CHEST_UPGRADING = RECIPE_SERIALIZERS.register("personal_chest_upgrade",()->new SimpleCraftingRecipeSerializer<>(PersonalChestUpgrading::new));
-   // public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PersonalBarrelUpgrading>> PERSONAL_BARREL_UPGRADING = RECIPE_SERIALIZERS.register("personal_barrel_upgrade",()->new SimpleCraftingRecipeSerializer<>(PersonalBarrelUpgrading::new));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BasicAlloyerRecipe>> ALLOYER = RECIPE_SERIALIZERS.register("alloying", () -> alloyer(BasicAlloyerRecipe::new));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BasicChemixerRecipe>> CHEMIXER = RECIPE_SERIALIZERS.register("chemixing", () -> chemixer(BasicChemixerRecipe::new));
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BasicAPTRecipe>> APT = RECIPE_SERIALIZERS.register("apt", ()->MekanismRecipeSerializer.itemChemicalToItem(BasicAPTRecipe::new));
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BasicMelterRecipe>> MELTER = RECIPE_SERIALIZERS.register("melting", () ->itemToFluid(BasicMelterRecipe::new));
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BasicSolidificationRecipe>> SOLIDIFICATION = RECIPE_SERIALIZERS.register("solidifying", () ->solidifier(BasicSolidificationRecipe::new));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BasicAPTRecipe>> APT = RECIPE_SERIALIZERS.register("apt",
+          () -> MekanismRecipeSerializer.itemChemicalToItem(BasicAPTRecipe::new, CompressingBookInfo.MAP_CODEC, CompressingBookInfo.STREAM_CODEC));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BasicMelterRecipe>> MELTER = RECIPE_SERIALIZERS.register("melting", () -> itemToFluid(BasicMelterRecipe::new));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BasicSolidificationRecipe>> SOLIDIFICATION = RECIPE_SERIALIZERS.register("solidifying", () -> solidifier(BasicSolidificationRecipe::new));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BasicFluidCombiningRecipe>> FLUID_COMBINING = RECIPE_SERIALIZERS.register("fluid_combining", () -> fluidCombining(BasicFluidCombiningRecipe::new));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BasicFluidAlloyingRecipe>> FLUID_ALLOYING = RECIPE_SERIALIZERS.register("fluid_alloying", () -> fluidAlloying(BasicFluidAlloyingRecipe::new));
 
-
-    public static <RECIPE extends BasicAlloyerRecipe> MekanismRecipeSerializer<RECIPE> alloyer(Function4<ItemStackIngredient, ItemStackIngredient, ItemStackIngredient,ItemStack, RECIPE> factory) {
-        return new MekanismRecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
-                ItemStackIngredient.CODEC.fieldOf(SerializationConstants.MAIN_INPUT).forGetter(BasicAlloyerRecipe::getMainInput),
-                ItemStackIngredient.CODEC.fieldOf(SerializationConstants.EXTRA_INPUT).forGetter(BasicAlloyerRecipe::getExtraInput),
-                ItemStackIngredient.CODEC.fieldOf(EMSerializationConstants.SECOND_EXTRA_INPUT).forGetter(BasicAlloyerRecipe::getTertiaryExtraInput),
-                ItemStack.CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(BasicAlloyerRecipe::getOutputRaw)
+    public static <RECIPE extends BasicAlloyerRecipe> RecipeSerializer<RECIPE> alloyer(
+          Function6<Recipe.CommonInfo, CombiningBookInfo, ItemStackIngredient, ItemStackIngredient, ItemStackIngredient, ItemStackTemplate, RECIPE> factory) {
+        return new RecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
+              Recipe.CommonInfo.MAP_CODEC.forGetter(MekanismRecipe::commonInfo),
+              CombiningBookInfo.MAP_CODEC.forGetter(MekanismRecipe::bookInfo),
+              ItemStackIngredient.CODEC.fieldOf(SerializationConstants.MAIN_INPUT).forGetter(AlloyerRecipe::getMainInput),
+              ItemStackIngredient.CODEC.fieldOf(SerializationConstants.EXTRA_INPUT).forGetter(AlloyerRecipe::getExtraInput),
+              ItemStackIngredient.CODEC.fieldOf(EMSerializationConstants.SECOND_EXTRA_INPUT).forGetter(AlloyerRecipe::getTertiaryExtraInput),
+              ItemStackTemplate.CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(BasicAlloyerRecipe::getOutputRaw)
         ).apply(instance, factory)), StreamCodec.composite(
-                ItemStackIngredient.STREAM_CODEC, BasicAlloyerRecipe::getMainInput,
-                ItemStackIngredient.STREAM_CODEC, BasicAlloyerRecipe::getExtraInput,
-                ItemStackIngredient.STREAM_CODEC, BasicAlloyerRecipe::getTertiaryExtraInput,
-                ItemStack.STREAM_CODEC, BasicAlloyerRecipe::getOutputRaw,
-                factory
+              Recipe.CommonInfo.STREAM_CODEC, MekanismRecipe::commonInfo,
+              CombiningBookInfo.STREAM_CODEC, MekanismRecipe::bookInfo,
+              ItemStackIngredient.STREAM_CODEC, AlloyerRecipe::getMainInput,
+              ItemStackIngredient.STREAM_CODEC, AlloyerRecipe::getExtraInput,
+              ItemStackIngredient.STREAM_CODEC, AlloyerRecipe::getTertiaryExtraInput,
+              ItemStackTemplate.STREAM_CODEC, BasicAlloyerRecipe::getOutputRaw,
+              factory::apply
         ));
     }
 
-
-    public static <RECIPE extends BasicFluidCombiningRecipe> MekanismRecipeSerializer<RECIPE> fluidCombining(Function3<FluidStackIngredient, FluidStackIngredient, FluidStackIngredient, RECIPE> factory) {
-        return new MekanismRecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
-                FluidStackIngredient.CODEC.fieldOf(SerializationConstants.MAIN_INPUT).forGetter(BasicFluidCombiningRecipe::getMainInput),
-                FluidStackIngredient.CODEC.fieldOf(SerializationConstants.EXTRA_INPUT).forGetter(BasicFluidCombiningRecipe::getExtraInput),
-                FluidStackIngredient.CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(BasicFluidCombiningRecipe::getOutputRaw)
+    public static <RECIPE extends BasicFluidCombiningRecipe> RecipeSerializer<RECIPE> fluidCombining(
+          Function5<Recipe.CommonInfo, CombiningBookInfo, FluidStackIngredient, FluidStackIngredient, FluidStackTemplate, RECIPE> factory) {
+        return new RecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
+              Recipe.CommonInfo.MAP_CODEC.forGetter(MekanismRecipe::commonInfo),
+              CombiningBookInfo.MAP_CODEC.forGetter(MekanismRecipe::bookInfo),
+              FluidStackIngredient.CODEC.fieldOf(SerializationConstants.MAIN_INPUT).forGetter(FluidCombiningRecipe::getMainInput),
+              FluidStackIngredient.CODEC.fieldOf(SerializationConstants.EXTRA_INPUT).forGetter(FluidCombiningRecipe::getExtraInput),
+              FluidStackTemplate.MAP_CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(FluidCombiningRecipe::getOutputRaw)
         ).apply(instance, factory)), StreamCodec.composite(
-                FluidStackIngredient.STREAM_CODEC, BasicFluidCombiningRecipe::getMainInput,
-                FluidStackIngredient.STREAM_CODEC, BasicFluidCombiningRecipe::getExtraInput,
-                FluidStackIngredient.STREAM_CODEC, BasicFluidCombiningRecipe::getOutputRaw,
-                factory
+              Recipe.CommonInfo.STREAM_CODEC, MekanismRecipe::commonInfo,
+              CombiningBookInfo.STREAM_CODEC, MekanismRecipe::bookInfo,
+              FluidStackIngredient.STREAM_CODEC, FluidCombiningRecipe::getMainInput,
+              FluidStackIngredient.STREAM_CODEC, FluidCombiningRecipe::getExtraInput,
+              FluidStackTemplate.STREAM_CODEC, FluidCombiningRecipe::getOutputRaw,
+              factory::apply
         ));
     }
 
-    public static <RECIPE extends BasicFluidAlloyingRecipe> MekanismRecipeSerializer<RECIPE> fluidAlloying(Function4<FluidStackIngredient, FluidStackIngredient, FluidStackIngredient, FluidStackIngredient, RECIPE> factory) {
-        return new MekanismRecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
-                FluidStackIngredient.CODEC.fieldOf(SerializationConstants.MAIN_INPUT).forGetter(BasicFluidAlloyingRecipe::getMainInput),
-                FluidStackIngredient.CODEC.fieldOf(SerializationConstants.EXTRA_INPUT).forGetter(BasicFluidAlloyingRecipe::getExtraInput),
-                FluidStackIngredient.CODEC.fieldOf(EMSerializationConstants.SECOND_EXTRA_INPUT).forGetter(BasicFluidAlloyingRecipe::getTertiaryExtraInput),
-                FluidStackIngredient.CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(BasicFluidAlloyingRecipe::getOutputRaw)
+    public static <RECIPE extends BasicFluidAlloyingRecipe> RecipeSerializer<RECIPE> fluidAlloying(
+          Function6<Recipe.CommonInfo, CombiningBookInfo, FluidStackIngredient, FluidStackIngredient, FluidStackIngredient, FluidStackTemplate, RECIPE> factory) {
+        return new RecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
+              Recipe.CommonInfo.MAP_CODEC.forGetter(MekanismRecipe::commonInfo),
+              CombiningBookInfo.MAP_CODEC.forGetter(MekanismRecipe::bookInfo),
+              FluidStackIngredient.CODEC.fieldOf(SerializationConstants.MAIN_INPUT).forGetter(FluidAlloyingRecipe::getMainInput),
+              FluidStackIngredient.CODEC.fieldOf(SerializationConstants.EXTRA_INPUT).forGetter(FluidAlloyingRecipe::getExtraInput),
+              FluidStackIngredient.CODEC.fieldOf(EMSerializationConstants.SECOND_EXTRA_INPUT).forGetter(FluidAlloyingRecipe::getTertiaryExtraInput),
+              FluidStackTemplate.MAP_CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(FluidAlloyingRecipe::getOutputRaw)
         ).apply(instance, factory)), StreamCodec.composite(
-                FluidStackIngredient.STREAM_CODEC, BasicFluidAlloyingRecipe::getMainInput,
-                FluidStackIngredient.STREAM_CODEC, BasicFluidAlloyingRecipe::getExtraInput,
-                FluidStackIngredient.STREAM_CODEC, BasicFluidAlloyingRecipe::getTertiaryExtraInput,
-                FluidStackIngredient.STREAM_CODEC, BasicFluidAlloyingRecipe::getOutputRaw,
-                factory
+              Recipe.CommonInfo.STREAM_CODEC, MekanismRecipe::commonInfo,
+              CombiningBookInfo.STREAM_CODEC, MekanismRecipe::bookInfo,
+              FluidStackIngredient.STREAM_CODEC, FluidAlloyingRecipe::getMainInput,
+              FluidStackIngredient.STREAM_CODEC, FluidAlloyingRecipe::getExtraInput,
+              FluidStackIngredient.STREAM_CODEC, FluidAlloyingRecipe::getTertiaryExtraInput,
+              FluidStackTemplate.STREAM_CODEC, FluidAlloyingRecipe::getOutputRaw,
+              factory::apply
         ));
     }
 
-    public static <RECIPE extends MeltingRecipe> MekanismRecipeSerializer<RECIPE> itemToFluid(BiFunction<ItemStackIngredient, FluidStackIngredient, RECIPE> factory) {
-        return new MekanismRecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
-                ItemStackIngredient.CODEC.fieldOf(SerializationConstants.INPUT).forGetter(MeltingRecipe::getInput),
-                FluidStackIngredient.CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(MeltingRecipe::getOutputRaw)
+    public static <RECIPE extends BasicMelterRecipe> RecipeSerializer<RECIPE> itemToFluid(
+          Function4<Recipe.CommonInfo, LiquificationBookInfo, ItemStackIngredient, FluidStackTemplate, RECIPE> factory) {
+        return new RecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
+              Recipe.CommonInfo.MAP_CODEC.forGetter(MekanismRecipe::commonInfo),
+              LiquificationBookInfo.MAP_CODEC.forGetter(MekanismRecipe::bookInfo),
+              ItemStackIngredient.CODEC.fieldOf(SerializationConstants.INPUT).forGetter(MeltingRecipe::getInput),
+              FluidStackTemplate.MAP_CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(MeltingRecipe::getOutputRaw)
         ).apply(instance, factory)), StreamCodec.composite(
-                ItemStackIngredient.STREAM_CODEC, MeltingRecipe::getInput,
-                FluidStackIngredient.STREAM_CODEC, MeltingRecipe::getOutputRaw,
-                factory
+              Recipe.CommonInfo.STREAM_CODEC, MekanismRecipe::commonInfo,
+              LiquificationBookInfo.STREAM_CODEC, MekanismRecipe::bookInfo,
+              ItemStackIngredient.STREAM_CODEC, MeltingRecipe::getInput,
+              FluidStackTemplate.STREAM_CODEC, MeltingRecipe::getOutputRaw,
+              factory::apply
         ));
     }
 
-    public static <RECIPE extends BasicChemixerRecipe> MekanismRecipeSerializer<RECIPE> chemixer(Function4<ItemStackIngredient, ItemStackIngredient, ChemicalStackIngredient, ItemStack, RECIPE> factory) {
-        return new MekanismRecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
-                ItemStackIngredient.CODEC.fieldOf(SerializationConstants.MAIN_INPUT).forGetter(BasicChemixerRecipe::getInputMain),
-                ItemStackIngredient.CODEC.fieldOf(SerializationConstants.EXTRA_INPUT).forGetter(BasicChemixerRecipe::getInputExtra),
-                ChemicalStackIngredient.CODEC.fieldOf(SerializationConstants.CHEMICAL_INPUT).forGetter(BasicChemixerRecipe::getInputGas),
-                ItemStack.CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(BasicChemixerRecipe::getOutputRaw)
+    public static <RECIPE extends BasicChemixerRecipe> RecipeSerializer<RECIPE> chemixer(
+          Function6<Recipe.CommonInfo, InjectingBookInfo, ItemStackIngredient, ItemStackIngredient, ChemicalStackIngredient, ItemStackTemplate, RECIPE> factory) {
+        return new RecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
+              Recipe.CommonInfo.MAP_CODEC.forGetter(MekanismRecipe::commonInfo),
+              InjectingBookInfo.MAP_CODEC.forGetter(MekanismRecipe::bookInfo),
+              ItemStackIngredient.CODEC.fieldOf(SerializationConstants.MAIN_INPUT).forGetter(ChemixerRecipe::getInputMain),
+              ItemStackIngredient.CODEC.fieldOf(SerializationConstants.EXTRA_INPUT).forGetter(ChemixerRecipe::getInputExtra),
+              ChemicalStackIngredient.CODEC.fieldOf(SerializationConstants.CHEMICAL_INPUT).forGetter(ChemixerRecipe::getInputGas),
+              ItemStackTemplate.CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(BasicChemixerRecipe::getOutputRaw)
         ).apply(instance, factory)), StreamCodec.composite(
-                ItemStackIngredient.STREAM_CODEC, BasicChemixerRecipe::getInputMain,
-                ItemStackIngredient.STREAM_CODEC, BasicChemixerRecipe::getInputExtra,
-                ChemicalStackIngredient.STREAM_CODEC, BasicChemixerRecipe::getInputGas,
-                ItemStack.STREAM_CODEC, BasicChemixerRecipe::getOutputRaw,
-                factory
+              Recipe.CommonInfo.STREAM_CODEC, MekanismRecipe::commonInfo,
+              InjectingBookInfo.STREAM_CODEC, MekanismRecipe::bookInfo,
+              ItemStackIngredient.STREAM_CODEC, ChemixerRecipe::getInputMain,
+              ItemStackIngredient.STREAM_CODEC, ChemixerRecipe::getInputExtra,
+              ChemicalStackIngredient.STREAM_CODEC, ChemixerRecipe::getInputGas,
+              ItemStackTemplate.STREAM_CODEC, BasicChemixerRecipe::getOutputRaw,
+              factory::apply
         ));
     }
 
-    public static <RECIPE extends BasicSolidificationRecipe> MekanismRecipeSerializer<RECIPE> solidifier(Function7<ItemStackIngredient, FluidStackIngredient, FluidStackIngredient, Long, Integer, ItemStackIngredient, Boolean, RECIPE> factory) {
-        return new MekanismRecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
-                ItemStackIngredient.CODEC.fieldOf(SerializationConstants.ITEM_INPUT).forGetter(BasicSolidificationRecipe::getInputSolid),
-                FluidStackIngredient.CODEC.fieldOf(SerializationConstants.FLUID_INPUT).forGetter(BasicSolidificationRecipe::getInputFluid),
-                FluidStackIngredient.CODEC.fieldOf(SerializationConstants.EXTRA_INPUT).forGetter(BasicSolidificationRecipe::getFluidInputExtra),
-                Codec.LONG.optionalFieldOf(SerializationConstants.ENERGY_REQUIRED,0L).forGetter(BasicSolidificationRecipe::getEnergyRequired),
-                Codec.INT.optionalFieldOf(SerializationConstants.DURATION,0).forGetter(BasicSolidificationRecipe::getDuration),
-                ItemStackIngredient.CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(BasicSolidificationRecipe::getOutputRaw),
-                Codec.BOOL.optionalFieldOf(EMSerializationConstants.KEEP_ITEM,true).forGetter(BasicSolidificationRecipe::shouldKeepItem)
-                ).apply(instance, factory)), composite(
-                ItemStackIngredient.STREAM_CODEC, BasicSolidificationRecipe::getInputSolid,
-                FluidStackIngredient.STREAM_CODEC, BasicSolidificationRecipe::getInputFluid,
-                FluidStackIngredient.STREAM_CODEC, BasicSolidificationRecipe::getFluidInputExtra,
-                ByteBufCodecs.VAR_LONG, BasicSolidificationRecipe::getEnergyRequired,
-                ByteBufCodecs.INT, BasicSolidificationRecipe::getDuration,
-                ItemStackIngredient.STREAM_CODEC, BasicSolidificationRecipe::getOutputRaw, ByteBufCodecs.BOOL, BasicSolidificationRecipe::shouldKeepItem, factory)
-        );
+    public static <RECIPE extends BasicSolidificationRecipe> RecipeSerializer<RECIPE> solidifier(
+          Function9<Recipe.CommonInfo, CombiningBookInfo, ItemStackIngredient, FluidStackIngredient, FluidStackIngredient, Long, Integer, ItemStackTemplate, Boolean, RECIPE> factory) {
+        return new RecipeSerializer<>(RecordCodecBuilder.mapCodec(instance -> instance.group(
+              Recipe.CommonInfo.MAP_CODEC.forGetter(MekanismRecipe::commonInfo),
+              CombiningBookInfo.MAP_CODEC.forGetter(MekanismRecipe::bookInfo),
+              ItemStackIngredient.CODEC.fieldOf(SerializationConstants.ITEM_INPUT).forGetter(SolidificationRecipe::getInputSolid),
+              FluidStackIngredient.CODEC.fieldOf(SerializationConstants.FLUID_INPUT).forGetter(SolidificationRecipe::getInputFluid),
+              FluidStackIngredient.CODEC.fieldOf(SerializationConstants.EXTRA_INPUT).forGetter(SolidificationRecipe::getFluidInputExtra),
+              Codec.LONG.optionalFieldOf(SerializationConstants.ENERGY_REQUIRED, 0L).forGetter(SolidificationRecipe::getEnergyRequired),
+              Codec.INT.optionalFieldOf(SerializationConstants.DURATION, 100).forGetter(SolidificationRecipe::getDuration),
+              ItemStackTemplate.CODEC.fieldOf(SerializationConstants.OUTPUT).forGetter(SolidificationRecipe::getOutputRaw),
+              Codec.BOOL.optionalFieldOf(EMSerializationConstants.KEEP_ITEM, true).forGetter(SolidificationRecipe::shouldKeepItem)
+        ).apply(instance, factory::apply)), composite9(
+              Recipe.CommonInfo.STREAM_CODEC, MekanismRecipe::commonInfo,
+              CombiningBookInfo.STREAM_CODEC, MekanismRecipe::bookInfo,
+              ItemStackIngredient.STREAM_CODEC, SolidificationRecipe::getInputSolid,
+              FluidStackIngredient.STREAM_CODEC, SolidificationRecipe::getInputFluid,
+              FluidStackIngredient.STREAM_CODEC, SolidificationRecipe::getFluidInputExtra,
+              ByteBufCodecs.VAR_LONG, SolidificationRecipe::getEnergyRequired,
+              ByteBufCodecs.VAR_INT, SolidificationRecipe::getDuration,
+              ItemStackTemplate.STREAM_CODEC, SolidificationRecipe::getOutputRaw,
+              ByteBufCodecs.BOOL, SolidificationRecipe::shouldKeepItem,
+              factory
+        ));
     }
 
-    static <B, C, T1, T2, T3, T4, T5, T6,T7> StreamCodec<B, C> composite(final StreamCodec<? super B, T1> p_331822_, final Function<C, T1> p_330864_, final StreamCodec<? super B, T2> p_331390_, final Function<C, T2> p_331203_, final StreamCodec<? super B, T3> p_331499_, final Function<C, T3> p_330294_, final StreamCodec<? super B, T4> p_331169_, final Function<C, T4> p_331830_, final StreamCodec<? super B, T5> p_331057_, final Function<C, T5> p_331593_, final StreamCodec<? super B, T6> p_331117_, final Function<C, T6> p_331904_,final StreamCodec<? super B, T7> t7C, final Function<C, T7> t7f, final Function7<T1, T2, T3, T4, T5, T6,T7, C> p_331335_) {
-        return new StreamCodec<B, C>() {
-            public C decode(B p_330310_) {
-                T1 t1 = (T1)p_331822_.decode(p_330310_);
-                T2 t2 = (T2)p_331390_.decode(p_330310_);
-                T3 t3 = (T3)p_331499_.decode(p_330310_);
-                T4 t4 = (T4)p_331169_.decode(p_330310_);
-                T5 t5 = (T5)p_331057_.decode(p_330310_);
-                T6 t6 = (T6)p_331117_.decode(p_330310_);
-                T7 t7 = (T7)t7C.decode(p_330310_);
-                return (C)p_331335_.apply(t1, t2, t3, t4, t5, t6,t7);
+    private static <C, T1, T2, T3, T4, T5, T6, T7, T8, T9> StreamCodec<RegistryFriendlyByteBuf, C> composite9(
+          StreamCodec<? super RegistryFriendlyByteBuf, T1> c1, java.util.function.Function<C, T1> g1,
+          StreamCodec<? super RegistryFriendlyByteBuf, T2> c2, java.util.function.Function<C, T2> g2,
+          StreamCodec<? super RegistryFriendlyByteBuf, T3> c3, java.util.function.Function<C, T3> g3,
+          StreamCodec<? super RegistryFriendlyByteBuf, T4> c4, java.util.function.Function<C, T4> g4,
+          StreamCodec<? super RegistryFriendlyByteBuf, T5> c5, java.util.function.Function<C, T5> g5,
+          StreamCodec<? super RegistryFriendlyByteBuf, T6> c6, java.util.function.Function<C, T6> g6,
+          StreamCodec<? super RegistryFriendlyByteBuf, T7> c7, java.util.function.Function<C, T7> g7,
+          StreamCodec<? super RegistryFriendlyByteBuf, T8> c8, java.util.function.Function<C, T8> g8,
+          StreamCodec<? super RegistryFriendlyByteBuf, T9> c9, java.util.function.Function<C, T9> g9,
+          Function9<T1, T2, T3, T4, T5, T6, T7, T8, T9, C> factory) {
+        return new StreamCodec<>() {
+            @Override
+            public C decode(RegistryFriendlyByteBuf buf) {
+                T1 t1 = c1.decode(buf);
+                T2 t2 = c2.decode(buf);
+                T3 t3 = c3.decode(buf);
+                T4 t4 = c4.decode(buf);
+                T5 t5 = c5.decode(buf);
+                T6 t6 = c6.decode(buf);
+                T7 t7 = c7.decode(buf);
+                T8 t8 = c8.decode(buf);
+                T9 t9 = c9.decode(buf);
+                return factory.apply(t1, t2, t3, t4, t5, t6, t7, t8, t9);
             }
 
-            public void encode(B p_332052_, C p_331912_) {
-                p_331822_.encode(p_332052_, p_330864_.apply(p_331912_));
-                p_331390_.encode(p_332052_, p_331203_.apply(p_331912_));
-                p_331499_.encode(p_332052_, p_330294_.apply(p_331912_));
-                p_331169_.encode(p_332052_, p_331830_.apply(p_331912_));
-                p_331057_.encode(p_332052_, p_331593_.apply(p_331912_));
-                p_331117_.encode(p_332052_, p_331904_.apply(p_331912_));
-                t7C.encode(p_332052_, t7f.apply(p_331912_));
+            @Override
+            public void encode(RegistryFriendlyByteBuf buf, C value) {
+                c1.encode(buf, g1.apply(value));
+                c2.encode(buf, g2.apply(value));
+                c3.encode(buf, g3.apply(value));
+                c4.encode(buf, g4.apply(value));
+                c5.encode(buf, g5.apply(value));
+                c6.encode(buf, g6.apply(value));
+                c7.encode(buf, g7.apply(value));
+                c8.encode(buf, g8.apply(value));
+                c9.encode(buf, g9.apply(value));
             }
         };
     }
-
 }

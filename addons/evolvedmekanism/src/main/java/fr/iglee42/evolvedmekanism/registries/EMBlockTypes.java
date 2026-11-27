@@ -25,7 +25,9 @@ import fr.iglee42.evolvedmekanism.tiles.machine.TileEntityFluidAlloyer;
 import fr.iglee42.evolvedmekanism.tiles.machine.TileEntityFluidCombiner;
 import fr.iglee42.evolvedmekanism.tiles.machine.TileEntityMelter;
 import fr.iglee42.evolvedmekanism.tiles.machine.TileEntitySolidifier;
-import mekanism.api.upgrade.Upgrade;
+import mekanism.api.math.MathUtils;
+import org.jspecify.annotations.Nullable;
+import net.minecraft.world.level.LevelReader;
 import mekanism.api.text.ILangEntry;
 import mekanism.api.tier.ITier;
 import mekanism.common.MekanismLang;
@@ -51,7 +53,6 @@ import fr.iglee42.evolvedmekanism.utils.EMVanillaMekanism;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
@@ -67,8 +68,8 @@ public class EMBlockTypes {
             .createFactoryMachine(() -> EMTileEntityTypes.ALLOYER, EvolvedMekanismLang.DESCRIPTION_ALLOYER, EMFactoryType.ALLOYING)
             .withGui(() -> EMContainerTypes.ALLOYER)
             .withSound(MekanismSounds.COMBINER)
-            .withEnergyConfig(EMConfig.general.alloyerEnergyUsage, EMConfig.general.alloyerEnergyStorage)
-            .withSupportedUpgrades(Upgrade.SPEED, Upgrade.ENERGY, Upgrade.MUFFLING, Upgrade.ANCHOR)
+            .withEnergyConfig(() -> MathUtils.clampToInt(EMConfig.general.alloyerEnergyUsage.get()), EMConfig.general.alloyerEnergyStorage::get)
+            .with(AttributeUpgradeSupport.DEFAULT_MACHINE_UPGRADES)
             .withComputerSupport("alloyer")
             .withSideConfig(TransmissionType.ITEM, TransmissionType.ENERGY)
             .build();
@@ -77,8 +78,8 @@ public class EMBlockTypes {
             .createFactoryMachine(() -> EMTileEntityTypes.FLUID_COMBINER, EvolvedMekanismLang.DESCRIPTION_FLUID_COMBINER, EMFactoryType.FLUID_COMBINING)
             .withGui(() -> EMContainerTypes.FLUID_COMBINER)
             .withSound(MekanismSounds.COMBINER)
-            .withEnergyConfig(EMConfig.general.fluidCombinerEnergyUsage, EMConfig.general.fluidCombinerEnergyStorage)
-            .withSupportedUpgrades(Upgrade.SPEED, Upgrade.ENERGY, Upgrade.MUFFLING, Upgrade.ANCHOR)
+            .withEnergyConfig(() -> MathUtils.clampToInt(EMConfig.general.fluidCombinerEnergyUsage.get()), EMConfig.general.fluidCombinerEnergyStorage::get)
+            .with(AttributeUpgradeSupport.DEFAULT_MACHINE_UPGRADES)
             .withComputerSupport("fluidCombiner")
             .withSideConfig(TransmissionType.ITEM, TransmissionType.FLUID, TransmissionType.ENERGY)
             .build();
@@ -87,8 +88,8 @@ public class EMBlockTypes {
             .createFactoryMachine(() -> EMTileEntityTypes.FLUID_ALLOYER, EvolvedMekanismLang.DESCRIPTION_FLUID_ALLOYER, EMFactoryType.FLUID_ALLOYING)
             .withGui(() -> EMContainerTypes.FLUID_ALLOYER)
             .withSound(MekanismSounds.COMBINER)
-            .withEnergyConfig(EMConfig.general.fluidAlloyerEnergyUsage, EMConfig.general.fluidAlloyerEnergyStorage)
-            .withSupportedUpgrades(Upgrade.SPEED, Upgrade.ENERGY, Upgrade.MUFFLING, Upgrade.ANCHOR)
+            .withEnergyConfig(() -> MathUtils.clampToInt(EMConfig.general.fluidAlloyerEnergyUsage.get()), EMConfig.general.fluidAlloyerEnergyStorage::get)
+            .with(AttributeUpgradeSupport.DEFAULT_MACHINE_UPGRADES)
             .withComputerSupport("fluidAlloyer")
             .withSideConfig(TransmissionType.ITEM, TransmissionType.FLUID, TransmissionType.ENERGY)
             .build();
@@ -97,8 +98,8 @@ public class EMBlockTypes {
             .createMachine(() -> EMTileEntityTypes.CHEMIXER, MekanismLang.DESCRIPTION_PRESSURIZED_REACTION_CHAMBER)
             .withGui(() -> EMContainerTypes.CHEMIXER)
             .withSound(MekanismSounds.PRESSURIZED_REACTION_CHAMBER)
-            .withEnergyConfig(EMConfig.general.chemixerEnergyUsage, EMConfig.general.chemixerEnergyStorage)
-            .withSupportedUpgrades(Upgrade.SPEED, Upgrade.ENERGY, Upgrade.MUFFLING, Upgrade.ANCHOR, EMUpgrades.RADIOACTIVE_UPGRADE)
+            .withEnergyConfig(() -> MathUtils.clampToInt(EMConfig.general.chemixerEnergyUsage.get()), EMConfig.general.chemixerEnergyStorage::get)
+            .with(AttributeUpgradeSupport.DEFAULT_MACHINE_UPGRADES)
             .withComputerSupport("chemixer")
             .withSideConfig(TransmissionType.ITEM,TransmissionType.ENERGY,TransmissionType.CHEMICAL)
             .build();
@@ -107,8 +108,8 @@ public class EMBlockTypes {
             .createMachine(() -> EMTileEntityTypes.MELTER, EvolvedMekanismLang.DESCRIPTION_MELTER)
             .withGui(() -> EMContainerTypes.MELTER)
             .withSound(MekanismSounds.CHEMICAL_OXIDIZER)
-            .withEnergyConfig(EMConfig.general.melterEnergyUsage, EMConfig.general.melterEnergyStorage)
-            .withSupportedUpgrades(Upgrade.SPEED, Upgrade.ENERGY, Upgrade.MUFFLING, Upgrade.ANCHOR)
+            .withEnergyConfig(() -> MathUtils.clampToInt(EMConfig.general.melterEnergyUsage.get()), EMConfig.general.melterEnergyStorage::get)
+            .with(AttributeUpgradeSupport.DEFAULT_MACHINE_UPGRADES)
             .withComputerSupport("melter")
             .withSideConfig(TransmissionType.ITEM,TransmissionType.FLUID,TransmissionType.HEAT)
             .build();
@@ -117,8 +118,8 @@ public class EMBlockTypes {
             .createMachine(() -> EMTileEntityTypes.SOLIDIFIER, EvolvedMekanismLang.DESCRIPTION_SOLIDIFIER)
             .withGui(() -> EMContainerTypes.SOLIDIFIER)
             .withSound(MekanismSounds.PRESSURIZED_REACTION_CHAMBER)
-            .withEnergyConfig(EMConfig.general.solidifierEnergyUsage, EMConfig.general.solidifierEnergyStorage)
-            .withSupportedUpgrades(Upgrade.SPEED, Upgrade.ENERGY, Upgrade.MUFFLING, Upgrade.ANCHOR)
+            .withEnergyConfig(() -> MathUtils.clampToInt(EMConfig.general.solidifierEnergyUsage.get()), EMConfig.general.solidifierEnergyStorage::get)
+            .with(AttributeUpgradeSupport.DEFAULT_MACHINE_UPGRADES)
             .withComputerSupport("solidifier")
             .withSideConfig(TransmissionType.FLUID,TransmissionType.ITEM,TransmissionType.ENERGY)
             .build();
@@ -161,7 +162,7 @@ public class EMBlockTypes {
     public static final BlockTypeTile<TileEntityLaserDisenchanter> LASER_DISENCHANTER = BlockTileBuilder
             .createBlock(() -> EMTileEntityTypes.LASER_DISENCHANTER, EvolvedMekanismLang.DESCRIPTION_LASER_DISENCHANTER)
             .withGui(() -> EMContainerTypes.LASER_DISENCHANTER)
-            .withEnergyConfig(EMConfig.general.laserDisenchanterEnergyStorage)
+            .withEnergyStorage(EMConfig.general.laserDisenchanterEnergyStorage::get)
             .with(new AttributeStateFacing(BlockStateProperties.FACING, AttributeStateFacing.FacePlacementType.SELECTED_FACE), new Attributes.AttributeRedstoneEmitter<>((tile, side) -> tile.getRedstoneLevel()), Attributes.REDSTONE, Attributes.COMPARATOR, Attributes.SECURITY, Attributes.INVENTORY)
             .withCustomShape(BlockShapes.LASER)
             .withComputerSupport("laserDisenchanter")
@@ -171,18 +172,22 @@ public class EMBlockTypes {
     public static final BlockTypeTile<TileEntityEnchantingStation> ENCHANTING_STATION = BlockTileBuilder
             .createBlock(() -> EMTileEntityTypes.ENCHANTING_STATION, EvolvedMekanismLang.DESCRIPTION_ENCHANTING_STATION)
             .withGui(() -> EMContainerTypes.ENCHANTING_STATION)
-            .withEnergyConfig(EMConfig.general.enchantingStationEnergyUsage, EMConfig.general.enchantingStationEnergyStorage)
+            .withEnergyConfig(() -> MathUtils.clampToInt(EMConfig.general.enchantingStationEnergyUsage.get()), EMConfig.general.enchantingStationEnergyStorage::get)
             .with(Attributes.INVENTORY, new AttributeStateFacing(false), Attributes.REDSTONE, Attributes.SECURITY)
             .withCustomShape(BlockShapes.MODIFICATION_STATION)
             .with(AttributeCustomSelectionBox.JSON)
             .withBounding(new AttributeHasBounding.HandleBoundingBlock() {
                 @Override
-                public <DATA> boolean handle(Level level, BlockPos pos, BlockState state, DATA data, AttributeHasBounding.TriBooleanFunction<Level, BlockPos, DATA> consumer) {
+                public <LEVEL extends LevelReader, DATA extends @Nullable Object> boolean handle(LEVEL level, BlockPos pos, BlockState state, DATA data, AttributeHasBounding.TriBooleanFunction<LEVEL, BlockPos, DATA> consumer) {
                     BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
                     if (!consumer.accept(level, mutable.setWithOffset(pos, Direction.UP), data)) {
                         return false;
                     }
-                    mutable.setWithOffset(pos, MekanismUtils.getRight(Attribute.getFacing(state)));
+                    Direction facing = Attribute.getFacing(state);
+                    if (facing == null) {
+                        return false;
+                    }
+                    mutable.setWithOffset(pos, MekanismUtils.getRight(facing));
                     if (!consumer.accept(level, mutable, data)) {
                         return false;
                     }
@@ -330,7 +335,7 @@ public class EMBlockTypes {
 
     private static <TILE extends TileEntityInductionCell> BlockTypeTile<TILE> createInductionCell(InductionCellTier tier, Supplier<TileEntityTypeRegistryObject<TILE>> tile) {
         return BlockTileBuilder.createBlock(tile, MekanismLang.DESCRIPTION_INDUCTION_CELL)
-                .withEnergyConfig(tier::getMaxEnergy)
+                .withEnergyStorage(tier::getMaxEnergy)
                 .with(new AttributeTier<>(tier))
                 .internalMultiblock()
                 .build();
@@ -354,7 +359,7 @@ public class EMBlockTypes {
     private static <TILE extends TileEntityEnergyCube> Machine<TILE> createEnergyCube(EnergyCubeTier tier, Supplier<TileEntityTypeRegistryObject<TILE>> tile, Supplier<BlockRegistryObject<?, ?>> upgradeBlock) {
         return MachineBuilder.createMachine(tile, MekanismLang.DESCRIPTION_ENERGY_CUBE)
                 .withGui(() -> MekanismContainerTypes.ENERGY_CUBE)
-                .withEnergyConfig(tier::getMaxEnergy)
+                .withEnergyStorage(tier::getCapacity)
                 .with(new AttributeTier<>(tier), new AttributeUpgradeable(upgradeBlock), new AttributeStateFacing(BlockStateProperties.FACING))
                 .withSideConfig(TransmissionType.ENERGY, TransmissionType.ITEM)
                 .without(AttributeParticleFX.class, AttributeStateActive.class, AttributeUpgradeSupport.class)
