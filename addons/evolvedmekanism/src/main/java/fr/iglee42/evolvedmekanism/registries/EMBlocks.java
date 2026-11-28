@@ -109,7 +109,7 @@ import java.util.function.Supplier;
 
 public class EMBlocks {
     public static final BlockDeferredRegister BLOCKS = new BlockDeferredRegister(EvolvedMekanism.MODID);
-    public static final DeferredRegister<Block> BLOCKS_NO_ITEMS = DeferredRegister.createBlocks(EvolvedMekanism.MODID);
+    public static final DeferredRegister.Blocks BLOCKS_NO_ITEMS = DeferredRegister.createBlocks(EvolvedMekanism.MODID);
 
     private static final Table<FactoryTier, FactoryType, BlockRegistryObject<BlockFactory<?>, ItemBlockTooltip>> FACTORIES = HashBasedTable.create();
     public static final Map<EMOreType, EMOreBlockType> ORES = new LinkedHashMap<>();
@@ -137,9 +137,9 @@ public class EMBlocks {
         BlockRegistryObject<EMBlockOre, ItemBlockTooltip> deepslateOre = BLOCKS.register("deepslate_" + name, () -> BlockBehaviour.Properties.ofLegacyCopy(stoneOre.value()),
                 properties -> new EMBlockOre(ore, properties.mapColor(MapColor.DEEPSLATE)
                         .strength(4.5F, 3).sound(SoundType.DEEPSLATE)), ItemBlockTooltip::new);
-        BLOCKS_NO_ITEMS.register(name+"_natural", key -> new BlockNoctisRozuliOre(ore, EMBlockOre.defaultProperties(BlockBehaviour.Properties.of().setId(key))));
+        BLOCKS_NO_ITEMS.registerBlock(name+"_natural", props -> new BlockNoctisRozuliOre(ore, EMBlockOre.defaultProperties(props)));
         BLOCKS_NO_ITEMS.register("deepslate_" + name + "_natural",
-                key -> new BlockNoctisRozuliOre(ore, BlockBehaviour.Properties.ofLegacyCopy(stoneOre.value()).setId(key).mapColor(MapColor.DEEPSLATE)
+                id -> new BlockNoctisRozuliOre(ore, BlockBehaviour.Properties.ofLegacyCopy(stoneOre.value()).setId(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, id)).mapColor(MapColor.DEEPSLATE)
                         .strength(4.5F, 3).sound(SoundType.DEEPSLATE)));
 
 
@@ -348,11 +348,11 @@ public class EMBlocks {
     public static final BlockRegistryObject<BlockTile<TileEntityInductionCell, BlockTypeTile<TileEntityInductionCell>>, ItemBlockInductionCell> MULTIVERSAL_INDUCTION_CELL = registerInductionCell(EMBlockTypes.MULTIVERSAL_INDUCTION_CELL);
     public static final BlockRegistryObject<BlockTile<TileEntityInductionCell, BlockTypeTile<TileEntityInductionCell>>, ItemBlockInductionCell> CREATIVE_INDUCTION_CELL = registerInductionCell(EMBlockTypes.CREATIVE_INDUCTION_CELL);
 
-    public static final BlockRegistryObject<BlockTile<TileEntityInductionProvider, BlockTypeTile<TileEntityInductionProvider>>, ItemBlockInductionProvider> OVERCLOCKED_INDUCTION_PROVIDER = registerInductionProvider(EMBlockTypes.OVERCLOCKED_INDUCTION_PROVIDER);
-    public static final BlockRegistryObject<BlockTile<TileEntityInductionProvider, BlockTypeTile<TileEntityInductionProvider>>, ItemBlockInductionProvider> QUANTUM_INDUCTION_PROVIDER = registerInductionProvider(EMBlockTypes.QUANTUM_INDUCTION_PROVIDER);
-    public static final BlockRegistryObject<BlockTile<TileEntityInductionProvider, BlockTypeTile<TileEntityInductionProvider>>, ItemBlockInductionProvider> DENSE_INDUCTION_PROVIDER = registerInductionProvider(EMBlockTypes.DENSE_INDUCTION_PROVIDER);
-    public static final BlockRegistryObject<BlockTile<TileEntityInductionProvider, BlockTypeTile<TileEntityInductionProvider>>, ItemBlockInductionProvider> MULTIVERSAL_INDUCTION_PROVIDER = registerInductionProvider(EMBlockTypes.MULTIVERSAL_INDUCTION_PROVIDER);
-    public static final BlockRegistryObject<BlockTile<TileEntityInductionProvider, BlockTypeTile<TileEntityInductionProvider>>, ItemBlockInductionProvider> CREATIVE_INDUCTION_PROVIDER = registerInductionProvider(EMBlockTypes.CREATIVE_INDUCTION_PROVIDER);
+    public static final BlockRegistryObject<BlockTile<TileEntityInductionProvider, BlockTypeTile<TileEntityInductionProvider>>, BlockItem> OVERCLOCKED_INDUCTION_PROVIDER = registerInductionProvider(EMBlockTypes.OVERCLOCKED_INDUCTION_PROVIDER);
+    public static final BlockRegistryObject<BlockTile<TileEntityInductionProvider, BlockTypeTile<TileEntityInductionProvider>>, BlockItem> QUANTUM_INDUCTION_PROVIDER = registerInductionProvider(EMBlockTypes.QUANTUM_INDUCTION_PROVIDER);
+    public static final BlockRegistryObject<BlockTile<TileEntityInductionProvider, BlockTypeTile<TileEntityInductionProvider>>, BlockItem> DENSE_INDUCTION_PROVIDER = registerInductionProvider(EMBlockTypes.DENSE_INDUCTION_PROVIDER);
+    public static final BlockRegistryObject<BlockTile<TileEntityInductionProvider, BlockTypeTile<TileEntityInductionProvider>>, BlockItem> MULTIVERSAL_INDUCTION_PROVIDER = registerInductionProvider(EMBlockTypes.MULTIVERSAL_INDUCTION_PROVIDER);
+    public static final BlockRegistryObject<BlockTile<TileEntityInductionProvider, BlockTypeTile<TileEntityInductionProvider>>, BlockItem> CREATIVE_INDUCTION_PROVIDER = registerInductionProvider(EMBlockTypes.CREATIVE_INDUCTION_PROVIDER);
 
     public static final BlockRegistryObject<BlockFluidTank, ItemBlockFluidTank> OVERCLOCKED_FLUID_TANK = registerFluidTank(EMBlockTypes.OVERCLOCKED_FLUID_TANK);
     public static final BlockRegistryObject<BlockFluidTank, ItemBlockFluidTank> QUANTUM_FLUID_TANK = registerFluidTank(EMBlockTypes.QUANTUM_FLUID_TANK);
@@ -364,35 +364,35 @@ public class EMBlocks {
     public static final BlockRegistryObject<BlockEnergyCube, ItemBlockEnergyCube> DENSE_ENERGY_CUBE = registerEnergyCube(EMBlockTypes.DENSE_ENERGY_CUBE);
     public static final BlockRegistryObject<BlockEnergyCube, ItemBlockEnergyCube> MULTIVERSAL_ENERGY_CUBE = registerEnergyCube(EMBlockTypes.MULTIVERSAL_ENERGY_CUBE);
 
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityUniversalCable>, ItemBlockUniversalCable> OVERCLOCKED_UNIVERSAL_CABLE = registerUniversalCable(EMBlockTypes.OVERCLOCKED_UNIVERSAL_CABLE);
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityUniversalCable>, ItemBlockUniversalCable> QUANTUM_UNIVERSAL_CABLE = registerUniversalCable(EMBlockTypes.QUANTUM_UNIVERSAL_CABLE);
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityUniversalCable>, ItemBlockUniversalCable> DENSE_UNIVERSAL_CABLE = registerUniversalCable(EMBlockTypes.DENSE_UNIVERSAL_CABLE);
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityUniversalCable>, ItemBlockUniversalCable> MULTIVERSAL_UNIVERSAL_CABLE = registerUniversalCable(EMBlockTypes.MULTIVERSAL_UNIVERSAL_CABLE);
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityUniversalCable>, ItemBlockUniversalCable> CREATIVE_UNIVERSAL_CABLE = registerUniversalCable(EMBlockTypes.CREATIVE_UNIVERSAL_CABLE);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityUniversalCable>, BlockItem> OVERCLOCKED_UNIVERSAL_CABLE = registerUniversalCable(EMBlockTypes.OVERCLOCKED_UNIVERSAL_CABLE);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityUniversalCable>, BlockItem> QUANTUM_UNIVERSAL_CABLE = registerUniversalCable(EMBlockTypes.QUANTUM_UNIVERSAL_CABLE);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityUniversalCable>, BlockItem> DENSE_UNIVERSAL_CABLE = registerUniversalCable(EMBlockTypes.DENSE_UNIVERSAL_CABLE);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityUniversalCable>, BlockItem> MULTIVERSAL_UNIVERSAL_CABLE = registerUniversalCable(EMBlockTypes.MULTIVERSAL_UNIVERSAL_CABLE);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityUniversalCable>, BlockItem> CREATIVE_UNIVERSAL_CABLE = registerUniversalCable(EMBlockTypes.CREATIVE_UNIVERSAL_CABLE);
 
-    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityMechanicalPipe>, ItemBlockMechanicalPipe> OVERCLOCKED_MECHANICAL_PIPE = registerMechanicalPipe(EMBlockTypes.OVERCLOCKED_MECHANICAL_PIPE);
-    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityMechanicalPipe>, ItemBlockMechanicalPipe> QUANTUM_MECHANICAL_PIPE = registerMechanicalPipe(EMBlockTypes.QUANTUM_MECHANICAL_PIPE);
-    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityMechanicalPipe>, ItemBlockMechanicalPipe> DENSE_MECHANICAL_PIPE = registerMechanicalPipe(EMBlockTypes.DENSE_MECHANICAL_PIPE);
-    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityMechanicalPipe>, ItemBlockMechanicalPipe> MULTIVERSAL_MECHANICAL_PIPE = registerMechanicalPipe(EMBlockTypes.MULTIVERSAL_MECHANICAL_PIPE);
-    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityMechanicalPipe>, ItemBlockMechanicalPipe> CREATIVE_MECHANICAL_PIPE = registerMechanicalPipe(EMBlockTypes.CREATIVE_MECHANICAL_PIPE);
+    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityMechanicalPipe>, BlockItem> OVERCLOCKED_MECHANICAL_PIPE = registerMechanicalPipe(EMBlockTypes.OVERCLOCKED_MECHANICAL_PIPE);
+    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityMechanicalPipe>, BlockItem> QUANTUM_MECHANICAL_PIPE = registerMechanicalPipe(EMBlockTypes.QUANTUM_MECHANICAL_PIPE);
+    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityMechanicalPipe>, BlockItem> DENSE_MECHANICAL_PIPE = registerMechanicalPipe(EMBlockTypes.DENSE_MECHANICAL_PIPE);
+    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityMechanicalPipe>, BlockItem> MULTIVERSAL_MECHANICAL_PIPE = registerMechanicalPipe(EMBlockTypes.MULTIVERSAL_MECHANICAL_PIPE);
+    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityMechanicalPipe>, BlockItem> CREATIVE_MECHANICAL_PIPE = registerMechanicalPipe(EMBlockTypes.CREATIVE_MECHANICAL_PIPE);
 
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityPressurizedTube>, ItemBlockPressurizedTube> OVERCLOCKED_PRESSURIZED_TUBE = registerPressurizedTube(EMBlockTypes.OVERCLOCKED_PRESSURIZED_TUBE);
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityPressurizedTube>, ItemBlockPressurizedTube> QUANTUM_PRESSURIZED_TUBE = registerPressurizedTube(EMBlockTypes.QUANTUM_PRESSURIZED_TUBE);
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityPressurizedTube>, ItemBlockPressurizedTube> DENSE_PRESSURIZED_TUBE = registerPressurizedTube(EMBlockTypes.DENSE_PRESSURIZED_TUBE);
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityPressurizedTube>, ItemBlockPressurizedTube> MULTIVERSAL_PRESSURIZED_TUBE = registerPressurizedTube(EMBlockTypes.MULTIVERSAL_PRESSURIZED_TUBE);
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityPressurizedTube>, ItemBlockPressurizedTube> CREATIVE_PRESSURIZED_TUBE = registerPressurizedTube(EMBlockTypes.CREATIVE_PRESSURIZED_TUBE);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityPressurizedTube>, BlockItem> OVERCLOCKED_PRESSURIZED_TUBE = registerPressurizedTube(EMBlockTypes.OVERCLOCKED_PRESSURIZED_TUBE);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityPressurizedTube>, BlockItem> QUANTUM_PRESSURIZED_TUBE = registerPressurizedTube(EMBlockTypes.QUANTUM_PRESSURIZED_TUBE);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityPressurizedTube>, BlockItem> DENSE_PRESSURIZED_TUBE = registerPressurizedTube(EMBlockTypes.DENSE_PRESSURIZED_TUBE);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityPressurizedTube>, BlockItem> MULTIVERSAL_PRESSURIZED_TUBE = registerPressurizedTube(EMBlockTypes.MULTIVERSAL_PRESSURIZED_TUBE);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityPressurizedTube>, BlockItem> CREATIVE_PRESSURIZED_TUBE = registerPressurizedTube(EMBlockTypes.CREATIVE_PRESSURIZED_TUBE);
 
-    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityLogisticalTransporter>, ItemBlockLogisticalTransporter> OVERCLOCKED_LOGISTICAL_TRANSPORTER = registerLogisticalTransporter(EMBlockTypes.OVERCLOCKED_LOGISTICAL_TRANSPORTER);
-    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityLogisticalTransporter>, ItemBlockLogisticalTransporter> QUANTUM_LOGISTICAL_TRANSPORTER = registerLogisticalTransporter(EMBlockTypes.QUANTUM_LOGISTICAL_TRANSPORTER);
-    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityLogisticalTransporter>, ItemBlockLogisticalTransporter> DENSE_LOGISTICAL_TRANSPORTER = registerLogisticalTransporter(EMBlockTypes.DENSE_LOGISTICAL_TRANSPORTER);
-    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityLogisticalTransporter>, ItemBlockLogisticalTransporter> MULTIVERSAL_LOGISTICAL_TRANSPORTER = registerLogisticalTransporter(EMBlockTypes.MULTIVERSAL_LOGISTICAL_TRANSPORTER);
-    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityLogisticalTransporter>, ItemBlockLogisticalTransporter> CREATIVE_LOGISTICAL_TRANSPORTER = registerLogisticalTransporter(EMBlockTypes.CREATIVE_LOGISTICAL_TRANSPORTER);
+    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityLogisticalTransporter>, BlockItem> OVERCLOCKED_LOGISTICAL_TRANSPORTER = registerLogisticalTransporter(EMBlockTypes.OVERCLOCKED_LOGISTICAL_TRANSPORTER);
+    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityLogisticalTransporter>, BlockItem> QUANTUM_LOGISTICAL_TRANSPORTER = registerLogisticalTransporter(EMBlockTypes.QUANTUM_LOGISTICAL_TRANSPORTER);
+    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityLogisticalTransporter>, BlockItem> DENSE_LOGISTICAL_TRANSPORTER = registerLogisticalTransporter(EMBlockTypes.DENSE_LOGISTICAL_TRANSPORTER);
+    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityLogisticalTransporter>, BlockItem> MULTIVERSAL_LOGISTICAL_TRANSPORTER = registerLogisticalTransporter(EMBlockTypes.MULTIVERSAL_LOGISTICAL_TRANSPORTER);
+    public static final BlockRegistryObject<BlockLargeTransmitter<TileEntityLogisticalTransporter>, BlockItem> CREATIVE_LOGISTICAL_TRANSPORTER = registerLogisticalTransporter(EMBlockTypes.CREATIVE_LOGISTICAL_TRANSPORTER);
 
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityThermodynamicConductor>, ItemBlockThermodynamicConductor> OVERCLOCKED_THERMODYNAMIC_CONDUCTOR = registerThermodynamicConductor(EMBlockTypes.OVERCLOCKED_THERMODYNAMIC_CONDUCTOR);
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityThermodynamicConductor>, ItemBlockThermodynamicConductor> QUANTUM_THERMODYNAMIC_CONDUCTOR = registerThermodynamicConductor(EMBlockTypes.QUANTUM_THERMODYNAMIC_CONDUCTOR);
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityThermodynamicConductor>, ItemBlockThermodynamicConductor> DENSE_THERMODYNAMIC_CONDUCTOR = registerThermodynamicConductor(EMBlockTypes.DENSE_THERMODYNAMIC_CONDUCTOR);
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityThermodynamicConductor>, ItemBlockThermodynamicConductor> MULTIVERSAL_THERMODYNAMIC_CONDUCTOR = registerThermodynamicConductor(EMBlockTypes.MULTIVERSAL_THERMODYNAMIC_CONDUCTOR);
-    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityThermodynamicConductor>, ItemBlockThermodynamicConductor> CREATIVE_THERMODYNAMIC_CONDUCTOR = registerThermodynamicConductor(EMBlockTypes.CREATIVE_THERMODYNAMIC_CONDUCTOR);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityThermodynamicConductor>, BlockItem> OVERCLOCKED_THERMODYNAMIC_CONDUCTOR = registerThermodynamicConductor(EMBlockTypes.OVERCLOCKED_THERMODYNAMIC_CONDUCTOR);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityThermodynamicConductor>, BlockItem> QUANTUM_THERMODYNAMIC_CONDUCTOR = registerThermodynamicConductor(EMBlockTypes.QUANTUM_THERMODYNAMIC_CONDUCTOR);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityThermodynamicConductor>, BlockItem> DENSE_THERMODYNAMIC_CONDUCTOR = registerThermodynamicConductor(EMBlockTypes.DENSE_THERMODYNAMIC_CONDUCTOR);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityThermodynamicConductor>, BlockItem> MULTIVERSAL_THERMODYNAMIC_CONDUCTOR = registerThermodynamicConductor(EMBlockTypes.MULTIVERSAL_THERMODYNAMIC_CONDUCTOR);
+    public static final BlockRegistryObject<BlockSmallTransmitter<TileEntityThermodynamicConductor>, BlockItem> CREATIVE_THERMODYNAMIC_CONDUCTOR = registerThermodynamicConductor(EMBlockTypes.CREATIVE_THERMODYNAMIC_CONDUCTOR);
 
     public static final BlockRegistryObject<BlockTileModel<TileEntityChemicalTank, Machine<TileEntityChemicalTank>>, ItemBlockChemicalTank> OVERCLOCKED_CHEMICAL_TANK = registerChemicalTank(EMBlockTypes.OVERCLOCKED_CHEMICAL_TANK);
     public static final BlockRegistryObject<BlockTileModel<TileEntityChemicalTank, Machine<TileEntityChemicalTank>>, ItemBlockChemicalTank> QUANTUM_CHEMICAL_TANK = registerChemicalTank(EMBlockTypes.QUANTUM_CHEMICAL_TANK);
@@ -437,12 +437,12 @@ public class EMBlocks {
     }
 
     private static <BLOCK extends Block & IHasDescription> BlockRegistryObject<BLOCK, ItemBlockTooltip> registerBlock(String name,
-                                                                                                                             Supplier<? extends BLOCK> blockSupplier) {
+                                                                                                                             Function<BlockBehaviour.Properties, ? extends BLOCK> blockSupplier) {
         return BLOCKS.register(name, blockSupplier, ItemBlockTooltip::new);
     }
 
     private static <BLOCK extends Block & IHasDescription> BlockRegistryObject<BLOCK, ItemBlockTooltip> registerBlock(String name,
-                                                                                                                             Supplier<? extends BLOCK> blockSupplier, Rarity rarity) {
+                                                                                                                             Function<BlockBehaviour.Properties, ? extends BLOCK> blockSupplier, Rarity rarity) {
         return BLOCKS.register(name, blockSupplier, (block, props) -> new ItemBlockTooltip(block, props.rarity(rarity)));
     }
 
@@ -455,7 +455,7 @@ public class EMBlocks {
     }
 
     private static BlockRegistryObject<BlockBin, ItemBlockBin> registerBin(BlockTypeTile<TileEntityBin> type) {
-        return registerTieredBlock(type, "_bin", color -> new BlockBin(type, properties -> properties.mapColor(color)), ItemBlockBin::new)
+        return registerTieredBlock(type, "_bin", (properties, color) -> new BlockBin(type, BlockTile.defaultProperties(properties).mapColor(color)), ItemBlockBin::new)
                 .forItemHolder(holder -> holder.addAttachmentOnlyContainers(ContainerType.ITEM, () -> ItemSlotsBuilder.builder()
                         .addSlot(ComponentBackedBinInventorySlot::create)
                         .build()
@@ -463,18 +463,18 @@ public class EMBlocks {
     }
 
     private static BlockRegistryObject<BlockTile<TileEntityInductionCell, BlockTypeTile<TileEntityInductionCell>>, ItemBlockInductionCell> registerInductionCell(BlockTypeTile<TileEntityInductionCell> type) {
-        return registerTieredBlock(type, "_induction_cell", color -> new BlockTile<>(type, properties -> properties.mapColor(color)), ItemBlockInductionCell::new);
+        return registerTieredBlock(type, "_induction_cell", (properties, color) -> new BlockTile<>(type, BlockTile.defaultProperties(properties).mapColor(color)), ItemBlockInductionCell::new);
     }
 
-    private static BlockRegistryObject<BlockTile<TileEntityInductionProvider, BlockTypeTile<TileEntityInductionProvider>>, ItemBlockInductionProvider> registerInductionProvider(BlockTypeTile<TileEntityInductionProvider> type) {
-        return registerTieredBlock(type, "_induction_provider", color -> new BlockTile<>(type, properties -> properties.mapColor(color)), ItemBlockInductionProvider::new);
+    private static BlockRegistryObject<BlockTile<TileEntityInductionProvider, BlockTypeTile<TileEntityInductionProvider>>, BlockItem> registerInductionProvider(BlockTypeTile<TileEntityInductionProvider> type) {
+        return registerTieredBlock(type, "_induction_provider", (properties, color) -> new BlockTile<>(type, BlockTile.defaultProperties(properties).mapColor(color)), BlockItem::new);
     }
 
     private static BlockRegistryObject<BlockFluidTank, ItemBlockFluidTank> registerFluidTank(Machine<TileEntityFluidTank> type) {
-        return registerTieredBlock(type, "_fluid_tank", () -> new BlockFluidTank(type), ItemBlockFluidTank::new)
+        return registerTieredBlock(type, "_fluid_tank", properties -> new BlockFluidTank(type, properties), ItemBlockFluidTank::new)
                 .forItemHolder(holder -> holder
                         .addAttachedContainerCapabilities(ContainerType.FLUID, () -> FluidTanksBuilder.builder()
-                                .addTank(ComponentBackedFluidTankFluidTank::create)
+                                .addContainer(ComponentBackedFluidTankFluidTank::create)
                                 .build()
                         ).addAttachmentOnlyContainers(ContainerType.ITEM, () -> ItemSlotsBuilder.builder()
                                 .addFluidInputSlot(0)
@@ -485,7 +485,7 @@ public class EMBlocks {
     }
 
     private static BlockRegistryObject<BlockEnergyCube, ItemBlockEnergyCube> registerEnergyCube(Machine<TileEntityEnergyCube> type) {
-        return registerTieredBlock(type, "_energy_cube", () -> new BlockEnergyCube(type), ItemBlockEnergyCube::new)
+        return registerTieredBlock(type, "_energy_cube", properties -> new BlockEnergyCube(type, properties), ItemBlockEnergyCube::new)
                 .forItemHolder(holder -> holder.addAttachmentOnlyContainers(ContainerType.ITEM, () -> ItemSlotsBuilder.builder()
                         .addEnergy()
                         .addDrainEnergy()
@@ -493,37 +493,37 @@ public class EMBlocks {
                 ));
     }
 
-    private static BlockRegistryObject<BlockSmallTransmitter<TileEntityUniversalCable>, ItemBlockUniversalCable> registerUniversalCable(
+    private static BlockRegistryObject<BlockSmallTransmitter<TileEntityUniversalCable>, BlockItem> registerUniversalCable(
             BlockTypeTile<TileEntityUniversalCable> type) {
-        return registerTieredBlock(type, "_universal_cable", () -> new BlockSmallTransmitter<>(type), ItemBlockUniversalCable::new);
+        return registerTieredBlock(type, "_universal_cable", properties -> new BlockSmallTransmitter<>(type, properties), BlockItem::new);
     }
 
-    private static BlockRegistryObject<BlockLargeTransmitter<TileEntityMechanicalPipe>, ItemBlockMechanicalPipe> registerMechanicalPipe(
+    private static BlockRegistryObject<BlockLargeTransmitter<TileEntityMechanicalPipe>, BlockItem> registerMechanicalPipe(
             BlockTypeTile<TileEntityMechanicalPipe> type) {
-        return registerTieredBlock(type, "_mechanical_pipe", () -> new BlockLargeTransmitter<>(type), ItemBlockMechanicalPipe::new);
+        return registerTieredBlock(type, "_mechanical_pipe", properties -> new BlockLargeTransmitter<>(type, properties), BlockItem::new);
     }
 
-    private static BlockRegistryObject<BlockSmallTransmitter<TileEntityPressurizedTube>, ItemBlockPressurizedTube> registerPressurizedTube(
+    private static BlockRegistryObject<BlockSmallTransmitter<TileEntityPressurizedTube>, BlockItem> registerPressurizedTube(
             BlockTypeTile<TileEntityPressurizedTube> type) {
-        return registerTieredBlock(type, "_pressurized_tube", () -> new BlockSmallTransmitter<>(type), ItemBlockPressurizedTube::new);
+        return registerTieredBlock(type, "_pressurized_tube", properties -> new BlockSmallTransmitter<>(type, properties), BlockItem::new);
     }
 
-    private static BlockRegistryObject<BlockLargeTransmitter<TileEntityLogisticalTransporter>, ItemBlockLogisticalTransporter> registerLogisticalTransporter(
+    private static BlockRegistryObject<BlockLargeTransmitter<TileEntityLogisticalTransporter>, BlockItem> registerLogisticalTransporter(
             BlockTypeTile<TileEntityLogisticalTransporter> type) {
-        return registerTieredBlock(type, "_logistical_transporter", () -> new BlockLargeTransmitter<>(type), ItemBlockLogisticalTransporter::new);
+        return registerTieredBlock(type, "_logistical_transporter", properties -> new BlockLargeTransmitter<>(type, properties), BlockItem::new);
     }
 
-    private static BlockRegistryObject<BlockSmallTransmitter<TileEntityThermodynamicConductor>, ItemBlockThermodynamicConductor> registerThermodynamicConductor(
+    private static BlockRegistryObject<BlockSmallTransmitter<TileEntityThermodynamicConductor>, BlockItem> registerThermodynamicConductor(
             BlockTypeTile<TileEntityThermodynamicConductor> type) {
-        return registerTieredBlock(type, "_thermodynamic_conductor", () -> new BlockSmallTransmitter<>(type), ItemBlockThermodynamicConductor::new);
+        return registerTieredBlock(type, "_thermodynamic_conductor", properties -> new BlockSmallTransmitter<>(type, properties), BlockItem::new);
     }
 
     private static BlockRegistryObject<BlockTileModel<TileEntityChemicalTank, Machine<TileEntityChemicalTank>>, ItemBlockChemicalTank> registerChemicalTank(
             Machine<TileEntityChemicalTank> type) {
-        return registerTieredBlock(type, "_chemical_tank", color -> new BlockTileModel<>(type, properties -> properties.mapColor(color)), ItemBlockChemicalTank::new)
+        return registerTieredBlock(type, "_chemical_tank", (properties, color) -> new BlockTileModel<>(type, BlockTileModel.defaultProperties(properties).mapColor(color)), ItemBlockChemicalTank::new)
                 .forItemHolder(holder -> holder
                         .addAttachedContainerCapabilities(ContainerType.CHEMICAL, () -> ChemicalTanksBuilder.builder()
-                                .addTank(ComponentBackedChemicalTankTank::create).build()
+                                .addContainer(ComponentBackedChemicalTankTank::create).build()
                         ).addAttachmentOnlyContainers(ContainerType.ITEM, () -> ItemSlotsBuilder.builder()
                                 .addChemicalDrainSlot(0)
                                 .addChemicalFillSlot(0)
