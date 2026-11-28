@@ -1,0 +1,400 @@
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderAPT.java:29: error: wrong number of type arguments; required 3
+public class RenderAPT extends MultiblockTileEntityRenderer<APTMultiblockData, TileEntityAPTCasing> {
+                                                           ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderTieredPersonalChest.java:23: error: wrong number of type arguments; required 2
+public class RenderTieredPersonalChest extends MekanismTileEntityRenderer<TileEntityTieredPersonalChest> {
+                                                                         ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMConfigurableConstantInt.java:19: error: no interface expected here
+public class EMConfigurableConstantInt extends IntProvider {
+                                               ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMResizableOreFeature.java:20: error: no interface expected here
+public class EMResizableOreFeature extends Feature<EMResizableOreFeatureConfig> {
+                                           ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMResizableOreFeature.java:20: error: type Feature does not take parameters
+public class EMResizableOreFeature extends Feature<EMResizableOreFeatureConfig> {
+                                                  ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMDisableableFeaturePlacement.java:22: error: no interface expected here
+public class EMDisableableFeaturePlacement extends PlacementFilter {
+                                                   ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMFeatures.java:20: error: type Feature does not take parameters
+    public static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(Registries.FEATURE, EvolvedMekanism.MODID);
+                                                ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMFeatures.java:22: error: type Feature does not take parameters
+    public static final DeferredHolder<Feature<?>, EMResizableOreFeature> ORE = FEATURES.register("ore", EMResizableOreFeature::new);
+                                              ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/EMFactoryBuilder.java:7: error: cannot find symbol
+import mekanism.common.lib.math.Pos3D;
+                               ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/EvolvedMekanism.java:193: error: cannot find symbol
+    public static Identifier getResource(MekanismUtils.ResourceType type, String name) {
+                                                      ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/multiblock/apt/APTMultiblockData.java:83: error: cannot find symbol
+    private List<RecipeHolder<ItemStackChemicalToItemStackRecipe<CompressingBookCategory, CompressingBookInfo>>> getAptRecipes() {
+            ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/loot/PersonalTieredStorageContentsLootFunction.java:13: error: cannot find symbol
+import net.minecraft.MethodsReturnNonnullByDefault;
+                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/loot/PersonalTieredStorageContentsLootFunction.java:18: error: cannot find symbol
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+                                                       ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/loot/PersonalTieredStorageContentsLootFunction.java:19: error: cannot find symbol
+import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
+                                                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/loot/PersonalTieredStorageContentsLootFunction.java:29: error: cannot find symbol
+@MethodsReturnNonnullByDefault
+ ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/loot/PersonalTieredStorageContentsLootFunction.java:33: error: cannot find symbol
+    private static final Set<LootContextParam<?>> REFERENCED_PARAMS = Set.of(LootContextParams.BLOCK_ENTITY);
+                             ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/loot/PersonalTieredStorageContentsLootFunction.java:43: error: cannot find symbol
+    public LootItemFunctionType<?> getType() {
+           ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/loot/PersonalTieredStorageContentsLootFunction.java:75: error: cannot find symbol
+    public Set<LootContextParam<?>> getReferencedContextParams() {
+               ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/network/PacketCurioAction.java:4: error: package fr.iglee42.evolvedmekanism.curios does not exist
+import fr.iglee42.evolvedmekanism.curios.CuriosGameplay;
+                                        ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/MoltenAvailability.java:4: error: package fr.iglee42.evolvedmekanism.datagen does not exist
+import fr.iglee42.evolvedmekanism.datagen.EMDatagenTags;
+                                         ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/MoltenAvailability.java:5: error: package fr.iglee42.evolvedmekanism.datagen.recipe does not exist
+import fr.iglee42.evolvedmekanism.datagen.recipe.MoltenRecipes;
+                                                ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/EMDataHandlerUtils.java:12: error: cannot find symbol
+import net.neoforged.neoforge.common.util.INBTSerializable;
+                                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/EMDataHandlerUtils.java:13: error: cannot find symbol
+import net.neoforged.neoforge.fluids.IFluidTank;
+                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/EMDataHandlerUtils.java:23: error: cannot find symbol
+    public static void readContents(HolderLookup.Provider provider,List<? extends INBTSerializable<CompoundTag>> contents, ListTag storedContents, String key) {
+                                                                                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/EMDataHandlerUtils.java:37: error: cannot find symbol
+    public static ListTag writeContents(HolderLookup.Provider provider,List<? extends INBTSerializable<CompoundTag>> contents, String key) {
+                                                                                      ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/RoutedFluidTankHolder.java:7: error: cannot find symbol
+import mekanism.api.fluid.IExtendedFluidTank;
+                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/RoutedFluidTankHolder.java:8: error: package mekanism.common.capabilities.holder.fluid does not exist
+import mekanism.common.capabilities.holder.fluid.IFluidTankHolder;
+                                                ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/RoutedFluidTankHolder.java:20: error: cannot find symbol
+public class RoutedFluidTankHolder implements IFluidTankHolder {
+                                              ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/RoutedFluidTankHolder.java:23: error: cannot find symbol
+    private final List<IExtendedFluidTank> tanks = new ArrayList<>();
+                       ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/RoutedFluidTankHolder.java:24: error: cannot find symbol
+    private final List<IExtendedFluidTank> inputTanks = new ArrayList<>();
+                       ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/RoutedFluidTankHolder.java:25: error: cannot find symbol
+    private final List<IExtendedFluidTank> outputTanks = new ArrayList<>();
+                       ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/RoutedFluidTankHolder.java:31: error: cannot find symbol
+    public void addInput(IExtendedFluidTank tank) {
+                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/RoutedFluidTankHolder.java:36: error: cannot find symbol
+    public void addOutput(IExtendedFluidTank tank) {
+                          ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/utils/RoutedFluidTankHolder.java:43: error: cannot find symbol
+    public List<IExtendedFluidTank> getTanks(@Nullable Direction side) {
+                ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/EvolvedMekanismLang.java:6: error: cannot find symbol
+import net.minecraft.Util;
+                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/CustomModelRenderer.java:9: error: cannot find symbol
+import mekanism.client.render.MekanismRenderer.Model3D;
+                                              ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/CustomRenderData.java:3: error: package mekanism.api.annotations does not exist
+import mekanism.api.annotations.NothingNullByDefault;
+                               ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/CustomRenderData.java:13: error: cannot find symbol
+@NothingNullByDefault
+ ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/CustomModelRenderer.java:20: error: cannot find symbol
+    private static final Map<CustomRenderData, Float2ObjectMap<Model3D>> cachedCenterData = new Object2ObjectOpenHashMap<>();
+                                                               ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/CustomModelRenderer.java:36: error: cannot find symbol
+    public static Model3D getModel(CustomRenderData data, double scale) {
+                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/CustomModelRenderer.java:57: error: cannot find symbol
+    public static float getActualHeight(Model3D model) {
+                                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderAPT.java:6: error: cannot find symbol
+import com.mojang.blaze3d.vertex.VertexFormat;
+                                ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderAPT.java:12: error: package mekanism.api.annotations does not exist
+import mekanism.api.annotations.NothingNullByDefault;
+                               ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderAPT.java:13: error: cannot find symbol
+import mekanism.client.render.data.FluidRenderData;
+                                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderAPT.java:14: error: cannot find symbol
+import mekanism.client.render.data.RenderData;
+                                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderAPT.java:17: error: cannot find symbol
+import net.minecraft.client.renderer.MultiBufferSource;
+                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderAPT.java:18: error: cannot find symbol
+import net.minecraft.client.renderer.RenderType;
+                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderAPT.java:28: error: cannot find symbol
+@NothingNullByDefault
+ ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderAPT.java:36: error: cannot find symbol
+    protected void render(TileEntityAPTCasing tile, APTMultiblockData multiblock, float partialTick, PoseStack matrix, MultiBufferSource renderer,
+                                                                                                                       ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/FluidRenderData.java:4: error: package mekanism.api.annotations does not exist
+import mekanism.api.annotations.NothingNullByDefault;
+                               ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/FluidRenderData.java:12: error: cannot find symbol
+@NothingNullByDefault
+ ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/MultipleCustomRenderData.java:13: error: cannot find symbol
+import net.minecraft.client.renderer.LightTexture;
+                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/MultipleCustomRenderData.java:24: error: cannot find symbol
+    private static final Map<String, MekanismRenderer.Model3D> cachedModels = new Object2ObjectOpenHashMap<>();
+                                                     ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/MultipleCustomRenderData.java:27: error: cannot find symbol
+    private final Map<String, Function<MekanismRenderer.Model3D, MekanismRenderer.Model3D>> customFunc = new Object2ObjectOpenHashMap<>();
+                                                       ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/MultipleCustomRenderData.java:27: error: cannot find symbol
+    private final Map<String, Function<MekanismRenderer.Model3D, MekanismRenderer.Model3D>> customFunc = new Object2ObjectOpenHashMap<>();
+                                                                                 ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/MultipleCustomRenderData.java:42: error: cannot find symbol
+    public void setCustomFunc(String data, Function<MekanismRenderer.Model3D, MekanismRenderer.Model3D> axis){
+                                                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/MultipleCustomRenderData.java:42: error: cannot find symbol
+    public void setCustomFunc(String data, Function<MekanismRenderer.Model3D, MekanismRenderer.Model3D> axis){
+                                                                                              ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/MultipleCustomRenderData.java:60: error: cannot find symbol
+    private void renderObject(Camera camera, CustomRenderData data, BlockPos rendererPos, MekanismRenderer.Model3D object, @NotNull PoseStack matrix, VertexConsumer buffer, int overlay, float scale) {
+                                                                                                          ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/MultipleCustomRenderData.java:68: error: cannot find symbol
+    private FaceDisplay getCustomFaceDisplay(Camera camera, CustomRenderData data, MekanismRenderer.Model3D model) {
+                                                                                                   ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/CustomChemicalRenderData.java:3: error: package mekanism.api.annotations does not exist
+import mekanism.api.annotations.NothingNullByDefault;
+                               ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/datas/CustomChemicalRenderData.java:12: error: cannot find symbol
+@NothingNullByDefault
+ ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderTieredPersonalChest.java:8: error: package mekanism.api.annotations does not exist
+import mekanism.api.annotations.NothingNullByDefault;
+                               ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderTieredPersonalChest.java:13: error: cannot find symbol
+import mekanism.common.util.MekanismUtils.ResourceType;
+                                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderTieredPersonalChest.java:16: error: cannot find symbol
+import net.minecraft.client.renderer.MultiBufferSource;
+                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderTieredPersonalChest.java:17: error: cannot find symbol
+import net.minecraft.client.renderer.RenderType;
+                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderTieredPersonalChest.java:22: error: cannot find symbol
+@NothingNullByDefault
+ ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/renderers/RenderTieredPersonalChest.java:38: error: cannot find symbol
+    protected void render(TileEntityTieredPersonalChest tile, float partialTick, PoseStack matrix, MultiBufferSource renderer, int light, int overlayLight, ProfilerFiller profiler) {
+                                                                                                   ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/EMRenderTypes.java:4: error: cannot find symbol
+import com.mojang.blaze3d.vertex.VertexFormat;
+                                ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/EMRenderTypes.java:5: error: cannot find symbol
+import net.minecraft.client.renderer.RenderStateShard;
+                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/EMRenderTypes.java:6: error: cannot find symbol
+import net.minecraft.client.renderer.RenderType;
+                                    ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/EMRenderTypes.java:10: error: cannot find symbol
+import static net.minecraft.client.renderer.RenderStateShard.*;
+                                           ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/client/EMRenderTypes.java:14: error: cannot find symbol
+    public static final RenderType TRANSLUCENT_NO_DEPTH = RenderType.create("translucent_no_depth",
+                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMConfigurableConstantInt.java:14: error: cannot find symbol
+import net.minecraft.util.valueproviders.IntProviderType;
+                                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMConfigurableConstantInt.java:64: error: cannot find symbol
+    public IntProviderType<?> getType() {
+           ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMResizableOreFeature.java:15: error: cannot find symbol
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+                                                 ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMResizableOreFeature.java:16: error: package net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration does not exist
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration.TargetBlockState;
+                                                                                 ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMResizableOreFeatureConfig.java:12: error: package net.minecraft.world.level.levelgen.feature.configurations does not exist
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+                                                                ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMResizableOreFeatureConfig.java:13: error: package net.minecraft.world.level.levelgen.feature.configurations does not exist
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+                                                                ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMResizableOreFeatureConfig.java:14: error: package net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration does not exist
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration.TargetBlockState;
+                                                                                 ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMResizableOreFeatureConfig.java:19: error: cannot find symbol
+                                          FloatSupplier discardChanceOnAirExposure) implements FeatureConfiguration {
+                                                                                               ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMResizableOreFeatureConfig.java:18: error: cannot find symbol
+public record EMResizableOreFeatureConfig(List<TargetBlockState> targetStates, OreVeinType oreVeinType, IntSupplier size,
+                                               ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMResizableOreFeature.java:31: error: cannot find symbol
+    public boolean place(@NotNull FeaturePlaceContext<EMResizableOreFeatureConfig> context) {
+                                  ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMResizableOreFeature.java:159: error: cannot find symbol
+          TargetBlockState targetState, BlockPos.MutableBlockPos mutablePos) {
+          ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMDisableableFeaturePlacement.java:17: error: cannot find symbol
+import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
+                                                   ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/world/EMDisableableFeaturePlacement.java:57: error: cannot find symbol
+    public PlacementModifierType<?> type() {
+           ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/modules/ModuleAdvancedVisionEnhancementUnit.java:15: error: cannot find symbol
+import mekanism.common.util.MekanismUtils.ResourceType;
+                                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMPlacementModifiers.java:8: error: cannot find symbol
+import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
+                                                   ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMPlacementModifiers.java:17: error: cannot find symbol
+    public static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIERS = DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, EvolvedMekanism.MODID);
+                                         ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMPlacementModifiers.java:19: error: cannot find symbol
+    public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<EMDisableableFeaturePlacement>> DISABLEABLE = PLACEMENT_MODIFIERS.register("disableable", () -> () -> EMDisableableFeaturePlacement.CODEC);
+                                       ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMPlacementModifiers.java:19: error: cannot find symbol
+    public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<EMDisableableFeaturePlacement>> DISABLEABLE = PLACEMENT_MODIFIERS.register("disableable", () -> () -> EMDisableableFeaturePlacement.CODEC);
+                                                                 ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMChemicals.java:5: error: cannot find symbol
+import mekanism.api.chemical.ChemicalBuilder;
+                            ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMChemicals.java:7: error: cannot find symbol
+import mekanism.common.registration.impl.ChemicalDeferredRegister;
+                                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMChemicals.java:8: error: cannot find symbol
+import mekanism.common.registration.impl.DeferredChemical;
+                                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMChemicals.java:13: error: cannot find symbol
+    public static final ChemicalDeferredRegister CHEMICALS = new ChemicalDeferredRegister(EvolvedMekanism.MODID);
+                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMChemicals.java:15: error: cannot find symbol
+    public static final DeferredChemical<Chemical> URANIUM = CHEMICALS.registerInfuse("uranium",0x9BE199);
+                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMChemicals.java:16: error: cannot find symbol
+    public static final DeferredChemical<Chemical> BETTER_GOLD = createInfuse("better_gold",EvolvedMekanism.rl("infuse_type/better_gold"),0xF9C918);
+                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMChemicals.java:17: error: cannot find symbol
+    public static final DeferredChemical<Chemical> PLASLITHERITE = createInfuse("plaslitherite",EvolvedMekanism.rl("infuse_type/plaslitherite"),0x666667);
+                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMChemicals.java:19: error: cannot find symbol
+    public static final DeferredChemical<Chemical> NITROGEN = CHEMICALS.register(EMChemicalConstants.NITROGEN);
+                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMChemicals.java:20: error: cannot find symbol
+    public static final DeferredChemical<Chemical> CRYONOCTIS = CHEMICALS.register(EMChemicalConstants.CRYONOCTIS);
+                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMChemicals.java:22: error: cannot find symbol
+    private static DeferredChemical<Chemical> createInfuse(String id, Identifier texture, int color){
+                   ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMBlocks.java:67: error: package mekanism.common.item.block.transmitter does not exist
+import mekanism.common.item.block.transmitter.*;
+                                 ^
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMFeatures.java:6: error: cannot find symbol
+import mekanism.common.world.OreRetrogenFeature;
+                            ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMFeatures.java:7: error: cannot find symbol
+import mekanism.common.world.ResizableDiskConfig;
+                            ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMFeatures.java:8: error: cannot find symbol
+import mekanism.common.world.ResizableDiskReplaceFeature;
+                            ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMIntProviderTypes.java:9: error: cannot find symbol
+import net.minecraft.util.valueproviders.IntProviderType;
+                                        ^
+--
+/home/runner/work/Mekanism-26.3/Mekanism-26.3/addons/evolvedmekanism/src/main/java/fr/iglee42/evolvedmekanism/registries/EMIntProviderTypes.java:18: error: cannot find symbol
+    public static final DeferredRegister<IntProviderType<?>> INT_PROVIDER_TYPES = DeferredRegister.create(Registries.INT_PROVIDER_TYPE, EvolvedMekanism.MODID);
