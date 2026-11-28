@@ -1,60 +1,53 @@
 package fr.iglee42.evolvedmekanism.utils;
 
-import mekanism.api.Action;
 import mekanism.api.AutomationType;
+import mekanism.api.fluid.IFluidTank;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.inventory.slot.FluidInventorySlot;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
+/**
+ * Fills/drains the single container (e.g. a bucket) that sits in a {@link FluidInventorySlot} without moving it to another slot.
+ */
 public final class FluidBucketHelper {
 
     private FluidBucketHelper() {
     }
 
+    /**
+     * Moves the contents of the container in the slot into the slot's tank (the container is left in the slot, now emptied).
+     */
     public static void fillInPlace(FluidInventorySlot slot) {
-        if (slot.getCount() != 1) {
+        if (slot.isEmpty() || slot.getCount() != 1) {
             return;
         }
-        ItemStack copy = slot.getStack().copyWithCount(1);
-        IFluidHandlerItem handler = Capabilities.FLUID.getCapability(copy);
-        if (handler == null) {
-            return;
-        }
-        FluidStack inItem = handler.getFluidInTank(0);
-        if (inItem.isEmpty() || !slot.getFluidTank().isFluidValid(inItem)) {
-            return;
-        }
-        FluidStack remainder = slot.getFluidTank().insert(inItem, Action.SIMULATE, AutomationType.INTERNAL);
-        int amount = inItem.getAmount() - remainder.getAmount();
-        if (amount <= 0) {
-            return;
-        }
-        FluidStack drained = handler.drain(inItem.copyWithAmount(amount), FluidAction.EXECUTE);
-        if (drained.isEmpty()) {
-            return;
-        }
-        slot.getFluidTank().insert(drained, Action.EXECUTE, AutomationType.INTERNAL);
-        slot.setStackUnchecked(handler.getContainer());
+        slot.fillTankFromSlot(null);
     }
 
+    /**
+     * Moves the contents of the slot's tank into the container in the slot (the container is left in the slot, now filled).
+     */
     public static void drainInPlace(FluidInventorySlot slot) {
-        if (slot.getCount() != 1 || slot.getFluidTank().isEmpty()) {
+        IFluidTank tank = slot.getFluidTank();
+        if (slot.isEmpty() || slot.getCount() != 1 || tank.isEmpty()) {
             return;
         }
-        ItemStack copy = slot.getStack().copyWithCount(1);
-        IFluidHandlerItem handler = Capabilities.FLUID.getCapability(copy);
+        ResourceHandler<FluidResource> handler = Capabilities.FLUID.item().getCapability(slot.asItemAccess());
         if (handler == null) {
             return;
         }
-        FluidStack stored = slot.getFluidTank().getFluid();
-        int filled = handler.fill(stored.copy(), FluidAction.EXECUTE);
-        if (filled <= 0) {
-            return;
+        FluidResource resource = tank.resource();
+        try (Transaction transaction = Transaction.openRoot()) {
+            int available = tank.extract(resource, tank.amountAsInt(), transaction, AutomationType.INTERNAL);
+            if (available <= 0) {
+                return;
+            }
+            int inserted = handler.insert(resource, available, transaction);
+            if (inserted > 0 && tank.extract(resource, inserted, transaction, AutomationType.INTERNAL) == inserted) {
+                transaction.commit();
+            }
         }
-        slot.getFluidTank().extract(filled, Action.EXECUTE, AutomationType.INTERNAL);
-        slot.setStackUnchecked(handler.getContainer());
     }
 }

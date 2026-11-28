@@ -6,7 +6,6 @@ import fr.iglee42.evolvedmekanism.interfaces.ThreeInputCachedRecipe;
 import fr.iglee42.evolvedmekanism.interfaces.TripleItemRecipeLookupHandler;
 import fr.iglee42.evolvedmekanism.recipes.AlloyerRecipe;
 import fr.iglee42.evolvedmekanism.recipes.vanilla_input.TriItemRecipeInput;
-import fr.iglee42.evolvedmekanism.recipeviewers.EMRecipeViewersTypes;
 import fr.iglee42.evolvedmekanism.registries.EMRecipeType;
 import fr.iglee42.evolvedmekanism.tiers.EMFactoryTier;
 import fr.iglee42.evolvedmekanism.tiles.LimitedInputInventorySlot;
@@ -22,7 +21,6 @@ import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.api.recipes.ingredients.ItemStackIngredient;
 import mekanism.api.recipes.inputs.IInputHandler;
 import mekanism.api.recipes.inputs.InputHelper;
-import mekanism.client.recipe_viewer.type.IRecipeViewerRecipeType;
 import mekanism.common.Mekanism;
 import mekanism.common.capabilities.holder.container.MekContainerHelper;
 import mekanism.common.integration.computer.SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper;
@@ -153,11 +151,6 @@ public class TileEntityAlloyingFactory extends TileEntityItemToItemFactory<Combi
     @Override
     public IMekanismRecipeTypeProvider<TriItemRecipeInput, CombiningBookCategory, CombiningBookInfo, AlloyerRecipe, EMInputRecipeCache.TripleItem<AlloyerRecipe>> getRecipeType() {
         return EMRecipeType.ALLOYING;
-    }
-
-    @Override
-    public @Nullable IRecipeViewerRecipeType<AlloyerRecipe> recipeViewerType() {
-        return EMRecipeViewersTypes.ALLOYING;
     }
 
     @Nullable

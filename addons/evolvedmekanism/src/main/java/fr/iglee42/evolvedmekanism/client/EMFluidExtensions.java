@@ -1,27 +1,29 @@
 package fr.iglee42.evolvedmekanism.client;
 
-import com.mojang.blaze3d.shaders.FogShape;
-import com.mojang.blaze3d.systems.RenderSystem;
 import fr.iglee42.evolvedmekanism.registries.EMFluids;
 import fr.iglee42.evolvedmekanism.registries.MoltenFluidType;
-import mekanism.client.render.MekanismRenderer;
 import mekanism.common.registration.impl.FluidDeferredRegister.MekanismFluidType;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.FogRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.fog.FogData;
+import net.minecraft.client.renderer.fog.environment.FogEnvironment;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
+import net.neoforged.neoforge.fluids.FluidType;
+import org.joml.Vector4f;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Molten fluids keep Mekanism's tinted textures, but the in-fluid fog matches lava's distances
+ * Molten fluids keep Mekanism's tinted textures (now provided through the fluid models, see
+ * {@link ClientRegistration#fluidModels}), but the in-fluid fog matches lava's distances
  * and uses the molten color. Other fluids stay on Mekanism's water fog.
  */
 public final class EMFluidExtensions {
@@ -30,53 +32,35 @@ public final class EMFluidExtensions {
     }
 
     public static void register(RegisterClientExtensionsEvent event) {
-        for (var entry : EMFluids.FLUIDS.getFluidTypeEntries()) {
+        for (Holder<FluidType> entry : EMFluids.FLUIDS.getFluidTypeEntries()) {
             if (entry.value() instanceof MekanismFluidType fluidType) {
                 event.registerFluidType(fluidType instanceof MoltenFluidType ? molten(fluidType) : chemical(fluidType), fluidType);
             }
         }
     }
 
+    private static void applyFogColor(MekanismFluidType fluidType, Vector4f fluidFogColor) {
+        //Note: Similarly to vanilla we don't bother applying a different value for alpha
+        fluidFogColor.set(ARGB.redFloat(fluidType.color), ARGB.greenFloat(fluidType.color), ARGB.blueFloat(fluidType.color));
+    }
+
     private static IClientFluidTypeExtensions molten(MekanismFluidType fluidType) {
         return new IClientFluidTypeExtensions() {
-            @NotNull
-            @Override
-            public ResourceLocation getStillTexture() {
-                return fluidType.stillTexture;
-            }
-
-            @NotNull
-            @Override
-            public ResourceLocation getFlowingTexture() {
-                return fluidType.flowingTexture;
-            }
-
-            @Override
-            public ResourceLocation getOverlayTexture() {
-                return fluidType.overlayTexture;
-            }
-
             @Nullable
             @Override
-            public ResourceLocation getRenderOverlayTexture(Minecraft mc) {
+            public Identifier getRenderOverlayTexture(Minecraft mc) {
                 return null;
             }
 
             @Override
-            public int getTintColor() {
-                return fluidType.color;
-            }
-
-            @NotNull
-            @Override
-            public Vector3f modifyFogColor(@NotNull Camera camera, float partialTick, @NotNull ClientLevel level, int renderDistance, float darkenWorldAmount, @NotNull Vector3f fluidFogColor) {
-                int color = getTintColor();
-                return new Vector3f(MekanismRenderer.getRed(color), MekanismRenderer.getGreen(color), MekanismRenderer.getBlue(color));
+            public void modifyFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, Vector4f fluidFogColor) {
+                applyFogColor(fluidType, fluidFogColor);
             }
 
             @Override
-            public void modifyFogRender(@NotNull Camera camera, @NotNull FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, @NotNull FogShape shape) {
-                Entity entity = camera.getEntity();
+            public void modifyFogRender(Camera camera, @Nullable FogEnvironment environment, float renderDistance, float partialTick, FogData fog) {
+                //Mirrors vanilla's lava fog
+                Entity entity = camera.entity();
                 float start = 0.25F;
                 float end = 1.0F;
                 if (entity.isSpectator()) {
@@ -86,64 +70,34 @@ public final class EMFluidExtensions {
                     start = 0.0F;
                     end = 3.0F;
                 }
-                if (end > renderDistance) {
-                    end = renderDistance;
-                    shape = FogShape.CYLINDER;
-                }
-                RenderSystem.setShaderFogStart(start);
-                RenderSystem.setShaderFogEnd(end);
-                RenderSystem.setShaderFogShape(shape);
+                end = Math.min(end, renderDistance);
+                fog.environmentalStart = start;
+                fog.environmentalEnd = end;
+                fog.skyEnd = end;
+                fog.cloudEnd = end;
             }
         };
     }
 
     private static IClientFluidTypeExtensions chemical(MekanismFluidType fluidType) {
         return new IClientFluidTypeExtensions() {
-            @NotNull
             @Override
-            public ResourceLocation getStillTexture() {
-                return fluidType.stillTexture;
-            }
-
-            @NotNull
-            @Override
-            public ResourceLocation getFlowingTexture() {
-                return fluidType.flowingTexture;
-            }
-
-            @Override
-            public ResourceLocation getOverlayTexture() {
-                return fluidType.overlayTexture;
-            }
-
-            @Nullable
-            @Override
-            public ResourceLocation getRenderOverlayTexture(Minecraft mc) {
+            public Identifier getRenderOverlayTexture(Minecraft mc) {
                 return fluidType.renderOverlayTexture;
             }
 
             @Override
-            public int getTintColor() {
-                return fluidType.color;
-            }
-
-            @NotNull
-            @Override
-            public Vector3f modifyFogColor(@NotNull Camera camera, float partialTick, @NotNull ClientLevel level, int renderDistance, float darkenWorldAmount, @NotNull Vector3f fluidFogColor) {
-                int color = getTintColor();
-                return new Vector3f(MekanismRenderer.getRed(color), MekanismRenderer.getGreen(color), MekanismRenderer.getBlue(color));
+            public void modifyFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, Vector4f fluidFogColor) {
+                applyFogColor(fluidType, fluidFogColor);
             }
 
             @Override
-            public void modifyFogRender(@NotNull Camera camera, @NotNull FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, @NotNull FogShape shape) {
-                farDistance = 24F;
-                if (farDistance > renderDistance) {
-                    farDistance = renderDistance;
-                    shape = FogShape.CYLINDER;
-                }
-                RenderSystem.setShaderFogStart(-8);
-                RenderSystem.setShaderFogEnd(farDistance);
-                RenderSystem.setShaderFogShape(shape);
+            public void modifyFogRender(Camera camera, @Nullable FogEnvironment environment, float renderDistance, float partialTick, FogData fog) {
+                //Same as Mekanism's own fluids: water fog distances without any biome/player adjustments
+                fog.environmentalStart = camera.attributeProbe().getValue(EnvironmentAttributes.WATER_FOG_START_DISTANCE, partialTick);
+                fog.environmentalEnd = camera.attributeProbe().getValue(EnvironmentAttributes.WATER_FOG_END_DISTANCE, partialTick);
+                fog.skyEnd = fog.environmentalEnd;
+                fog.cloudEnd = fog.environmentalEnd;
             }
         };
     }

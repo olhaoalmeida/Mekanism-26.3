@@ -4,10 +4,11 @@ import fr.iglee42.evolvedmekanism.EvolvedMekanism;
 import fr.iglee42.evolvedmekanism.registries.EMBlocks;
 import fr.iglee42.evolvedmekanism.utils.EMNight;
 import fr.iglee42.evolvedmekanism.registries.EMOreType;
-import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -19,26 +20,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.phys.HitResult;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = EvolvedMekanism.MODID)
 public class BlockNoctisRozuliOre extends EMBlockOre{
 
     public static final BooleanProperty UNCOVERED = BooleanProperty.create("uncovered");
 
-    public BlockNoctisRozuliOre(EMOreType ore) {
-        super(ore);
-        this.registerDefaultState(this.defaultBlockState().setValue(UNCOVERED, false));
-    }
-
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
         boolean isDeepslate = BuiltInRegistries.BLOCK.getKey(this).getPath().contains("deepslate");
         return isDeepslate ? EMBlocks.ORES.get(EMOreType.NOCTIS_ROZULI).deepslate().asItem().getDefaultInstance() : EMBlocks.ORES.get(EMOreType.NOCTIS_ROZULI).stone().asItem().getDefaultInstance();
     }
@@ -46,7 +40,7 @@ public class BlockNoctisRozuliOre extends EMBlockOre{
     @Override
     public String getDescriptionId() {
         boolean isDeepslate = BuiltInRegistries.BLOCK.getKey(this).getPath().contains("deepslate");
-        return Util.makeDescriptionId("block", Identifier.withDefaultNamespace((isDeepslate ? "deepslate_":"")+"lapis_ore"));
+        return Identifier.withDefaultNamespace((isDeepslate ? "deepslate_":"")+"lapis_ore").toLanguageKey("block");
     }
 
     public BlockNoctisRozuliOre(EMOreType ore, Properties properties) {
@@ -55,7 +49,7 @@ public class BlockNoctisRozuliOre extends EMBlockOre{
     }
 
     @Override
-    public void playerDestroy(Level worldIn, Player player, BlockPos pos, BlockState state,
+    public void playerDestroy(ServerLevel worldIn, ServerPlayer player, BlockPos pos, BlockState state,
                               @Nullable BlockEntity te, ItemStack stack) {
         super.playerDestroy(worldIn, player, pos, state.getValue(UNCOVERED) ? state : Blocks.LAPIS_ORE.defaultBlockState(), te,
                 stack);

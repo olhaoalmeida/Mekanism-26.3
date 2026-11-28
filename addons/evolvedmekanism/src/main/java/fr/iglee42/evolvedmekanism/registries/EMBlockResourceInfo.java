@@ -1,6 +1,8 @@
 package fr.iglee42.evolvedmekanism.registries;
 
 import mekanism.common.resource.IResource;
+import mekanism.common.resource.ResourceType;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
@@ -75,6 +77,14 @@ public enum EMBlockResourceInfo implements IResource {
 
     public MapColor getMapColor() {
         return mapColor;
+    }
+
+    @Override
+    public Item.Properties modifyProperties(Item.Properties properties, @Nullable ResourceType resourceType) {
+        if (!burnsInFire) {
+            properties = properties.fireResistant();
+        }
+        return properties;
     }
 
     public BlockBehaviour.Properties modifyProperties(BlockBehaviour.Properties properties) {

@@ -1,7 +1,6 @@
 package fr.iglee42.evolvedmekanism.tiles;
 
 import fr.iglee42.evolvedmekanism.tiers.PersonalStorageTier;
-import mekanism.api.providers.IBlockProvider;
 import mekanism.common.registries.MekanismBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -40,7 +39,7 @@ public class TileEntityTieredPersonalBarrel extends TileEntityTieredPersonalStor
         double d0 = (double) this.worldPosition.getX() + 0.5D + (double) vec3i.getX() / 2.0D;
         double d1 = (double) this.worldPosition.getY() + 0.5D + (double) vec3i.getY() / 2.0D;
         double d2 = (double) this.worldPosition.getZ() + 0.5D + (double) vec3i.getZ() / 2.0D;
-        level.playSound(null, d0, d1, d2, sound, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+        level.playSound(null, d0, d1, d2, sound, SoundSource.BLOCKS, 0.5F, level.getRandom().nextFloat() * 0.1F + 0.9F);
     }
 
     @Override

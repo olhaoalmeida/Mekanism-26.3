@@ -3,7 +3,6 @@ package fr.iglee42.evolvedmekanism.tiles.machine;
 import fr.iglee42.evolvedmekanism.config.EMConfig;
 import fr.iglee42.evolvedmekanism.interfaces.EMInputRecipeCache;
 import fr.iglee42.evolvedmekanism.recipes.MeltingRecipe;
-import fr.iglee42.evolvedmekanism.recipeviewers.EMRecipeViewersTypes;
 import fr.iglee42.evolvedmekanism.registries.EMBlocks;
 import fr.iglee42.evolvedmekanism.registries.EMRecipeType;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import mekanism.api.recipes.inputs.IInputHandler;
 import mekanism.api.recipes.inputs.InputHelper;
 import mekanism.api.recipes.outputs.IOutputHandler;
 import mekanism.api.recipes.outputs.OutputHelper;
-import mekanism.client.recipe_viewer.type.IRecipeViewerRecipeType;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.common.capabilities.fluid.BasicFluidTank;
 import mekanism.common.capabilities.heat.BasicHeatCapacitor;
@@ -248,14 +246,6 @@ public class TileEntityMelter extends TileEntityRecipeMachine<MeltingRecipe, Pro
         return recipeContainers;
     }
 
-    /**
-     * The melter is heat powered and has no energy container.
-     */
-    @Nullable
-    public MachineEnergyContainer<TileEntityMelter> getEnergyContainer() {
-        return null;
-    }
-
     public boolean hasMachineEnoughHeat() {
         return heatCapacitor.getTemperature() > 1273;
     }
@@ -277,10 +267,5 @@ public class TileEntityMelter extends TileEntityRecipeMachine<MeltingRecipe, Pro
             }
         }
         return 0;
-    }
-
-    @Override
-    public @Nullable IRecipeViewerRecipeType<MeltingRecipe> recipeViewerType() {
-        return EMRecipeViewersTypes.MELTING;
     }
 }

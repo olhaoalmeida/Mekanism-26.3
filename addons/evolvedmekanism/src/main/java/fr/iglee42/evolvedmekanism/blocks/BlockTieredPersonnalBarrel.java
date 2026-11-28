@@ -12,17 +12,16 @@ import mekanism.common.util.WorldUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
 
 public class BlockTieredPersonnalBarrel extends BlockTieredPersonalStorage<TileEntityTieredPersonalBarrel,BlockTypeTile<TileEntityTieredPersonalBarrel>>{
-    public BlockTieredPersonnalBarrel(BlockTypeTile<TileEntityTieredPersonalBarrel> type, PersonalStorageTier tier) {
-        super(type, tier);
+    public BlockTieredPersonnalBarrel(BlockTypeTile<TileEntityTieredPersonalBarrel> type, PersonalStorageTier tier, BlockBehaviour.Properties properties) {
+        super(type, tier, properties);
     }
 
     @Override
-    @Deprecated
-    public void tick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         super.tick(state, level, pos, random);
         TileEntityPersonalBarrel barrel = WorldUtils.getTileEntity(TileEntityPersonalBarrel.class, level, pos);
         if (barrel != null) {
@@ -30,7 +29,7 @@ public class BlockTieredPersonnalBarrel extends BlockTieredPersonalStorage<TileE
         }
     }
 
-    public static BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage<BlockTieredPersonnalBarrel>> getUpgrade(PersonalStorageTier tier){
+    public static BlockRegistryObject<BlockTieredPersonnalBarrel, ItemBlockTieredPersonalStorage> getUpgrade(PersonalStorageTier tier){
         return switch (tier){
             case BASIC -> EMBlocks.ADVANCED_PERSONAL_BARREL;
             case ADVANCED -> EMBlocks.ELITE_PERSONAL_BARREL;

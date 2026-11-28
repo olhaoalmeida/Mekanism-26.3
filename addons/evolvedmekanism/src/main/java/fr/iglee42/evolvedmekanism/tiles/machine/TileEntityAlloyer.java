@@ -4,7 +4,6 @@ import fr.iglee42.evolvedmekanism.interfaces.EMInputRecipeCache;
 import fr.iglee42.evolvedmekanism.interfaces.ThreeInputCachedRecipe;
 import fr.iglee42.evolvedmekanism.interfaces.TripleItemRecipeLookupHandler;
 import fr.iglee42.evolvedmekanism.recipes.AlloyerRecipe;
-import fr.iglee42.evolvedmekanism.recipeviewers.EMRecipeViewersTypes;
 import fr.iglee42.evolvedmekanism.registries.EMBlocks;
 import fr.iglee42.evolvedmekanism.registries.EMRecipeType;
 import fr.iglee42.evolvedmekanism.tiles.LimitedInputInventorySlot;
@@ -17,7 +16,6 @@ import mekanism.api.recipes.inputs.IInputHandler;
 import mekanism.api.recipes.inputs.InputHelper;
 import mekanism.api.recipes.outputs.IOutputHandler;
 import mekanism.api.recipes.outputs.OutputHelper;
-import mekanism.client.recipe_viewer.type.IRecipeViewerRecipeType;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.api.energy.IEnergyContainer;
 import mekanism.common.capabilities.holder.container.IContainerHolder;
@@ -188,9 +186,6 @@ public class TileEntityAlloyer extends TileEntityProgressMachine<AlloyerRecipe> 
         return energyContainer;
     }
 
-    public MachineEnergyContainer<TileEntityAlloyer> getEnergyContainer() {
-        return energyContainer;
-    }
 
 
 
@@ -201,9 +196,4 @@ public class TileEntityAlloyer extends TileEntityProgressMachine<AlloyerRecipe> 
     }
     //End methods IComputerTile
 
-
-    @Override
-    public @Nullable IRecipeViewerRecipeType<AlloyerRecipe> recipeViewerType() {
-        return EMRecipeViewersTypes.ALLOYING;
-    }
 }

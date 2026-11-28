@@ -4,7 +4,6 @@ import fr.iglee42.evolvedmekanism.interfaces.EMInputRecipeCache;
 import fr.iglee42.evolvedmekanism.interfaces.SolidificationCachedRecipe;
 import fr.iglee42.evolvedmekanism.recipes.SolidificationRecipe;
 import fr.iglee42.evolvedmekanism.recipes.vanilla_input.SingleItemBiFluidRecipeInput;
-import fr.iglee42.evolvedmekanism.recipeviewers.EMRecipeViewersTypes;
 import fr.iglee42.evolvedmekanism.registries.EMBlocks;
 import fr.iglee42.evolvedmekanism.registries.EMRecipeType;
 import java.util.List;
@@ -24,7 +23,6 @@ import mekanism.api.recipes.outputs.IOutputHandler;
 import mekanism.api.recipes.outputs.OutputHelper;
 import mekanism.api.upgrade.Upgrade;
 import mekanism.api.upgrade.UpgradeIds;
-import mekanism.client.recipe_viewer.type.IRecipeViewerRecipeType;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.common.capabilities.fluid.BasicFluidTank;
 import mekanism.common.capabilities.holder.container.IContainerHolder;
@@ -226,9 +224,6 @@ public class TileEntitySolidifier extends TileEntityProgressMachine<Solidificati
         return energyContainer;
     }
 
-    public MachineEnergyContainer<TileEntitySolidifier> getEnergyContainer() {
-        return energyContainer;
-    }
 
     //Methods relating to IComputerTile
     @ComputerMethod(methodDescription = ComputerConstants.DESCRIPTION_GET_ENERGY_USAGE)
@@ -236,9 +231,4 @@ public class TileEntitySolidifier extends TileEntityProgressMachine<Solidificati
         return getActive() ? energyContainer.getEnergyPerTick() : 0;
     }
     //End methods IComputerTile
-
-    @Override
-    public @Nullable IRecipeViewerRecipeType<SolidificationRecipe> recipeViewerType() {
-        return EMRecipeViewersTypes.SOLIDIFICATION;
-    }
 }

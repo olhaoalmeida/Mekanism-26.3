@@ -49,7 +49,7 @@ public class PersonalTieredStorageContentsLootFunction implements LootItemFuncti
         BlockEntity blockEntity = lootContext.getParam(LootContextParams.BLOCK_ENTITY);
         if (blockEntity instanceof TileEntityPersonalStorage personalStorage && !personalStorage.isInventoryEmpty()) {
             List<IInventorySlot> tileSlots = personalStorage.getInventorySlots(null);
-            if (!(itemStack.getItem() instanceof ItemBlockTieredPersonalStorage<?> item)) throw new IllegalStateException("Item isn't ItemBlockTieredPersonalStorage");
+            if (!(itemStack.getItem() instanceof ItemBlockTieredPersonalStorage item)) throw new IllegalStateException("Item isn't ItemBlockTieredPersonalStorage");
 
             AbstractTieredPersonalStorageItemInventory destInv;
             if (EffectiveSide.get().isClient()) {

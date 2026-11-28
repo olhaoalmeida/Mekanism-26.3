@@ -3,17 +3,19 @@ package fr.iglee42.evolvedmekanism.particles;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
-import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.util.RandomSource;
 
 /**
  * Lava's pop, drawn with the flame sprite and tinted by the molten color.
  */
-public class MoltenPopParticle extends TextureSheetParticle {
+public class MoltenPopParticle extends SingleQuadParticle {
 
-    protected MoltenPopParticle(ClientLevel level, double x, double y, double z, float r, float g, float b) {
-        super(level, x, y, z, 0.0D, 0.0D, 0.0D);
+    protected MoltenPopParticle(ClientLevel level, double x, double y, double z, float r, float g, float b, TextureAtlasSprite sprite) {
+        super(level, x, y, z, 0.0D, 0.0D, 0.0D, sprite);
         this.gravity = 0.75F;
         this.friction = 0.999F;
         this.xd *= 0.8D;
@@ -26,15 +28,13 @@ public class MoltenPopParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    protected SingleQuadParticle.Layer getLayer() {
+        return SingleQuadParticle.Layer.TRANSLUCENT;
     }
 
     @Override
-    public int getLightColor(float partialTick) {
-        int light = super.getLightColor(partialTick);
-        int sky = light >> 16 & 255;
-        return 240 | sky << 16;
+    public int getLightCoords(float partialTick) {
+        return LightCoordsUtil.withBlock(super.getLightCoords(partialTick), 15);
     }
 
     @Override
@@ -51,10 +51,8 @@ public class MoltenPopParticle extends TextureSheetParticle {
         }
 
         @Override
-        public Particle createParticle(ColoredMoltenOptions type, ClientLevel level, double x, double y, double z, double vx, double vy, double vz) {
-            MoltenPopParticle particle = new MoltenPopParticle(level, x, y, z, type.red(), type.green(), type.blue());
-            particle.pickSprite(this.sprites);
-            return particle;
+        public Particle createParticle(ColoredMoltenOptions type, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
+            return new MoltenPopParticle(level, x, y, z, type.red(), type.green(), type.blue(), this.sprites.get(random));
         }
     }
 }

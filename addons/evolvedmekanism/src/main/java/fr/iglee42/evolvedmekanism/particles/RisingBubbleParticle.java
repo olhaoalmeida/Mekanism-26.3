@@ -1,25 +1,31 @@
 package fr.iglee42.evolvedmekanism.particles;
 
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.util.RandomSource;
 
-public class RisingBubbleParticle extends TextureSheetParticle {
+public class RisingBubbleParticle extends SingleQuadParticle {
+
     protected RisingBubbleParticle(ClientLevel level, double x, double y, double z,
-                                   double vx, double vy, double vz,float r,float g,float b) {
-        super(level, x, y, z, vx, vy, vz);
+                                   double vx, double vy, double vz, float r, float g, float b, TextureAtlasSprite sprite) {
+        super(level, x, y, z, vx, vy, vz, sprite);
         this.lifetime = 20;
         this.gravity = -0.02F;
         this.xd = vx;
         this.yd = vy;
         this.zd = vz;
         this.scale(0.2F + level.random.nextFloat());
-        this.setColor(lighten(r,0.05f),lighten(g,0.05f),lighten(b,0.05f));
+        this.setColor(lighten(r, 0.05f), lighten(g, 0.05f), lighten(b, 0.05f));
     }
 
     public static float lighten(float value, float factor) {
         return value + (1.0f - value) * factor;
     }
-
 
     @Override
     public void tick() {
@@ -28,13 +34,13 @@ public class RisingBubbleParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    protected SingleQuadParticle.Layer getLayer() {
+        return SingleQuadParticle.Layer.TRANSLUCENT;
     }
 
     @Override
-    protected int getLightColor(float p_107249_) {
-        return 240;
+    public int getLightCoords(float partialTick) {
+        return LightCoordsUtil.pack(15, 15);
     }
 
     public static class Factory implements ParticleProvider<ColoredRisingBubbleOptions> {
@@ -47,10 +53,8 @@ public class RisingBubbleParticle extends TextureSheetParticle {
         @Override
         public Particle createParticle(ColoredRisingBubbleOptions type, ClientLevel level,
                                        double x, double y, double z,
-                                       double vx, double vy, double vz) {
-            RisingBubbleParticle particle = new RisingBubbleParticle(level, x, y, z, vx, vy, vz,type.red(),type.green(),type.blue());
-            particle.pickSprite(sprites);
-            return particle;
+                                       double vx, double vy, double vz, RandomSource random) {
+            return new RisingBubbleParticle(level, x, y, z, vx, vy, vz, type.red(), type.green(), type.blue(), sprites.get(random));
         }
     }
 }

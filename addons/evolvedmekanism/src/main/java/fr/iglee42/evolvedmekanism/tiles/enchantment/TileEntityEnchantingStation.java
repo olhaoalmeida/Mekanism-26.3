@@ -25,7 +25,6 @@ import org.jspecify.annotations.Nullable;
 import mekanism.api.gear.IModuleHelper;
 import mekanism.api.gear.ModuleData;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
-import mekanism.common.content.gear.IModuleItem;
 import mekanism.common.content.gear.ModuleContainer;
 import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.integration.computer.SpecialComputerMethodWrapper;
@@ -94,9 +93,6 @@ public class TileEntityEnchantingStation extends TileEntityMekanism implements I
         return new BasicSingleHolder<>(energyContainer, facingSupplier, BACK_ONLY);
     }
 
-    public MachineEnergyContainer<TileEntityEnchantingStation> getEnergyContainer() {
-        return energyContainer;
-    }
 
     @Override
     protected IContainerHolder<IInventorySlot> getInitialInventory(IContentsListener listener) {
@@ -140,7 +136,7 @@ public class TileEntityEnchantingStation extends TileEntityMekanism implements I
                             transaction.commit();
                         }
                         writeEnchantments(pendingResult);
-                        level.playSound(null, getBlockPos(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, level.random.nextFloat() * 0.1F + 0.9F);
+                        level.playSound(null, getBlockPos(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.1F + 0.9F);
                         cancelOperation();
                     }
                 } else {

@@ -2,20 +2,20 @@ package fr.iglee42.emgenerators.client;
 
 import fr.iglee42.emgenerators.tiers.AdvancedWindGeneratorTier;
 import fr.iglee42.evolvedmekanism.EvolvedMekanism;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class WindModelTexture {
 
-    private static ResourceLocation current;
+    private static Identifier current;
 
     private WindModelTexture() {
     }
 
-    public static ResourceLocation forTier(AdvancedWindGeneratorTier tier) {
-        return EvolvedMekanism.rl("render/wind_generators/" + tier.getBaseTier().getLowerName() + "_wind_generator.png");
+    public static Identifier forTier(AdvancedWindGeneratorTier tier) {
+        return Identifier.fromNamespaceAndPath(EvolvedMekanism.MODID, "render/wind_generators/" + tier.getBaseTier().getLowerName() + "_wind_generator.png");
     }
 
-    public static void set(ResourceLocation texture) {
+    public static void set(Identifier texture) {
         current = texture;
     }
 
@@ -23,7 +23,7 @@ public final class WindModelTexture {
         current = null;
     }
 
-    public static ResourceLocation current() {
+    public static Identifier current() {
         return current;
     }
 }

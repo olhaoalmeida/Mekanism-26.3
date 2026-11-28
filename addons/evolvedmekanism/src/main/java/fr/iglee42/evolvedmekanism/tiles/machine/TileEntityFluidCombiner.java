@@ -4,7 +4,6 @@ import fr.iglee42.evolvedmekanism.interfaces.EMInputRecipeCache;
 import fr.iglee42.evolvedmekanism.interfaces.FluidCombiningCachedRecipe;
 import fr.iglee42.evolvedmekanism.recipes.FluidCombiningRecipe;
 import fr.iglee42.evolvedmekanism.recipes.vanilla_input.BiFluidRecipeInput;
-import fr.iglee42.evolvedmekanism.recipeviewers.EMRecipeViewersTypes;
 import fr.iglee42.evolvedmekanism.registries.EMBlocks;
 import fr.iglee42.evolvedmekanism.registries.EMRecipeType;
 import fr.iglee42.evolvedmekanism.utils.FluidBucketHelper;
@@ -21,7 +20,6 @@ import mekanism.api.recipes.inputs.IInputHandler;
 import mekanism.api.recipes.inputs.InputHelper;
 import mekanism.api.recipes.outputs.IOutputHandler;
 import mekanism.api.recipes.outputs.OutputHelper;
-import mekanism.client.recipe_viewer.type.IRecipeViewerRecipeType;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.common.capabilities.fluid.BasicFluidTank;
 import mekanism.common.capabilities.holder.container.IContainerHolder;
@@ -189,12 +187,4 @@ public class TileEntityFluidCombiner extends TileEntityProgressMachine<FluidComb
         return energyContainer;
     }
 
-    public MachineEnergyContainer<TileEntityFluidCombiner> getEnergyContainer() {
-        return energyContainer;
-    }
-
-    @Override
-    public @Nullable IRecipeViewerRecipeType<FluidCombiningRecipe> recipeViewerType() {
-        return EMRecipeViewersTypes.FLUID_COMBINING;
-    }
 }
