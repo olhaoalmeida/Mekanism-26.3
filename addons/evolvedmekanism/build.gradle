@@ -24,7 +24,7 @@ sourceSets {
         exclude 'fr/iglee42/evolvedmekanism/datagen/**'
         exclude 'fr/iglee42/evolvedmekanism/recipeviewers/**'
         exclude 'fr/iglee42/evolvedmekanism/curios/**'
-        exclude 'fr/iglee42/evolvedmekanism/mixins/curios/**'
+        exclude 'fr/iglee42/evolvedmekanism/mixins/**'
     }
 
     main.resources {
