@@ -16,7 +16,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.profiling.ProfilerFiller;
 
 @NothingNullByDefault
@@ -42,7 +42,7 @@ public class RenderTieredPersonalChest extends MekanismTileEntityRenderer<TileEn
             matrix.mulPose(Axis.YP.rotationDegrees(-tile.getDirection().toYRot()));
             matrix.translate(-0.5D, -0.5D, -0.5D);
         }
-        ResourceLocation texture = EvolvedMekanism.getResource(ResourceType.TEXTURE_BLOCKS, "models/"+tile.getTier().getBaseTier().getSerializedName()+"_personal_chest.png");
+        Identifier texture = EvolvedMekanism.getResource(ResourceType.TEXTURE_BLOCKS, "models/"+tile.getTier().getBaseTier().getSerializedName()+"_personal_chest.png");
         float lidAngle = 1.0F - tile.getOpenNess(partialTick);
         lidAngle = 1.0F - lidAngle * lidAngle * lidAngle;
         VertexConsumer builder = renderer.getBuffer(RenderType.entityCutout(texture));

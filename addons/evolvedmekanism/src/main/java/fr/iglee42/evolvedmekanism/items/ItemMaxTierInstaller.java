@@ -109,7 +109,7 @@ public class ItemMaxTierInstaller extends Item {
     @NotNull
     @Override
     public Component getName(@NotNull ItemStack stack) {
-        return FMLEnvironment.dist.isClient() ? ClientNameAnimation.animateTierInstaller(stack, super.getName(stack)) : super.getName(stack);
+        return FMLEnvironment.getDist().isClient() ? ClientNameAnimation.animateTierInstaller(stack, super.getName(stack)) : super.getName(stack);
     }
 
     @NotNull
@@ -246,7 +246,7 @@ public class ItemMaxTierInstaller extends Item {
     @Override
     public void appendHoverText(ItemStack p_41421_, TooltipContext p_339594_, List<Component> tooltip, TooltipFlag p_41424_) {
         super.appendHoverText(p_41421_, p_339594_, tooltip, p_41424_);
-        if (!FMLEnvironment.dist.isClient()) return;
+        if (!FMLEnvironment.getDist().isClient()) return;
         if (MekKeyHandler.isKeyPressed(MekanismKeyHandler.descriptionKey))
             tooltip.add(EvolvedMekanismLang.DESCRIPTION_MAX_TIER_INSTALLER.translate(EMConfig.general.getMaxInstallerTier().getSerializedName()));
         else

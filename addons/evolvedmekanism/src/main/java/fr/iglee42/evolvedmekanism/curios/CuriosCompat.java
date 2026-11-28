@@ -23,7 +23,7 @@ public final class CuriosCompat {
         modEventBus.addListener(CuriosCompat::registerCapabilities);
         modEventBus.addListener(CuriosCompat::registerPackets);
         NeoForge.EVENT_BUS.register(CuriosGameplay.class);
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
             CuriosClient.register(modEventBus);
         }
     }

@@ -10,7 +10,7 @@ import mekanism.common.tile.base.TileEntityMekanism;
 import mekanism.common.tile.component.config.DataType;
 import mekanism.common.tile.interfaces.ISideConfiguration;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,10 +20,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public abstract class GuiGaugeMixin {
 
     @Unique
-    private static final ResourceLocation EVOLVEDMEKANISM$EXTRA_GAUGE = EvolvedMekanism.rl("gui/gauge/extra.png");
+    private static final Identifier EVOLVEDMEKANISM$EXTRA_GAUGE = EvolvedMekanism.rl("gui/gauge/extra.png");
 
-    @Redirect(method = "drawBackground", at = @At(value = "INVOKE", target = "Lmekanism/client/gui/element/gauge/GaugeInfo;getResourceLocation()Lnet/minecraft/resources/ResourceLocation;"))
-    private ResourceLocation evolvedmekanism$extraGaugeTexture(GaugeInfo info) {
+    @Redirect(method = "drawBackground", at = @At(value = "INVOKE", target = "Lmekanism/client/gui/element/gauge/GaugeInfo;getResourceLocation()Lnet/minecraft/resources/Identifier;"))
+    private Identifier evolvedmekanism$extraGaugeTexture(GaugeInfo info) {
         if (evolvedmekanism$isExtraGauge(info) && Minecraft.getInstance().getResourceManager().getResource(EVOLVEDMEKANISM$EXTRA_GAUGE).isPresent()) {
             return EVOLVEDMEKANISM$EXTRA_GAUGE;
         }

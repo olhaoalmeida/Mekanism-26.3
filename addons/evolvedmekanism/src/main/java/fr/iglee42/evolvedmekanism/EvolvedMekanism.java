@@ -21,7 +21,6 @@ import fr.iglee42.evolvedmekanism.registries.*;
 import fr.iglee42.evolvedmekanism.tiers.EMBaseTier;
 import fr.iglee42.evolvedmekanism.utils.ModsCompats;
 import fr.iglee42.evolvedmekanism.utils.MoltenAvailability;
-import mekanism.api.MekanismIMC;
 import mekanism.api.text.EnumColor;
 import mekanism.api.tier.AlloyTier;
 import mekanism.api.tier.BaseTier;
@@ -29,13 +28,14 @@ import mekanism.common.MekanismLang;
 import mekanism.common.command.builders.BuildCommand;
 import mekanism.common.content.blocktype.FactoryType;
 import mekanism.common.lib.Version;
-import mekanism.common.lib.multiblock.MultiblockManager;
+import mekanism.common.lib.multiblock.MekanismMultiblockRegistry;
+import mekanism.common.lib.multiblock.MultiblockType;
 import mekanism.common.registration.impl.ItemRegistryObject;
 import mekanism.common.registries.MekanismItems;
 import mekanism.common.tier.*;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -70,13 +70,14 @@ public class EvolvedMekanism {
 
     public final Version versionNumber;
 
-    public static final MultiblockManager<APTMultiblockData> aptManager = new MultiblockManager<>("apt", APTCache::new,
-            APTValidator::new);
+    private static final MekanismMultiblockRegistry MULTIBLOCKS = new MekanismMultiblockRegistry(MODID);
+    public static final MultiblockType<APTMultiblockData> APT_MULTIBLOCK = MULTIBLOCKS.registerMultiblock("apt", APTCache::new, APTValidator::new);
 
     public EvolvedMekanism(IEventBus modEventBus, ModContainer container) {
         logger.info("Evolved Mekanism Launched");
         instance = this;
         initEnums();
+        MULTIBLOCKS.register(modEventBus);
         EMConfig.registerConfigs(container);
         if (ModsCompats.MEKANISMTOOLS.isLoaded()) EvolvedMekanismToolsConfig.registerConfigs(container);
         modEventBus.addListener(this::commonSetup);
@@ -114,7 +115,7 @@ public class EvolvedMekanism {
 
         versionNumber = new Version(container);
         packetHandler = new EMPacketHandler(modEventBus);
-        modEventBus.addListener(fr.iglee42.evolvedmekanism.datagen.EMDataGenerator::gatherData);
+        // TODO(port): datagen disabled
     }
 
     private void registerCompats(IEventBus modEventBus) {
@@ -125,16 +126,16 @@ public class EvolvedMekanism {
            EMGenTileEntityTypes.register(modEventBus);
            EMGenContainerTypes.register(modEventBus);
            EMGenBlockTypes.register();
-           if (FMLEnvironment.dist == Dist.CLIENT) modEventBus.register(new EMGenClientRegistration());
+           if (FMLEnvironment.getDist() == Dist.CLIENT) modEventBus.register(new EMGenClientRegistration());
         }
 
         if (ModsCompats.MEKANISMTOOLS.isLoaded()) {
             EMToolsItems.register(modEventBus);
-            if (FMLEnvironment.dist == Dist.CLIENT) modEventBus.register(new EMToolsClientRegistration());
+            if (FMLEnvironment.getDist() == Dist.CLIENT) modEventBus.register(new EMToolsClientRegistration());
         }
 
         if (ModsCompats.CURIOS.isLoaded()) {
-            fr.iglee42.evolvedmekanism.curios.CuriosCompat.register(modEventBus);
+            // TODO(port): curios compat disabled
         }
     }
 
@@ -147,25 +148,8 @@ public class EvolvedMekanism {
     }
 
     private void initEnums() {
-        logger.info("Initializing Enum Injections");
-        ((InitializableEnum)(Object)BaseTier.BASIC).evolvedmekanism$initNewValues();
-        ((InitializableEnum)(Object)AlloyTier.INFUSED).evolvedmekanism$initNewValues();
-        ((InitializableEnum)(Object)FactoryTier.BASIC).evolvedmekanism$initNewValues();
-        ((InitializableEnum)(Object)QIODriveTier.BASE).evolvedmekanism$initNewValues();
-        ((InitializableEnum)(Object)FactoryType.COMBINING).evolvedmekanism$initNewValues();
+        // TODO(port): enum injection mixins disabled until core compiles
 
-        ((InitializableEnum)(Object)CableTier.BASIC).evolvedmekanism$initNewValues();
-        ((InitializableEnum)(Object)ConductorTier.BASIC).evolvedmekanism$initNewValues();
-        ((InitializableEnum)(Object)PipeTier.BASIC).evolvedmekanism$initNewValues();
-        ((InitializableEnum)(Object)TubeTier.BASIC).evolvedmekanism$initNewValues();
-        ((InitializableEnum)(Object)TransporterTier.BASIC).evolvedmekanism$initNewValues();
-
-        ((InitializableEnum)(Object)BinTier.BASIC).evolvedmekanism$initNewValues();
-        ((InitializableEnum)(Object)InductionCellTier.BASIC).evolvedmekanism$initNewValues();
-        ((InitializableEnum)(Object)InductionProviderTier.BASIC).evolvedmekanism$initNewValues();
-        ((InitializableEnum)(Object)EnergyCubeTier.BASIC).evolvedmekanism$initNewValues();
-        ((InitializableEnum)(Object)ChemicalTankTier.BASIC).evolvedmekanism$initNewValues();
-        ((InitializableEnum)(Object)FluidTankTier.BASIC).evolvedmekanism$initNewValues();
     }
 
     private void hideUnavailableMoltenTanks(BuildCreativeModeTabContentsEvent event) {
@@ -189,8 +173,8 @@ public class EvolvedMekanism {
         if (!stack.is(MekanismBlocks.CREATIVE_FLUID_TANK.getItemHolder())) {
             return false;
         }
-        FluidStack stored = StorageUtils.getFirstFluidFromAttachment(stack);
-        return !stored.isEmpty() && !MoltenAvailability.isObtainable(event.getParameters().holders(), stored.getFluid());
+        // TODO(port): reimplement with 26.3 fluid attachment API
+        return false;
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -202,11 +186,11 @@ public class EvolvedMekanism {
         });
     }
 
-    public static ResourceLocation rl(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    public static Identifier rl(String path) {
+        return Identifier.fromNamespaceAndPath(MODID, path);
     }
 
-    public static ResourceLocation getResource(MekanismUtils.ResourceType type, String name) {
+    public static Identifier getResource(MekanismUtils.ResourceType type, String name) {
         return rl(type.getPrefix() + name);
     }
 
@@ -238,15 +222,8 @@ public class EvolvedMekanism {
     }
 
     private void enqueueIMC(InterModEnqueueEvent event) {
-        MekanismIMC.addMekaSuitBootsModules(EMModules.AIR_AFFINITY);
-        MekanismIMC.addMekaSuitHelmetModules(EMModules.AQUA_AFFINITY, EMModules.ADVANCED_VISION_ENHANCEMENT);
-        MekanismIMC.addMekaSuitPantsModules(EMModules.LUCK);
-        MekanismIMC.addMekaToolModules(EMModules.CAPTURING);
-        if (ModsCompats.MEKAWEAPONS.isLoaded()) {
-            MekanismIMC.sendModuleIMC("add_meka_tana_modules", EMModules.CAPTURING);
-            MekanismIMC.sendModuleIMC("add_meka_bow_modules", EMModules.CAPTURING);
-            MekanismIMC.sendModuleIMC("add_meka_gun_modules", EMModules.CAPTURING);
-        }
+        // TODO(port): MekanismIMC removed in 10.8 (modules are datapack entries now)
+
     }
 
     public static Component logFormat(Object message) {

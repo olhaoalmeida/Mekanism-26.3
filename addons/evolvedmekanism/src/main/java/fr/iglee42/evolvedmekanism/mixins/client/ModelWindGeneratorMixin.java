@@ -6,7 +6,7 @@ import java.util.Map;
 
 import mekanism.generators.client.model.ModelWindGenerator;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,11 +23,11 @@ public abstract class ModelWindGeneratorMixin {
     private RenderType RENDER_TYPE;
 
     @Unique
-    private static final Map<ResourceLocation, RenderType> evolvedmekanism$tierTypes = new HashMap<>();
+    private static final Map<Identifier, RenderType> evolvedmekanism$tierTypes = new HashMap<>();
 
     @Redirect(method = "render", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lmekanism/generators/client/model/ModelWindGenerator;RENDER_TYPE:Lnet/minecraft/client/renderer/RenderType;"))
     private RenderType evolvedmekanism$tierTexture(ModelWindGenerator model) {
-        ResourceLocation override = WindModelTexture.current();
+        Identifier override = WindModelTexture.current();
         if (override == null) {
             return RENDER_TYPE;
         }
